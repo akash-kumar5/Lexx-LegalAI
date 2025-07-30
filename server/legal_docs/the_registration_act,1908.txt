@@ -1,0 +1,651 @@
+THE REGISTRATION ACT, 1908
+
+ARRANGEMENT OF SECTIONS
+
+
+
+
+
+
+SECTIONS
+   
+PART I PRELIMINARY
+
+1. Short title, extent and commencement.
+2. Definitions.
+
+
+
+PART II
+
+OF THE REGISTRATION-ESTABLISHMENT
+3. Inspector-General of Registration.
+4. [Repealed.].
+5. Districts and sub-districts.
+6. Registrars and Sub-Registrars.
+7. Offices of Registrar and Sub-Registrar.
+8. Inspectors of Registration offices.
+9. [Repealed.].
+10. Absence of Registrar or vacancy in his office.
+11. Absence of Registrar on duty in his district.
+12. Absence of Sub-Registrar or vacancy in his office.
+13. Report to State Government of appointments under sections 10, 11 and 12.
+14. Establishments of registering officers.
+15. Seal of registering officers.
+16. Register-books and fire-proof boxes.
+16A. Keeping of books in computer floppies, diskettes, etc.
+PART III
+OR REGISTRABEL DOCUMENTS
+17. Documents of which registration is compulsory.
+18. Documents of which registration is optional.
+19. Documents in language not understood by registering officer.
+20. Documents containing interlineations, blanks, erasures or alterations.
+21. Description of property and maps or plans.
+22. Description of houses and land by reference to Government maps or surveys.
+PART IV
+OF THE TIME OF PRESENTATION
+23. Time for presenting documents.
+23A. Re-registration of certain documents.
+24. Documents executed by several persons at different times.
+25. Provision where delay in presentation is unavoidable.
+26. Documents executed out of India.
+27. Wills may be presented or deposited at any time.
+PART V
+OF THE PLACE OF REGISTRATION
+28. Place for registering documents relating to land.
+29. Place for registering other documents.
+
+SECTIONS
+30. Registration by Registrars in certain cases.
+31. Registration or acceptance for deposit at private residence.
+PART IV
+OF PRESENTING DOCUMENTS FOR REGISTRATION
+32. Persons to present documents for registration. 32A. Compulsory affixing of photograph, etc.
+33. Power-of-attorney recognisable for purposes of section 32
+34. Enquiry before registration by registering officer.
+35. Procedure on admission and denial of execution respectively.
+PART VII
+OF ENFORCING THE APPEARANCE OF EXECUTANTS AND WITNESSES
+36. Procedure where appearance of executant or witness is desired.
+37. Officer or Court to issue and cause service of summons.
+38. Persons exempt from appearance at registration-office.
+39. Law as to summonses, commissions and witnesses.
+PART VIII
+OF PRESENTING WILLS AND AUTHORITIES TO ADOPT
+40. Persons entitled to present wills and authorities to adopt.
+41. Registration of wills and authorities to adopt.
+PART IX
+OF THE DEPOSIT OF WILLS
+42. Deposit of wills.
+43. Procedure on deposit of wills.
+44. Withdrawal of sealed cover deposited under section 42.
+45. Proceedings on death of depositor.
+46. Saving of certain enactments and powers of Courts.
+PART X
+OF THE EFFECTS OF REGISTRATION AND NON-REGISTRATION
+47. Time from which registered document operates.
+48. Registered documents relating to property when to take effect against oral agreements.
+49. Effect of non-registration of documents required to be registered.
+50. Certain registered documents relating to land to take effect against unregistered documents.
+PART XI
+OF THE DUITES AND POWERS OF REGISTERING OFFICERS
+(A) As to the Register-books and Indexes
+51. Register-books to be kept in the several offices.
+52. Duties of registering officers when document presented.
+53. Entries to be numbered consecutively.
+54. Current indexes and entries therein.
+55. Indexes to be made by registering officers, and their contents.
+56. [Repealed.].
+(B) As to the procedure on admitting to registration
+57. Registering officers to allow inspection of certain books and indexes, and to give certified copies of entries.
+58. Particulars to be endorsed on documents admitted to registration.
+59. Endorsements to be dated and signed by registering officer.
+60. Certificate of registration
+61. Endorsements and certificate to be copied and document returned.
+62. Procedure on presenting document in language unknown to registering officer.
+
+SECTIONS
+63. Power to administer oaths and record of substance of statements.
+(C) Special duties of Sub-Registrar
+64. Procedure where document relates to land in several sub-districts.
+65. Procedure where document relates to land in several districts.
+(D) Special duties of Registrar
+66. Procedure after registration of documents relating to land.
+67. [Omitted.].
+(E) Of the Controlling powers of Registrar and Inspector-General
+68. Power of Registrar to superintend and control Sub-Registrars.
+69. Power of Inspector-General to superintend registration offices and make rules.
+70. Power of Inspector-General to remit fines.
+PART XII
+OF REFUSAL TO REGISTER
+71. Reasons for refusal to register to be recorded.
+72. Appeal to Registrar from orders of Sub-Registrar refusing registration on ground other than denial of execution.
+73. Application to Registrar where Sub-Registrar refuses to register on ground of denial of execution.
+74. Procedure of Registrar on such application.
+75. Order by Registrar to register and procedure thereon.
+76. Order of refusal by Registrar.
+77. Suit in case of order of refusal by Registrar.
+PART XIII
+OF THE FEES FOR REGISTRATION, SEARCHES AND COPIES
+78. Fees to be fixed by State Government.
+79. Publication of fees.
+80. Fees payable on presentation.
+PART XIV OF PENALTIES
+81. Penalty for incorrectly endorsing, copying, translating or registering documents with intent to injure.
+82. Penalty for making false statements, delivering false copies or translations, false personation, and abetment.
+83. Registering officers may commence prosecutions.
+84. Registering officers to be deemed public servants.
+PART XV MISCELLANEOUS
+85. Destruction of unclaimed documents.
+86. Registering officer not liable for thing bona fide done or refused in his official capacity.
+87. Nothing so done invalidated by defect in appointment or procedure.
+88. 88. Registration of documents executed by Government officers or certain public functionaries.
+89. Copies of certain orders, certificates and instruments to be sent to registering officers and filed.
+Exemption from Act
+90. Exemption of certain documents executed by or in favour of Government.
+91. Inspection and copies of such documents.
+92. [Repealed.].
+93. [Repealed.].
+THE SCHEDULE. [REPEALED.] .
+
+THE REGISTRATION ACT, 1908 ACT NO. 16 OF 19081
+[18th December, 1908.]
+An Act to consolidate the enactments relating to the Registration of Documents.
+   WHEREAS it is expedient to consolidate the enactments relating to the registration of documents; it is hereby enacted as follows:-
+PART I PRELIMINARY
+   1. Short title, extent and commencement.-(1) This Act may be called the 2*** Registration Act, 1908.
+3[(2) It extends to the whole of India except the State of Jammu and Kashmir:
+Provided that the State Government may exclude any districts or tracts of country from its operation.]
+(3) It shall come into force on the first day of January, 1909.
+2. Definitions.-In this Act, unless there is anything repugnant in the subject or context,-
+   (1) "Addition" means the place of residence, and the profession, trade, rank and title (if any) of a person described, and in the case of 4[an Indian], 5*** his father's name, or where he is usually described as the son of his mother, then his mother's name;
+   (2) "Book" includes a portion of a book and also any number of sheets connected together with a view of forming a book or portion of a book;
+   (3) "District" and "sub-district" respectively mean a district and sub-district formed under this Act;
+(4) "District Court" includes the High Court in its ordinary original civil jurisdiction;
+   (5) "Endorsement" and "endorsed" include and apply to an entry in writing by a registering officer on a rider or covering slip to any document tendered for registration under this Act;
+   (6) "Immovable Property" includes land, buildings, hereditary allowances, rights to ways, lights, ferries, fisheries or any other benefit to arise out of land, and things attached to the earth, or permanently fastened to anything which is attached to the earth, but not standing timber, growing crops nor grass;
+6[(6A) "India" means the territory of India excluding the State of Jammu and Kashmir;]
+   (7) "Lease" includes a counterpart, kabuliyat, and undertaking to cultivate or occupy, and an agreement to lease;
+
+
+
+1. It has been amended in its application to West Bengal by Ben. Act 5 of 1942 and West Ben. Acts 29 of 1950 and 31 of 1951; to Maharashtra by Bombay Acts 5 of 1929, 17 of 1930, 18 of 1933, 24 of 1939, 10 of 1939, 10 of 1942 and 6 of 1960, Maharashtra Acts 19 of 1960 and 20 of 1971; to the C.P. Act 1 of 1937 and M.P. Act 8 of 1965; to Madras and Andhra by Madras Acts 3 of 1935 and 17 of `952; to Orissa by Orissa Act 3 of 1933; to the Punjab by Punjab Act 8 of 1941 and 19 of 1961; to Bihar by Bihar Acts 14 of 1947 and 24 of 1952; to Kerala by Kerala Act 7 of 1968; to Himachal Pradesh by H.P. Act 2 of 1969; to Pondicherry by Pondicherry Act 17 of 1970; to Uttar Pradesh by U.P. Acts 14 of 1971, 48 of 1975 and 57 of 1976; to Haryana by Haryana Act 36 of 1973; to Maharashtra by Maharashtra Acts 29 of 1974 and 49 of 1975; to Tamil Nadu by T.N. Act 31 of 1974; to Orissa by Orissa Act 11 of 1976 and to West Bengal by West Ben. Act 17 of 1978.
+This Act has been extended to-
+Dadra and Nagar Haveli by Reg. 6 of 1963, s.2 and first Schedule, Goa, Daman and Diu by Reg. 11 of 1963, s. 3 and Schedule and the whole of the Union territory of Lakshadweep by Reg. 8 of 1965, s.3 and Schedule.
+Pondicherry by Act 26 of 1968, s. 3 and Schedule.
+2. The word "Indian" omitted by Act 45 of 1969, s. 2.
+3. Subs. by Act 3 of 1951, s. 3 and the Schedule, for sub-section (2).
+4. Subs. by A.O. 1950, for "a Native of India".
+5. The words and brackets "his cast (if any) and" omitted by Act 17 of 1956, s. 2.
+6. Ins. by Act 3 of 1951, s. 3 and the Schedule.
+
+   (8) "Minor" means a person who, according to the personal law to which he is subject, has not attained majority;
+   (9) "Movable Property" includes standing timber, growing crops and grass, fruit upon and juice in trees, and property of every other description, except immovable property; and
+   (10) "Representative" includes the guardian of a minor and the committee or other legal curator of a lunatic or idiot.
+1*	*		*	*	* PART II
+OF THE REGISTRATION-ESTABLISHMENT
+   3. Inspector-General of Registration.-(1) The 2[State Government] shall appoint an officer to be the Inspector-General of Registration for the territories subject to such Government:
+   Provided that the 2[State Government] may, instead of making such appointment, direct that all or any of the powers and duties hereinafter conferred and imposed upon the Inspector-General shall be exercised and performed by such officer or officers, and within such local limits, as the 2[State Government] appoints in this behalf.
+(2) Any Inspector-General may hold simultaneously any other office under the 3[Government].
+   4. [Branch Inspector-General of Sindh (Repealed).]-Rep. by the Government of India (Adaptation of Indian Laws) Order, 1937.
+   5. Districts and sub-districts.-(1) For the purposes of this Act, the 2[State Government] shall form districts and sub-districts, and shall prescribe, and may alter, the limits of such districts and sub-districts.
+   (2) The districts and sub-districts formed under this section, together with the limits thereof, and every alternation of such limits, shall be notified in the 4[Official Gazette].
+   (3) Every such alternation shall take effect on such day after the date of the notification as is therein mentioned.
+   6. Registrars and Sub-Registrars.-The 2[State Government] may appoint such persons, whether public officers or not, as it thinks proper, to be Registrars of the several districts, and to be Sub-Registrars of the several sub-districts, formed as aforesaid, respectively.
+5*	*	*	*	*
+   7. Offices of Registrar and Sub-Registrar.-(1) The 2[State Government] shall establish in every district an office to be styled the office of the Registrar and in every sub-district an office or offices to be styled the office of the Sub-Registrar or the offices of the Joint Sub-Registrars.
+   (2) The 2[State Government] may amalgamate with any office of a Registrar, any office of a Sub-Registrar subordinate to such Registrar, and may authorise any Sub-Registrar whose office has been so amalgamated to exercise and perform, in addition to his own powers and duties, all or any of the powers and the duties of the Registrar to whom he is subordinate:
+   Provided that no such authorisation shall enable a Sub-Registrar to hear an appeal against an order passed by himself under this Act.
+   8. Inspectors of Registration offices.-(1) The 2[State Government] may also appoint officers to be called Inspector of Registration offices, and may prescribe the duties of such officers.
+(2) Every such Inspector shall be subordinate to the Inspector-General.
+
+
+1. Clause (11) omitted by Act 3 of 1951, s. 3 and Schedule. Earlier it was inserted by the A.O. 1950.
+2. Subs. by the A.O. 1950, for "Provincial Government".
+3. Subs., ibid., for "the Crown".
+4. Subs. by the A.O. 1937, for "Local Official Gazette".
+5. The proviso rep. by the A.O. 1937. Earlier it was inserted by Act 4 of 1914, s. 2 and the Schedule.
+
+   9. [Military cantonments may be declared sub-districts or districts (Repealed).] Rep. by the Repealing and Amending Act, 1927 (10 of 1927), s. 3 and Second Schedule.]
+   10. Absence of Registrar or vacancy in his office.-(1) When any Registrar, other than the Registrar of a district including a Presidency-town, is absent otherwise than on duty in his district, or when his office is temporarily vacant, any person whom the Inspector-General appoints in this behalf, or, in default of such appointment, the Judge of the District Court within the local limits of whose jurisdiction the Registrar's office is situate, shall be the Registrar during such absence or until the 1[State Government] fills up the vacancy.
+   (2) When the Registrar of a district including a Presidency-town is absent otherwise than on duty in his district, or when his office is temporarily vacant, any person whom the Inspector-General appoints in this behalf shall be the Registrar during such absence, or until the 1[State Government] fills up the vacancy.
+   11. Absence of Registrar on duty in his district.-When any Registrar is absent from his office on duty in his district, he may appoint any Sub-Registrar or other person in his district to perform, during such absence, all the duties of a Registrar except those mentioned in sections 68 and 72.
+   12. Absence of Sub-Registrar or vacancy in his office.-When any Sub-Registrar is absent, or when his office is temporarily vacant, any person whom the Registrar of the district appoints in this behalf shall be Sub-Registrar during such absence, or until 2[the vacancy is filled up].
+   13. Report to State Government of appointments under sections 10, 11 and 12.-(1) 3*** All appointments made under section 10, section 11 or section 12 shall be reported to the 1[State Government] by the Inspector-General.
+(2) Such report shall be either special or general, as the l[State Government] directs.
+4*	*	*	*	*
+14. Establishments of registering officers.-5***
+(2) The 1[State Government] may allow proper establishments for the several offices under this Act.
+   15. Seal of registering officers.-The several Registrars and Sub-Registrars shall use a seal bearing the following inscription in English and in such other language as the 1[State Government] directs:-"The seal of the Registrar (or of the Sub-Registrar) of".
+   16. Register-books and fire-proof boxes.-(1) The 1[State Government] shall provide for the office of every registering officer the books necessary for the purposes of this Act.
+   (2) The books so provided shall contain the forms from time to time prescribed by the Inspector- General, with the sanction of the 1[State Government], and the pages of such books shall be consecutively numbered in print, and the number of pages in each book shall be certified on the title page by the officer by whom such books are issued.
+   (3) The 1[State Government] shall supply the office of every Registrar with a fire-proof box, and shall in each district make suitable provision for the safe custody of the records connected with the registration of documents in such district.
+      6[16A. Keeping of books in computer floppies, diskettes, etc.-(1) Notwithstanding anything contained in section 16, the books provided under sub-section (1) of that section may also be kept in computer floppies or diskettes or in any other electronic form in the manner and subject to the safeguards as may be prescribed by the Inspector-General with the sanction of the State Government.
+
+1. Subs. by the A.O. 1950, for "Provincial Government".
+2. Subs. by Act 4 of 1914, s. 2 and the Schedule, for "the Local Government fills up the vacancy".
+3. The words and figure "All appointments made by the Inspector-General section 6 and" rep. by the A.O. 1937. Earlier these words and figure were ins. by Act 4 of 1914, s. 2 and the Schedule.
+4. Sub-section (3) rep. by the A.O. 1937.
+5. Sub-section (1) rep., ibid.,
+6. Ins. by Act 48 of 2001, s. 2 (w.e.f. 24-9-2001).
+
+   (2) Notwithstanding anything contained in this Act or in any other law for the time being in force, a copy or extracts from the books kept under sub-section (1) given by the registering officer under his hand and seal shall be deemed to be a copy given under section 57 for the purposes of sub-section (5) of that section.]
+PART III
+OR REGISTRABEL DOCUMENTS
+   17. Documents of which registration is compulsory.-(1) The following documents shall be registered, if the property to which they relate is situate in a district in which, and if they have been executed on or after the date on which, Act No. XVI of 1864, or the Indian Registration Act, 1866, or the Indian Registration Act, 1871, or the Indian Registration Act, 1877, or this Act came or comes into force, namely:-
+(a) instruments of gift of immovable property;
+   (b) other non-testamentary instruments which purport or operate to create, declare, assign, limit or extinguish, whether in present or in future, any right, title or interest, whether vested or contingent, of the value of one hundred rupees and upwards, to or in immovable property;
+   (c) non-testamentary instruments which acknowledge the receipt or payment of any consideration on account of the creation, declaration, assignment, limitation or extinction of any such right, title or interest; and
+   (d) leases of immovable property from year to year, or for any term exceeding one year, or reserving a yearly rent;
+      1[(e) non-testamentary instruments transferring or assigning any decree or order of a Court or any award when such decree or order or award purports or operates to create, declare, assign, limit or extinguish, whether in present or in future, any right, title or interest, whether vested or contingent, of the value of one hundred rupees and upwards, to or in immovable property:]
+   Provided that the 2[State Government] may, by order published in the 3[Official Gazette], exempt from the operation of this sub-section any lease executed in any district, or part of a district, the terms granted by which do not exceed five years and the annual rents reserved by which do not exceed fifty rupees.
+      4[(1A) The documents containing contracts to transfer for consideration, any immovable property for the purpose of section 53A of the Transfer of Property Act, 1882 (4 of 1882) shall be registered if they have been executed on or after the commencement of the Registration and Other Related laws (Amendment) Act, 2001 (48 of 2001) and if such documents are not registered on or after such commencement, then, they shall have no effect for the purposes of the said section 53A.]
+(2) Nothing in clauses (b) and (c) of sub-section (1) applies to-
+(i) any composition deed; or
+   (ii) any instrument relating to shares in a joint stock Company, notwithstanding that the assets of such Company consist in whole or in part of immovable property; or
+   (iii) any debenture issued by any such Company and not creating, declaring, assigning, limiting or extinguishing any right, title or interest, to or in immovable property except in so far as it entitles the holder to the security afforded by a registered instrument whereby the Company has mortgaged, conveyed or otherwise transferred the whole or part of its immovable property or any interest therein to trustees upon trust for the benefit of the holders of such debentures; or
+
+1. Ins. by Act 21 of 1929, s. 10.
+2. Subs. by the A.O. 1950, for "Provincial Government".
+3. Subs. by the A.O. 1937, for "Local Official Gazette".
+4. Ins. by Act 48 of 2001, s. 3 (w.e.f. 24-9-2001).
+
+(iv) any endorsement upon or transfer of any debenture issued by any such Company; or
+      (v) 1[any document other than the documents specified in sub-section (1A)] not itself creating, declaring, assigning, limiting or extinguishing any right, title or interest of the value of one hundred rupees and upwards to or in immovable property, but merely creating a right to obtain another document which will, when executed, create, declare, assign, limit or extinguish any such right, title or interest; or
+   (vi) any decree or order of a Court 2[except a decree or order expressed to be made on a compromise and comprising immovable property other than that which is the subject-matter of the suit or proceeding]; or
+(vii) any grant of immovable property by 3[Government]; or
+(viii) any instrument of partition made by a Revenue-Officer; or
+   (ix) any order granting a loan or instrument of collateral security granted under the Land Improvement Act, 1871, or the Land Improvement Loans Act, 1883; or
+   (x) any order granting a loan under the Agriculturists, Loans Act, 1884, or instrument for securing the repayment of a loan made under that Act; or
+      4[(xa) any order made under the Charitable Endowments Act, 1890 (6 of 1890), vesting any property in a Treasurer of Charitable Endowments or divesting any such Treasurer of any property; or]
+   (xi) any endorsement on a mortgage-deed acknowledging the payment of the whole or any part of the mortgage-money, and any other receipt for payment of money due under a mortgage when the receipt does not purport to extinguish the mortgage; or
+   (xii) any certificate of sale granted to the purchaser of any property sold by public auction by a Civil or Revenue-Officer.
+      5[Explanation.-A document purporting or operating to effect a contract for the sale of immovable property shall not be deemed to require or ever to have required registration by reason only of the fact that such document contains a recital of the payment of any earnest money or of the whole or any part of the purchase money.]
+   (3) Authorities to adopt a son, executed after the 1st day of January, 1872, and not conferred by a will, shall also be registered.
+   18. Documents of which registration is optional.-Any of the following documents may be registered under this Act, namely:-
+   (a) Instruments (other than instruments of gift and wills) which purport or operate to create, declare, assign, limit or extinguish, whether in present or in future, any right, title or interest, whether vested or contingent, of a value less then one hundred rupees, to or in immovable property;
+   (b) instruments acknowledging the receipt or payment of any consideration on account of the creation, declaration, assignment, limitation or extinction of any such right, title or interest;
+   (c) leases of immovable property for any term not exceeding one year, and leases exempted under section 17;
+      6[(cc) instruments transferring or assigning any decree or order of a Court or any award when such decree or order or award purports or operates to create, declare, assign, limit or extinguish,
+
+
+1. Subs. by Act 48 of 2001, s. 3, for "any document" (w.e.f. 24-9-2001).
+2. Subs. by Act 21 of 1929, s. 10, for "and any award".
+3. Subs. by the A.O. 1950, for "Crown".
+4. Ins. by Act 39 of 1948, s. 2.
+5. Ins by Act 2 of 1927, s. 2.
+6. Ins. by Act 33 of 1940, s. 2.
+
+whether in present or in future, any right, title or interest, whether vested or contingent, of a value less than one hundred rupees, to or in immovable property;]
+   (d) instruments (other than wills) which purport or operate to create, declare, assign, limit or extinguish any right, title or interest to or in movable property;
+(e) wills; and
+(f) all other documents not required by section 17 to be registered.
+   19. Documents in language not understood by registering officer.-If any document duly presented for registration be in a language which the registering officer does not understand, and which is not commonly used in the district he shall refuse to register the documents, unless it be accompanied by a true translation into a language commonly used in the district and also by a true copy.
+   20. Documents containing interlineations, blanks, erasures or alterations.-(1) The registering officer may in his discretion refuse to accept for registration any document in which any interlineation, blank, erasure or alteration appears, unless the persons executing the document attest with their signatures or initials such interlineation, blank, erasure or alteration.
+   (2) If the registering officer registers any such document, he shall, at the time of registering the same, make a note in the register of such interlineation, blank, erasure or alteration.
+   21. Description of property and maps or plans.-(1) No non-testamentary document relating to immovable property shall be accepted for registration unless it contains a description of such property sufficient to identify the same.
+   (2) Houses in towns shall be described as situate on the north or other side of the street or road (which should be specified) to which they front, and by their existing and former occupancies, and by their numbers if the houses in such street or road are numbered.
+   (3) Other houses and lands shall be described by their name, if any, and as being the territorial division in which they are situate, and by their superficial contents, the roads and other properties on to which they abut, and their existing occupancies, and also, whenever it is practicable, by reference to a Government map or survey.
+   (4) No non-testamentary document containing a map or plan of any property comprised therein shall be accepted for registration unless it is accompanied by a true copy of the map or plan, or, in case such property is situate in several districts, by such number of true copies of the map or plan as are equal to the number of such districts.
+   22. Description of houses and land by reference to Government maps or surveys.-(1) Where it is, in the opinion of the 1[State Government], practicable to describe houses, not being houses in towns, and lands by reference to a Government map or survey, the 1[State Government] may, by rule made under this Act, require that such houses and lands as aforesaid shall, for the purposes of section 21, be so described.
+   (2) Save as otherwise provided by any rule made under sub-section (1), failure to comply with the provisions of section 21, sub-section (2) or sub-section (3), shall not disentitle a document to be registered if the description of the property to which it relates is sufficient to identify that property.
+PART IV
+OF THE TIME OF PRESENTATION
+   23. Time for presenting documents.-Subject to the provisions contained in sections 24, 25 and 26, no document other than a will shall be accepted for registration unless presented for that purpose to the proper officer within four months from the date of its execution:
+
+
+
+
+1. Subs. by the A.O. 1950, for "Provincial Government".
+
+   Provided that a copy a of a decree or order may be presented within four months from the day on which the decree or order was made, or, where it is appealable, within four months from the day on which it becomes final.
+      1[23A. Re-registration of certain documents.-Notwithstanding anything to the contrary contained in this Act, if in any case a document requiring registration has been accepted for registration by a Registrar or Sub-Registrar from a person not duly empowered to present the same, and has been registered, any person claiming under such document may, within four months form his first becoming aware that the registration of such document is invalid, present such document or cause the same to be presented, in accordance with the provisions of Part VI for re-registration in the office of the Registrar of the district in which the document was originally registered; and upon the Registrar being satisfied that the document was so accepted for registration from a person not duly empowered to present the same, he shall proceed to the re-registration of the document as if it has not been previously registered, and as if such presentation for re-registration was a presentation for registration made within the time allowed therefore under Part IV, and all the provisions of this Act, as to registration of documents, shall apply to such re-registration; and such document, if duly re-registered in accordance with the provisions of this section, shall be deemed to have been duly registered for all purposes from the date of its original registration:
+   Provided that, within three months from the twelfth day of September, 1917, any person claiming under a document to which this section applies may present the same or cause the same to be presented for re-registration in accordance with this section, whatever may have been the time when he first became aware that the registration of the document was invalid.
+   24. Documents executed by several persons at different times.-Where there are several persons executing a document at different times, such document may be presented for registration and re-registration within four months from the date of each execution.
+   25. Provision where delay in presentation is unavoidable.-(1) If, owing to urgent necessity or unavoidable accident, any document executed, or copy of a decree or order made, in 2[India] is not presented for registration till after the expiration of the time hereinbefore prescribed in that behalf, the Registrar, in cases where the delay in presentation does not exceed four months, may direct that, on payment of a fine not exceeding ten times the amount of the proper registration-fee, such document shall be accepted for registration.
+   (2) Any application for such direction may be lodged with a Sub-Registrar, who shall forthwith forward it to the Registrar to whom he is subordinate.
+   26. Documents executed out of India.-When a document purporting to have been executed by all or any of the parties out of 2[India] is not presented for registration till after the expiration of the time hereinbefore prescribed in that behalf, the registering officer, if satisfied-
+(a) that the instrument was so executed, and
+       (b) that it has been presented for registration within four months after its arrival in 2[India], may, on payment of the proper registration-fee accept such document for registration.
+   27. Wills may be presented or deposited at any time.-A will may at any time be presented for registration or deposited in manner hereinafter provided.
+PART V
+OF THE PLACE OF REGISTRATION
+   28. Place for registering documents relating to land.-Save as in this Part otherwise provided, every document mentioned in section 17, sub-section (1), clauses (a), (b), (c) 3[, (d) and (e), section 17, sub-section (2), insofar as such document affects immovable property,] and section 18, clauses (a),
+
+1. Ins. by Act 15 of 1917, s. 2.
+2. Subs. by Act 3 of 1951, s. 3 and the Schedule, for "the State".
+3. Subs. by Act 33 of 1940, s. 3, for "and (d)".
+
+(b) 1[(c) and (cc),] shall be presented for registration in the office of a Sub-Registrar within whose sub-district the whole or some portion of the property to which such document relates is situate.
+   29. Place for registering other documents.-(1) Every document 2[not being a document referred to in section 28 or a copy of a decree or order], may be presented for registration either in the office of the Sub-Registrar in whose sub-district the document was executed, or in the office of any other Sub-Registrar under the 3[State Government] at which all the persons executing and claiming under the document desire the same to be registered.
+   (2) A copy of a decree or order may be presented for registration in the office of the Sub-Registrar in whose sub-district the original decree or order was made, or, where the decree or order does not affect immovable property, in the office of any the Sub-Registrar under the 2[State Government] at which all the persons claiming under the decree or order desire the copy to be registered.
+   30. Registration by Registrars in certain cases.-(1) Any Registrar may in his discretion receive and register any document which might be registered by any Sub-Registrar subordinate to him.
+4*	*	*	*	*
+   31. Registration or acceptance for deposit at private residence.-In ordinary cases the registration or deposit of documents under this Act shall be made only at the office of the officer authorised to accept the same for registration or deposit:
+   Provided that such officer may on special cause being shown attend at the residence of any person desiring to present a document for registration or to deposit a will, and accept for registration or deposit such document or will.
+PART IV
+OF PRESENTING DOCUMENTS FOR REGISTRATION
+   32. Persons to present documents for registration.-Except in the cases mentioned in 5[sections 31, 88 and 89], every document to be registered under this Act, whether such registration be compulsory or optional, shall be presented at the proper registration-office,-
+   (a) by some person executing or claiming under the same, or, in the case of a copy of a decree or order, claiming under the decree or order, or
+(b) by the representive or assign of such a person, or
+   (c) by the agent of such a person, representative or assign, duly authorised by power-of- attorney executed and authenticated in manner hereinafter mentioned.
+      6[32A. Compulsory affixing of photograph, etc.-Every person presenting any document at the proper registration office under section 32 shall affix his passport size photograph and fingerprints to the document:
+   Provided that where such document relates to the transfer of ownership of immovable property, the passport size photograph and fingerprints of each buyer and seller of such property mentioned in the document shall also be affixed to the document.]
+   33. Power-of-attorney recognisable for purposes of section 32.-(1) For the purposes of section 32, the following powers-of-attorney shall alone be recognized, namely:-
+
+
+
+
+1. Subs. by Act 33 of 1940, s. 3, for "and (c)".
+2. Subs. by Act 32 of 1940, s. 3 and the first Schedule, for certain words.
+3. Subs. by the A.O. 1950, for "Provincial Government".
+4. Sub-section (2) omitted by Act 48 of 2001, s. 4 (w.e.f. 24-9-2001).
+5. Subs. by Act 39 of 1948, s. 3, for "section 31 and section 89".
+6. Ins. by Act 48 of 2001, s. 5 (w.e.f. 24-9-2001).
+
+   (a) if the principal at the time of executing the power-of-attorney resides in any part of 1[India] in which this Act is for the time being in force, a power-of-attorney executed before and authenticated by the Registrar or Sub-Registrar within whose district or sub-district the principal resides;
+   (b) if the principal at the time aforesaid 2[resides in any part of India in which this Act is not in force], a power-of-attorney executed before and authenticated by any Magistrate;
+   (c) if the principal at the time aforesaid does not reside in 1[India], a power-of-attorney executed before and authenticated by a Notary Public, or any Court, Judge, Magistrate, 3[Indian] Consul or Vice-Consul, or representative 4*** of the Central Government:
+   Provided that the following persons shall not be required to attend at any registration-office or Court for the purpose of executing any such power-of-attorney as is mentioned in clauses (a) and (b) of this section, namely:-
+   (i) persons who by reason of bodily infirmity are unable without risk or serious inconvenience so to attend;
+(ii) persons who are in jail under civil or criminal process; and
+(iii) persons exempt by law from personal appearance in court.
+      5[Explanation.-In this sub-section "India" means India, as defined in clause (28) of section 3 of the General Clauses Act, 1897 (10 of 1897).]
+   (2) In the case of every such person the Registrar or Sub-Registrar or Magistrate, as the case may be, if satisfied that the power-of-attorney has been voluntarily executed by the person purporting to be the principal, may attest the same without requiring his personal attendance at the office or Court aforesaid.
+   (3) To obtain evidence as to the voluntary nature of the execution, the Registrar or Sub-Registrar or Magistrate may either himself go to the house of the person purporting to be the principal, or to the jail in which he is confined, and examine him, or issue a commission for his examination.
+   (4) Any power-of-attorney mentioned in this section may be proved by the production of it without further proof when it purports on the face of it to have been executed before and authenticated by the person or Court hereinbefore mentioned in that behalf.
+   34. Enquiry before registration by registering officer.-(1) Subject to the provisions contained in this Part and in sections 41, 43, 45, 69, 75, 77, 88 and 89, no document shall be registered under this Act, unless the persons executing such document, or their representatives, assigns or agents authorised as aforesaid, appear before the registering officer within the time allowed for presentation under sections 23, 24, 25 and 26:
+   Provided that, if owing to urgent necessity or unavoidable accident all such persons do not so appear, the Registrar, in cases where the delay in appearing does not exceed four months, may direct that on payment of a fine not exceeding ten times the amount of the proper registration fee, in addition to the fine, if any, payable under section 25, the document may be registered.
+(2) Appearances under sub-section (1) may be simultaneous or at different times.
+(3) The registering officer shall thereupon-
+   (a) enquire whether or not such document was executed by the persons by whom it purports to have been executed;
+   (b) satisfy himself as to the identity of the persons appearing before him and alleging that they have executed the document; and
+
+
+1. Subs. by Act 3 of 1951, s. 3 and the Schedule, for "the State".
+2. Subs. by Act 3 of 1951, s. 3, and the Schedule, for "resides in any other part of the States".
+3. Subs. by the A.O. 1950, for "British".
+4. The words "of His Majesty or" omitted, ibid.
+5. Ins. by Act 3 of 1951, s. 3 and the Schedule.
+
+   (c) in the case of any person appearing as a representative, assign or agent, satisfy himself of the right of such person so to appear.
+   (4) Any application for a direction under the proviso to sub-section (1) may be lodged with a Sub- Registrar, who shall forthwith forward it to the Registrar to whom he is subordinate.
+(5) Nothing in this section applies to copies of decrees or orders.
+   35. Procedure on admission and denial of execution respectively.-(1) (a) If all the persons executing the document appear personally before the registering officer and are personally known to him, or if he be otherwise satisfied that they are the person they represent themselves to be, and if they all admit the execution of the document, or
+   (b) if in the case of any person appearing by a representative, assign or agent, such representative, assign or agent admits the execution, or
+   (c) if the person executing the document is dead, and his representative or assign appears before the registering officer and admits the execution,
+the registering officer shall register the document as directed in sections 58 to 61 inclusive.
+   (2) The registering officer may, in order to satisfy himself that the persons appearing before him are the persons they represent themselves to be, or for any other purpose contemplated by this Act, examine any one present in his office.
+(3) (a) If any person by whom the document purports to be executed denies its execution, or
+(b) if any such person appears to the registering officer to be a minor, an idiot or a lunatic, or
+   (c) if any person by whom the document purports to be executed is dead, and his representative or assign denies its execution,
+   the registering officer shall refuse to register the document as to the person so denying, appearing or dead:
+Provided that, where such officer is a Registrar, he shall follow the procedure prescribed in Part XII:
+      1[Provided further that the 2[State Government] may, by notification in the 3[Official Gazette], declare that any Sub-Registrar named in the notification shall, in respect of documents the execution of which is denied, be deemed to be a Registrar for the purposes of this sub-section and of Part XII.]
+PART VII
+OF ENFORCING THE APPEARANCE OF EXECUTANTS AND WITNESSES
+   36. Procedure where appearance of executant or witness is desired.-If any person presenting any document for registration or claiming under any document, which is capable of being so presented, desires the appearance of any person whose presence or testimony is necessary for the registration of such document, the registering officer may, in his discretion, call upon such Officer or Court as the 2[State Government] directs in this behalf to issue a summons requiring him to appear at the registration office, either in person or by duly authorised agent, as in the summons may be mentioned, and at a time named therein.
+   37. Officer or Court to issue and cause service of summons.-The officer or Court, upon receipt of the peon's fee payable in such cases, shall issue the summons accordingly, and cause it to be served upon the person whose appearance is so required.
+   38. Persons exempt from appearance at registration-office.-(1) (a) A person who by reason of bodily infirmity is unable without risk or serious inconvenience to appear at the registration-office, or
+(b) a person in jail under civil or criminal process, or
+
+1. Ins. by Act 13 of 1926, s. 2.
+2. Subs. by the A.O. 1950, for "Provincial Government".
+3. Subs. by the A.O. 1939, for "Local Official Gazette".
+
+   (c) person exempt by law from personal appearance in Court, and who would but for the provisions next hereinafter contained be required to appear in person at the registration-office, shall not be required so to appear.
+   (2) In the case of every such person the registering officer shall either himself go to the house of such person, or to the jail in which he is confined, and examine him or issue a commission for his examination.
+   39. Law as to summonses, commissions and witnesses.-The law in force for the time being as to summonses, commissions and compelling the attendance of witnesses, and for their remuneration in suits before Civil Courts, shall, save as aforesaid and mutatis mutandis, apply to any summons or commission issued and any person summoned to appear under the provisions of this Act.
+PART VIII
+OF PRESENTING WILLS AND AUTHORITIES TO ADOPT
+   40. Persons entitled to present wills and authorities to adopt.-(1) The testator, or after his death any person claiming as executor or otherwise under a will, may present it to any Registrar or Sub-Registrar for registration.
+   (2) The donor, or after his death the done, of any authority to adopt, or the adoptive son, may present it to any Registrar or Sub-Registrar for registration.
+   41. Registration of wills and authorities to adopt.-(1) A will or an authority to adopt, presented for registration by the testator or donor, may be registered in the same manner as any other document.
+   (2) A will or authority to adopt presented for registration by any other person entitled to present it shall be registered if the registering officer is satisfied-
+(a) that the will or authority was executed by the testator or donor, as the case may be;
+(b) that the testator or donor is dead; and
+   (c) that the person presenting the will or authority is, under section 40, entitled to present the same.
+PART IX
+OF THE DEPOSIT OF WILLS
+   42. Deposit of wills.-Any testator may, either personally or by duly authorised agent, deposit with any Registrar his will in a sealed cover super scribed with the name of the testator and that of his agent (if any) and with a statement of the nature of the document.
+   43. Procedure on deposit of wills.-(1) On receiving such cover, the Registrar, if satisfied that the person presenting the same for deposit is the testator or his agent, shall transcribe in his Register-book No. 5 the superscription aforesaid, and shall note in the same book and on the said cover the year, month, day and hour of such presentation and receipt, and the names of any persons who may testify to the identity of the testator or his agent, and any legible inscription which may be on the seal of the cover.
+(2) The Registrar shall then place and retain the sealed cover in his fire-proof box.
+   44. Withdrawal of sealed cover deposited under section 42.-If the testator who has deposited such cover wishes to withdraw it, he may apply, either personally or by duly authorised agent, to the Registrar who holds it in deposit, and such Registrar, if satisfied that the applicant is actually the testator or his agent, shall deliver the cover accordingly.
+   45. Proceedings on death of depositor.-(1) If, on the death of a testator who has deposited a sealed cover under section 42, application be made to the Registrar who holds it in deposit to open the same, and if the Registrar is satisfied that the testator is dead, he shall, in the applicant's presence, open the cover, and, at the applicant's expense, cause the contents thereof to be copied into his Book No. 3.
+(2) When such copy has been made, the Registrar shall re-deposit the original will.
+
+   46. Saving of certain enactments and powers of Courts.-(1) Nothing hereinbefore contained shall affect the provisions of section 259 of the Indian Succession Act, 1865, or of section 81 of the Probate and Administration Act, 1881, or the power of any Court by order to compel the production of any will.
+   (2) When any such order is made, the Registrar shall, unless the will has been already copied under section 45, open the cover and cause the will to be copied into his Book No. 3 and make a note on such copy that the original has been removed into Court in pursuance of the order aforesaid.
+PART X
+OF THE EFFECTS OF REGISTRATION AND NON-REGISTRATION
+   47. Time from which registered document operates.-A registered document shall operate from the time which it would have commenced to operate if no registration thereof had been required or made, and not from the time of its registration.
+   48. Registered documents relating to property when to take effect against oral agreements.- All non-testamentary documents duly registered under this Act, and relating to any property, whether movable or immovable, shall take effect against any order agreement or declaration relating to such property, unless where the agreement or declaration has been accompanied or followed by delivery of possession 1[and the same constitutes a valid transfer under any law for the time being in force:
+   Provided that a mortgage as defined in section 58 of the Transfer of Property Act, 1882 (4 of 1882), shall take effect against any mortgage-deed subsequently executed and registered which relates to the same property.]
+   49. Effect of non-registration of documents required to be registered.-No document required by section 17 1[or by any provision of the Transfer of Property Act, 1882 (4 of 1882)], to be registered shall-
+(a) affect any immovable property comprised therein, or
+(b) confer any power to adopt, or
+       (c) be received as evidence of any transaction affecting such property or conferring such power, unless it has been registered:
+      1[Provided that an unregistered document affecting immovable property and required by this Act or the Transfer of Property Act, 1882 (4 of 1882), to be registered may be received as evidence of a contract in a suit for specific performance under Chapter II of the Specific Relief Act, 1877 (3 of 1877) 2, 3*** or as evidence of any collateral transaction not required to be effected by registered instrument.]
+    50. Certain registered documents relating to land to take effect against unregistered documents.-(1) Every document of the kinds mentioned in clauses (a), (b), (c) and (d) of section 17, sub-section (1), and clauses (a) and (b) of section 18, shall, if duly registered, take effect as regards the property comprised therein, against every unregistered document relating to the same property, and not being a decree or order, whether such unregistered document be of the same nature as the registered document or not.
+   (2) Nothing in sub-section (1) applies to leases exempted under the proviso to sub-section (1) of section 17 or to any document mentioned in sub-section (2) of the same section, or to any registered document which had not priority under the law in force at the commencement of this Act.
+   Explanation.-In cases, where Act No. 16 of 1864 or the Indian Registration Act, 1866 (20 of 1866), was in force in the place and at the time in and at which such unregistered document was executed, "unregistered" means not registered according to such Act, and, where the document is executed after the
+
+1. Ins. by Act 21 of 1929, s. 10.
+2. See now the Specific Relief Act, 1963 (47 of 1963).
+3. The words, figures and letter "or as evidence of part performance of a contract for the purposes of section 53A of the Transfer of Property Act, 1882 (4 of 1882)" omitted by Act 48 of 2001, s. 6 (w.e.f. 24-9-2001).
+
+first day of July, 1871, not registered under the Indian Registration Act, 1871 (8 of 1871), or the Indian Registration Act, 1877 (3 of 1877), or this Act.
+PART XI
+OF THE DUITES AND POWERS OF REGISTERING OFFICERS
+(A) As to the Register-books and Indexes
+   51. Register-books to be kept in the several offices.-(1) The following books shall be kept in the several offices hereinafter named, namely:-
+A-In all registration offices-
+Book 1, "Register of non-testamentary documents relating to immovable property". Book 2, "Record of reasons for refusal to register".
+Book 3, "Register of wills and authorities to adopt", and Book 4, "Miscellaneous Register".
+B-In the offices of Registrars-
+Book 5, "Register of deposits of wills".
+   (2) In Book 1 shall be entered or filed all documents or memoranda registered under sections 17, 18 and 89 which relate to immovable property, and are not wills.
+   (3) In Book 4 shall be entered all documents registered under clauses (d) and (f) of section 18 which do not relate to immovable property.
+   (4) Nothing in this section shall be deemed to require more than one set of books where the office of the Registrar has been amalgamated with the office of a Sub-Registrar.
+   52. Duties of registering officers when document presented.-(1) (a) The day, hour and place of presentation, 1[the photographs and finger prints affixed under section 32A,] and the signature of every person presenting a document for registration, shall be endorsed on every such document at the time of presenting it;
+   (b) a receipt for such document shall be given by the registering officer to the person presenting the same; and
+   (c) subject to the, provisions contained in section 62, every document admitted to registration shall without unnecessary delay be copied in the book appropriated therefore according to the order of its admission.
+   (2) All such books shall be authenticated at such intervals and in such manner as is from time to time prescribed by the Inspector-General.
+   53. Entries to be numbered consecutively.-All entries in each book shall be numbered in a consecutive series, which shall commence and terminate with the year, a fresh series being commenced at the beginning of each year.
+   54. Current indexes and entries therein.-In every office in which any of the books hereinbefore mentioned are kept, there shall be prepared current indexes of the contents of such books; and every entry in such indexes shall be made, so far as practicable, immediately after the registering officer has copied, or filed a memorandum of, the document to which it relates.
+   55. Indexes to be made by registering officers, and their contents.-(1) Four such indexes shall be made in all registration offices, and shall be named, respectively, Index No. I, Index No. II, Index No. Ill and Index No. IV.
+
+
+
+1. Ins. by Act 48 of 2001, s. 7 (w.e.f. 24-9-2001).
+
+   (2) Index No. I shall contain the names and additions of all persons executing and of all persons claiming under every document entered or memorandum filed in Book No. 1.
+   (3) Index No. II shall contain such particulars mentioned in section 21 relating to every such document and memorandum as the Inspector-General from time to time directs in that behalf.
+   (4) Index No. III shall contain the names and additions of all persons executing every will and authority entered in Book No. 3, and of the executors and persons respectively appointed thereunder, and after the death of the testator or the donor (but not before) the names and additions of all persons claiming under the same.
+   (5) Index No. IV shall contain the names and additions of all persons executing and of all persons claiming under every document entered in Book No. 4.
+   (6) Each Index shall contain such other particulars, and shall be prepared in such form, as the Inspector-General from time to time directs.
+56. [Copy of entries in Indexes Nos. I, II and III to be sent by Sub-Registrar to Registrar and filed
+(Repealed)] Rep. by the Indian Registration (Amendment) Act, 1929 (15 of 1929), s. 2.
+(B) As to the procedure on admitting to registration
+   57. Registering officers to allow inspection of certain books and indexes, and to give certified copies of entries.-(1) Subject to the previous payment of the fees payable in that behalf, the Books Nos. 1 and 2 and the Indexes relating to Book No. 1 shall be at all time open to inspection by any person applying to inspect the same; and, subject to the provisions of section 62, copies or entries in such books shall be given to all persons applying for such copies.
+   (2) Subject to the same provisions, copies of entries in Book No. 3 and in the Index relating thereto shall be given to the persons executing the documents to which such entries relate, or to their agents, and after the death of the executants (but not before) to any person applying for such copies.
+   (3) Subject to the same provisions, copies of entries in Book No. 4 and in the Index relating thereto shall be given to any person executing or claiming under the documents to which such entries respectively refer, or to his agent or representative.
+   (4) The requisite search, under this section for entries in Book Nos. 3. and 4 shall be made only by the registering officer.
+   (5) All copies given under this section shall be signed and sealed by the registering officer, and shall be admissible for the purpose of proving the contents of the original documents.
+   58. Particulars to be endorsed on documents admitted to registration.-(1) On every document admitted to registration, other than a copy of a decree or order, or a copy sent to a registering officer under section 89, there shall be endorsed from time to time the following particulars, namely:-
+   (a) the signature and addition of every person admitting the execution of the document, and, if such execution has been admitted by the representative, assign or agent of any person, the signature and addition of such representative, assign or agent;
+   (b) the signature and addition of every person examined in reference to such document under any of the provisions of this Act; and
+   (c) any payment of money or delivery of goods made in the presence of the registering officer in reference to the execution of the document, and any admission of receipt of consideration, in whole or in part, made in his presence in reference to such execution.
+   (2) If any person admitting the execution of a document refuses to endorse the same, the registering officer shall nevertheless register it, but shall at the same time endorse a note of such refusal.
+   59. Endorsements to be dated and signed by registering officer.-The registering officer shall affix the date and his signature to all endorsements made under sections 52 and 58, relating to the same document and made in his presence on the same day.
+
+   60. Certificate of registration.-(1) After such of the provisions of sections 34, 35, 58 and 59 as apply to any document presented for registration have been complied with, the registering officer shall endorse thereon a certificate containing the word "registered", together with the number and page of the book in which the document has been copied.
+   61. Endorsements and certificate to be copied and document returned.-(1) The endorsements and certificate referred to and mentioned in sections 59 and 60 shall thereupon be copied into the margin of the Register-book, and the copy of the map or plan (if any) mentioned in section 21 shall be filed in Book No. 1.
+   (2) The registration of the document shall thereupon be deemed complete, and the document shall then be returned to the person who presented the same for registration, or to such other person (if any) as he has nominated in writing in that behalf on the receipt mentioned in section 52.
+   62. Procedure on presenting document in language unknown to registering officer.-(1) When a document is presented for registration under section 19, the translation shall be transcribed in the register of documents of the nature of the original, and, together with the copy referred to in section 19, shall be filed in the registration office.
+   (2) The endorsements and certificate respectively mentioned in sections 59 and 60 shall be made on the original, and, for the purpose of making the copies and memoranda required by sections 57, 64, 65 and 66, the translation shall be treated as if it were the original.
+   63. Power to administer oaths and record of substance of statements.-(1) Every registering officer may, at his discretion, administer an oath to any person examined by him under the provisions of this Act.
+   (2) Every such officer may also at his discretion record a note of the substance of the statement made by each such person, and such statement shall be read over, or (if made in a language with which such person is not acquainted) interpreted to him in a language with which he is acquainted, and, if he admits the correctness of such note, it shall be signed by the registering officer.
+   (3) Every such note so signed shall be admissible for the purpose of proving that the statements therein recorded were made by the persons and under the circumstances therein stated.
+(C) Special duties of Sub-Registrar
+   64. Procedure where document relates to land in several sub-districts.-Every Sub-Registrar on registering a non-testamentary document relating to immovable property not wholly situate in his own sub-district shall make a memorandum thereof and of the endorsement and certificate (if any) thereon, and send the same to every other Sub-Registrar subordinate to the same Registrar as himself in whose sub-district any part of such property is situate, and such Sub-Registrar shall file the memorandum in his Book No. 1.
+   65. Procedure where document relates to land in several districts.-(1) Every Sub-Registrar on registering a non-testamentary document relating to immovable property situate in more districts than one shall also forward a copy thereof and of the endorsement and certificate (if any) thereon, together with a copy of the map or plan (if any) mentioned in section 21, to the Registrar of every district in which any part of such property is situate other than the district in which his own sub-district is situate.
+   (2) The Registrar on receiving the same shall file in his Book No. 1 the copy of the document and the copy of the map or plan (if any), and shall forward a memorandum of the document to each of the Sub- Registrars subordinate to him within whose sub-district any part of such property is situate; and every Sub-Registrar receiving such memorandum shall file in his Book No. 1.
+(D) Special duties of Registrar
+   66. Procedure after registration of documents relating to land.-(1) On registering any non- testamentary document relating to immovable properly, the Registrar shall forward a memorandum of such document to each Sub-Registrar subordinate to himself in whose sub-district any part of the property is situate.
+
+   (2) The Registrar shall also forward a copy of such document, together with a copy of the map or plan (if any) mentioned in section 21, to every other Registrar in whose district any part of such property is situate.
+   (3) Such Registrar on receiving any such copy shall file it in his Book No. 1, and shall also send a memorandum of the copy to each of the Sub-Registrars subordinate to him within whose sub-district any part of the property is situate.
+(4) Every Sub-Registrar receiving any memorandum under this section shall file it in his Book No. 1.
+   67. [Procedure after registration under section 30, sub-section (2).] Omitted by the Registration and Other Related Laws (Amendment) Act, 2001 (48 of 2001), s. 8 (w.e.f. 24-9-2001).
+(E) Of the Controlling powers of Registrar and Inspector-General
+   68. Power of Registrar to superintend and control Sub-Registrars.-(1) Every Sub-Registrar shall perform the duties of his office under the superintendence and control of the Registrar in whose district the office of such Sub-Registrar is situate.
+   (2) Every Registrar shall have authority to issue (whether on complaint or otherwise) any order consistent with this Act which he considers necessary in respect of any act or omission of any Sub- Registrar subordinate to him or in respect of the rectification of any error regarding the book or the office in which any document has been registered.
+   69. Power of Inspector-General to superintend registration offices and make rules.-(1) The Inspector-General shall exercise a general superintendence over all the registration offices in the territories under the 1[State Government], and shall have power from time to time to make rules consistent with this Act-
+(a) providing for the safe custody of books, papers and documents; 2***
+      3[(aa) providing the manner in which and the safeguards subject to which the books may be kept in computer floppies or diskettes or in any other electronic form under sub-section (1) of section 16A;]
+(b) declaring what language shall be deemed to be commonly used in each district;
+(c) declaring what territorial divisions shall be recognized under section 21;
+(d) regulating the amount of fines imposed under sections 25 and 34, respectively;
+(e) regulating the exercise of the discretion reposed in the registering officer by section 63;
+(f) regulating the form in which registering officers are to make memoranda of documents;
+   (g) regulating the authentication by Registrars and Sub-Registrars of the books kept in their respective offices under section 51;
+      4[(gg) regulating the manner in which the instruments referred to in sub-section (2) of section 88 may be presented for registration;]
+(h) declaring the particulars to be contained in Indexes Nos. I, II, III and IV, respectively;
+(i) declaring the holidays that shall be observed in the registration offices; and
+(j) generally, regulating the proceedings of the Registrars and Sub-Registrars.
+   (2) The rules so made shall be submitted to the 1[State Government] for approval, and, after they have been approved, they shall be published in the 5[Official Gazette], and on publication shall have effect as if enacted in this Act.
+
+1. Subs. by the A.O. 1950, for "Provincial Government".
+2. The words "and also for the destruction of such books, papers and documents as need no longer be kept" rep. by Act 5 of 1917, s. 6 and the Schedule.
+3. Ins. by Act 48 of 2001, s. 9 (w.e.f. 24-9-2001).
+4. Ins. by Act 39 of 1948, s. 4.
+5. Subs. by the A.O. 1937, for "Local Official Gazette".
+
+   70. Power of Inspector-General to remit fines.-The Inspector-General may also, in the exercise of his discretion, remit wholly or in part the difference between any fine levied under section 25 or section 34, and the amount of the proper registration fee.
+PART XII
+OF REFUSAL TO REGISTER
+   71. Reasons for refusal to register to be recorded.-(1) Every Sub-Registrar refusing to register a document, except on the ground that the property to which it relates is not situate within his sub-district, shall make an order of refusal and record his reasons for such order in his Book No. 2, and endorse the words "registration refused" on the document; and, on application made by any person executing or claiming under the document, shall, without payment and unnecessary delay, give him a copy of the reasons so recorded.
+   (2) No registering officer shall accept for registration a document so endorsed unless and until, under the provisions hereinafter contained, the document is directed to be registered.
+   72. Appeal to Registrar from orders of Sub-Registrar refusing registration on ground other than denial of execution.-(1) Except where the refusal is made on the ground of denial of execution, an appeal shall lie against an order of a Sub-Registrar refusing to admit a document to registration (whether the registration of such document is compulsory or optional) to the Registrar to whom such Sub-Registrar is subordinate, if presented to such Registrar within thirty days from the date of the order; and the Registrar may reverse or alter such order.
+   (2) If the order of the Registrar directs the document to be registered and the document is duly presented for registration within thirty days after the making of such order, the Sub-Registrar shall obey the same, and thereupon shall, so far as may be practicable, follow the procedure prescribed in sections 58, 59 and 60; and such registration shall take effect as if the document had been registered when it was first duly presented for registration.
+   73. Application to Registrar where Sub-Registrar refuses to register on ground of denial of execution.-(1) When a Sub-Registrar has refused to register a document on the ground that any person by whom it purports to be executed, or his representative or assign, denies its execution, any person claiming under such document, or his representative, assign or agent authorised as aforesaid, may, within thirty days after the making of the order of refusal, apply to the Registrar to whom such Sub-Registrar is subordinate in order to establish his right to have the document registered.
+   (2) Such application shall be in writing and shall be accompanied by a copy of the reasons recorded under section 71, and the statements in the application shall be verified by the applicant in manner required by law for the verification of plaints.
+   74. Procedure of Registrar on such application.-In such case, and also where such denial as aforesaid is made before a Registrar in respect of a document presented for registration to him, the Registrar shall, as soon as conveniently may be, enquire.-
+(a) whether the document has been executed;
+   (b) whether the requirements of the law for the time being in force have been complied with on the part of the applicant or person presenting the document for registration, as the case may be, so as to entitle the document to registration.
+   75. Order by Registrar to register and procedure thereon.-(1) If the Registrar finds that the document has been executed and that the said requirements have been complied with, he shall order the document to be registered.
+   (2) If the document is duly presented for registration within thirty days after the making of such order, the registering officer shall obey the same and thereupon shall, so far as may be practicable, follow the procedure prescribed in sections 58, 59 and 60.
+   (3) Such registration shall take effect as if the document had been registered when it was first duly presented for registration.
+
+   (4) The Registrar may, for the purpose of any enquiry under section 74, summon and enforce the attendance of witness, and compel them to give evidence, as if he were a Civil Court and he may also direct by whom the whole or any part of the costs of any such enquiry shall be paid, and such costs shall be recoverable as if they had been awarded in a suit under the Code of Civil Procedure, 1908 (5 of 1908).
+76. Order of refusal by Registrar.-(1) Every Registrar refusing-
+   (a) to register a document except on the ground that the property to which it relates is not situate within his district or that the document ought to be registered in the office of a Sub-Registrar, or
+(b) to direct the registration of a document under section 72 or section 75,
+shall make an order of refusal and record the reasons for such order in his Book No. 2, and, on application made by any person executing or claiming under the document, shall, without unnecessary delay, give him a copy of the reasons so recorded.
+(2) No appeal lies from any order by a Registrar under this section or section 72.
+   77. Suit in case of order of refusal by Registrar.-(1) Where the Registrar refuses to order the document to be registered, under section 72 or a decree section 76, any person claiming under such document, or his representative, assign or agent, may, within thirty days after the making of the order of refusal, institute in the Civil Court, within the local limits of whose original jurisdiction is situate the office in which the document is sought to be registered, a suit for a decree directing the document to be registered in such office if it be duly presented for registration within thirty days after the passing of such decree.
+   (2) The provisions contained in sub-sections (2) and (3) of section 75 shall, mutatis mutandis, apply to all documents presented for registration in accordance with any such decree, and, notwithstanding anything contained in this Act, the documents shall be receivable in evidence in such suit.
+PART XIII
+OF THE FEES FOR REGISTRATION, SEARCHES AND COPIES
+   78. Fees to be fixed by State Government.-1*** The 2[State Government] shall prepare a table of fees payable-
+(a) for the registration of documents;
+(b) for searching the registers;
+   (c) for making or granting copies of reasons, entries or documents, before on or after registration; and of extra or additional fees payable-
+(d) for every registration under section 30;
+(e) for the issue of commissions;
+(f) for filing translations;
+(g) for attending at private residences;
+(h) for the safe custody and return of document; and
+   (i) for such other matters as appear to the Government necessary to effect the purposes of this Act.
+   79. Publication of fees.-A table of the fees so payable shall be published in the Official Gazette, and a copy thereof in English and the vernacular language of the district shall be exposed to public view in every registration office.
+
+
+
+1. The words "Subject to the control of the Governor-General in Council" omitted by Act 38 of 1920, s. 2, and the First Schedule.
+2. Subs. by the A.O. 1950, for "Provincial Government".
+
+   80. Fees payable on presentation.-All fees for the registration of documents under this Act shall be payable on the presentation of such documents.
+PART XIV OF PENALTIES
+   81. Penalty for incorrectly endorsing, copying, translating or registering documents with intent to injure.-Every registering officer appointed under this Act and every person employed in his office for the purposes of this Act, who, being charged with the endorsing, copying, translating or registering of any document presented or deposited under its provisions, endorses, copies, translates or registers such document in a manner which he knows or believes to be incorrect, intending thereby to cause or knowing it to be likely that he may thereby cause, injury, as defined in the Indian Penal Code (45 of 1860), to any person, shall be punishable with imprisonment for a term which may extend to seven years, or with fine, or with both.
+   82. Penalty for making false statements, delivering false copies or translations, false personation, and abetment.-Whoever-
+   (a) intentionally makes any false statement, whether on oath or not, and whether it has been recorded or not, before any officer acting in execution of this Act, in any proceeding or enquiry under this Act; or
+   (b) intentionally delivers to a registering officer, in any proceeding under section 19 or section 21, a false copy or translation of a document, or a false copy of a map or plan; or
+   (c) falsely personates another, and in such assumed character presents any document, or makes any admission or statement, or causes any summons or commission to be issued, or does any other act in any proceeding or enquiry under this Act; or
+(d) abets anything made punishable by this Act,
+shall be punishable with imprisonment for a term which may extend to seven years, or with fine, or with both.
+   83. Registering officers may commence prosecutions.-(1) A prosecution for any offence under this Act coming to the knowledge of a registering officer in his official capacity may be commenced by or with the permission of the Inspector-General, 1*** the Registrar or the Sub-Registrar, in whose territories, district or sub-district, as the case may be, the offence has been committed.
+   (2) Offences punishable under this Act shall be triable by any Court or officer exercising powers not less than those of a Magistrate of the second class.
+   84. Registering officers to be deemed public servants.-(1) Every registering officer appointed under this Act shall be deemed to be a public servant public servant within the meaning of the Indian Penal Code (45 of 1860).
+   (2) Every person shall be legally bound to furnish information to such registering officer when required by him to do so.
+   (3) In section 228 of the Indian Penal Code (45 of 1860), the words "judicial proceeding" shall be deemed to include any proceeding under this Act.
+PART XV MISCELLANEOUS
+   85. Destruction of unclaimed documents.-Documents (other than wills) remaining unclaimed in any registration office for a period exceeding two years may be destroyed.
+
+
+
+
+1. The words "the Branch Inspector-General of Sindh", omitted by the A.O. 1937.
+
+   86. Registering officer not liable for thing bona fide done or refused in his official capacity.-No registering officer shall be liable to any suit, claim or demand by reason of anything in good faith done or refused in his official capacity.
+   87. Nothing so done invalidated by defect in appointment or procedure.-Nothing done in good faith pursuant to this Act or any Act hereby repealed, by any registering officer, shall be deemed invalid merely by reason of any defect in his appointment or procedure.
+      1[88. Registration of documents executed by Government officers or certain public functionaries.-(1) Notwithstanding anything contained in this Act, it shall not be necessary for,-
+(a) any officer of Government, or
+(b) any Administrator-General, Official Trustee or Official Assignee, or
+(c) the Sheriff, Receiver or Registrar of a High Court, or
+   (d) the holder for the time being of such other public office as may be specified in a notification in the Official Gazette issued in that behalf by the State Government,
+to appear in person or by agent at any registration office in any proceeding connected with the registration of any instrument executed by him or in his favour, in his official capacity, or to sign as provided in section 58.
+   (2) Any instrument executed by or in favour of an officer of Government or any other person referred to in sub-section (1) may be presented for registration in such manner as may be prescribed by rules made under section 69.
+   (3) The registering officer to whom any instrument is presented for registration under this section may, if he thinks fit, refer to any Secretary to Government or to such officer of Government or other person referred to in sub-section (1) for information respecting the same and, on being satisfied of the execution thereof, shall register the instrument.]
+   89. Copies of certain orders, certificates and instruments to be sent to registering officers and filed.-(1) Every officer granting a loan under the Land Improvement Loans Act, 1883 (19 of 1883), shall send a copy of his order to the registering officer within the local limits of whose jurisdiction the whole or any part of the land to be improved or of the land to be granted as collateral security, is situate, and such registering officer shall file the copy in his Book No. 1.
+   (2) Every Court granting a certificate of sale of immovable property under the Code of Civil Procedure, 1908 (5 of 1908), shall send a copy of such certificate to the registering officer within the local limits of whose jurisdiction the whole or any part of the immovable property comprised in such certificate is situate, and such officer shall file the copy in his Book No. 1.
+   (3) Every officer granting a loan under the Agriculturists' Loans Act, 1884 (12 of 1884), shall send a copy of any instrument whereby immovable property is mortgaged for the purpose of securing the repayment of the loan, and, if any such property is mortgaged for the same purpose in the order granting the loan, a copy also or that order, to the registering officer within the local limits of whose jurisdiction the whole or any part of the property so mortgaged is situate, and such registering officer shall file the copy or copies as the case may be, in his Book No. 1.
+Exemption from Act
+   (4) Every Revenue Officer granting a certificate of sale to the purchaser of immovable property sold by public auction shall send a copy of the certificate to the registering officer within the local limits of whose jurisdiction the whole or any part of the immovable property comprised in the certificate is situate, and such officer shall file the copy in his Book No. 1.
+   90. Exemption of certain documents executed by or in favour of Government.-(1) Nothing contained in this Act or in the Indian Registration Act, 1877 (3 of 1877), or in the Indian Registration Act,
+
+
+1. Subs. by Act 39 of 1948, s. 5, for section 88.
+
+1871 (8 of 1871), or in any Act thereby repealed, shall be deemed to require, or to have at any time required, the registration of any of the following documents or maps, namely:-
+   (a) documents issued, received or attested by any officer engaged in making a settlement or revision or settlement of land-revenue, and which form part of the records of such settlement; or
+   (b) documents and maps issued, received or authenticated by any officer engaged on behalf of Government in making or revising the survey of any land, and which form part of the record of such survey; or
+   (c) documents which, under any law for the time being in force, are filed periodically in any revenue office by patwaris or other officers charged with the preparation of village records; or
+   (d) sanads, inam, title-deeds and other documents purporting to be or to evidence grants or assignments by Government of land or of any interest in land; or
+   (e) notices given under section 74 or section 76 of the Bombay Land-Revenue Code, 1879, or relinquishment of occupancy by occupants, or of alienated land by holders of such land.
+   (2) All such documents and maps shall, for the purposes of sections 48 and 49, be deemed to have been and to be registered in accordance with the provisions of this Act.
+   91. Inspection and copies of such documents.-1[(1)] Subject to such rules and the previous payment of such fees as the 2[ 3[State Government], by notification in the Official Gazette, prescribes in this behalf], all documents and maps mentioned in section 90, clauses (a), (b), (c), and (e), and all registers of the documents mentioned in clause (d), shall be open to the inspection of any person applying to inspect the same, and, subject as aforesaid, copies of such documents shall be given to all persons applying for such copies.
+      4[(2) Every rule prescribed under this sub-section or made under section 69 shall be laid, as soon as it is made, before the State Legislature.]
+   92. [Burmese registration-rules confirmed] Rep. by the Government of India (Adaptation of Indian Laws) Order, 1937.
+93. [Repeals] Rep. by the Repealing Act, 1938 (1 of 1938), s. 2 and Schedule. THE SCHEDULE. [Repeal of Enactments]. Rep. by s. 2 and the Schedule, ibid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. Section 91 renumbered as sub-section (1) thereof by Act 20 of 1983, s. 2 and Schedule.
+2. Subs. by the A.O. 1950, for "Provincial Government".
+3. Subs., ibid., for "State Government prescribes in this behalf".
+4. Ins. by Act 20 of 1983, s. 2 and Schedule (w.e.f. 15-3-1984).
+
+
+
+
+
+
