@@ -9,6 +9,15 @@ interface ChatSummary {
   preview: string;
 }
 
+interface ChatSidebarProps {
+  onSelectChat: (chatId: string) => void;
+  onNewChat: () => void;
+  currentChatId: string | null;
+  navbarHeight?: string;
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+}
+
 export default function ChatSidebar({
   onSelectChat,
   onNewChat,
@@ -16,7 +25,7 @@ export default function ChatSidebar({
   navbarHeight = "64px",
   collapsed,
   setCollapsed,
-}) {
+}: ChatSidebarProps) {
   const { token } = useAuth();
   const [chats, setChats] = useState<ChatSummary[]>([]);
 
@@ -58,15 +67,13 @@ export default function ChatSidebar({
         {/* Sidebar Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {collapsed ? (
-            <>
-              <button
-                onClick={onNewChat}
-                className=" rounded-full hover:bg-zinc-700"
-                aria-label="New Chat"
-              >
-                <PlusIcon className="w-5 h-5" /> {/* Use an icon library */}
-              </button>
-            </>
+            <button
+              onClick={onNewChat}
+              className="rounded-full hover:bg-zinc-700"
+              aria-label="New Chat"
+            >
+              <PlusIcon className="w-5 h-5" />
+            </button>
           ) : (
             <>
               <button

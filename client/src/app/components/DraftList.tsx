@@ -3,27 +3,26 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+type Draft = {
+  id: string; // UUID or timestamp based unique id
+  category: string; // e.g., "notices"
+  slug: string; // e.g., "payment-reminder"
+  draftContent: string;
+  formData: { [key: string]: string };
+  timestamp: number; // Date.now()
+};
+
 export default function DraftListPage() {
-  const [drafts, setDrafts] = useState([]);
+  const [drafts, setDrafts] = useState<Draft[]>([]);
   const router = useRouter();
-  const [filter, setFilter] = useState("all");
-
-  type Draft = {
-    id: string; // UUID or timestamp based unique id
-    category: string; // e.g., "notices"
-    slug: string; // e.g., "payment-reminder"
-    draftContent: string;
-    formData: { [key: string]: string };
-    timestamp: number; // Date.now()
-  };
-
+  const [filter, setFilter] = useState<string>("all");
 
   useEffect(() => {
-    const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]");
+    const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]") as Draft[];
     setDrafts(savedDrafts);
   }, []);
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this draft?")) {
       const updatedDrafts = drafts.filter((draft) => draft.id !== id);
       localStorage.setItem("savedDrafts", JSON.stringify(updatedDrafts));
