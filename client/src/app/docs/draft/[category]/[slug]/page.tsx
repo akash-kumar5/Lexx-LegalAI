@@ -10,6 +10,14 @@ import { useEffect, useState } from "react";
 export default function DraftEditorPage() {
   const params = useParams();
   const slug = params.slug as string;
+  type Draft = {
+    id: string; // UUID or timestamp based unique id
+    category: string; // e.g., "notices"
+    slug: string; // e.g., "payment-reminder"
+    draftContent: string;
+    formData: { [key: string]: string };
+    timestamp: number; // Date.now()
+  };
 
   const fieldSchema: { [key: string]: { label: string; key: string }[] } = {
     "payment-reminder": [
@@ -105,8 +113,8 @@ On behalf of {{companyName}}
   };
 
   useEffect(() => {
-  const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]");
-  const existingDraft = savedDrafts.find((draft: any) => draft.slug === slug);
+  const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]") as Draft[];
+  const existingDraft = savedDrafts.find((draft: Draft) => draft.slug === slug);
 
   if (existingDraft) {
     setDraftContent(existingDraft.draftContent);
