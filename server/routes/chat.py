@@ -11,6 +11,7 @@ import chromadb
 from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 import os
+from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PERSIST_DIR = os.path.join(BASE_DIR, "../chroma_data") 
@@ -60,7 +61,7 @@ async def ask_llm(request: ChatRequest, user: User = Depends(get_current_user)):
         chat_id = request.chat_id
 
         if not chat_id:
-            chat = {"user_id": user.id, "messages": []}
+            chat = {"user_id": user.id, "messages": [], "createdAt":datetime.now()}
             result = await chats_collection.insert_one(chat)
             chat_id = str(result.inserted_id)
 
@@ -111,7 +112,8 @@ async def get_chats(user: User = Depends(get_current_user)):
     return [{
         "_id": str(chat["_id"]),
         "title": f"Chat {str(chat['_id'])[-4:]}",  # Temporary title
-        "preview": chat["messages"][0]["content"][:50] if chat.get("messages") else ""
+        "preview": chat["messages"][0]["content"][:50] if chat.get("messages") else "",
+        "createdAt" : chat.get("createdAt")
     } for chat in chats]
 
 
@@ -121,6 +123,28 @@ async def get_chat_messages(chat_id: str, user: User = Depends(get_current_user)
     if not chat:
         raise HTTPException(status_code=404, detail="Chat not found")
     return chat.get("messages", [])
+
+@router.delete("/chats/{chat_id}")
+async def delete_chat(chat_id: str, user: User = Depends(get_current_user)):
+    chat = await chats_collection.find_one({"_id": ObjectId(chat_id), "user_id": user.id})
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat not found.")
+    await chats_collection.delete_one({"_id": ObjectId(chat_id)})
+    return {"success": True}
+
+@router.patch("/chats/{chat_id}")
+async def rename_chat(chat_id: str, payload: dict, user: User = Depends(get_current_user)):
+    new_title = payload.get("title", "").strip()
+    if not new_title:
+        raise HTTPException(status_code=400, detail="Title can't be empty.")
+    chat = await chats_collection.find_one({"_id": ObjectId(chat_id), "user_id": user.id})
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat not found.")
+    await chats_collection.update_one(
+        {"_id": ObjectId(chat_id)},
+        {"$set": {"title": new_title}}
+    )
+    return {"success": True}
 
 
 @router.post("/chats")

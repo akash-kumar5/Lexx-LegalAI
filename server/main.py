@@ -17,6 +17,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include_router(chat.router)  # All endpoints will start with /api
+app.include_router(chat.router)
 app.include_router(auth.router)
 app.include_router(summary.router)
