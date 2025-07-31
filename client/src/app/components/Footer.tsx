@@ -7,7 +7,7 @@ export default function Footer() {
         <a href="#" className="hover:underline">Terms of Service</a>
         <a href="#" className="hover:underline">Contact</a>
       </div>
-      <p>© 2025 Lexi.AI. All rights reserved.</p>
+      <p>© 2025 Lexx.AI. All rights reserved.</p>
     </footer>
   );
 }

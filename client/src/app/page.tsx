@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import FeaturesSection from "./components/FeaturesGrid";
 import WorkflowSection from "./components/WorkflowSection";
 import Footer from "./components/Footer";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -21,18 +22,18 @@ export default function Home() {
             AI-Powered Legal Assistant
           </p>
           <h1 className="text-6xl md:text-7xl font-extrabold mb-6 drop-shadow-lg">
-            Lexi
+            Lexx
           </h1>
           <p className="text-lg text-gray-300 max-w-2xl mb-8">
             Automate legal drafting, simplify research, and create professional
             documents with AI precision — in minutes.
           </p>
-          <Button
-            size="lg"
+          <Link
+          href="/chat"
             className="bg-black/60 hover:bg-zinc-900 rounded-2xl border border-zinc-500 px-8 py-4 transition-transform transform hover:scale-110 shadow-md"
           >
             Get Started
-          </Button>
+          </Link>
         </div>
       </section>
 

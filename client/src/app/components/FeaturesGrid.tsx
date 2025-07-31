@@ -20,7 +20,7 @@ export default function FeaturesSection() {
 
   return (
     <section className=" min-h-screen py-16 px-6 text-white text-center">
-      <h2 className="text-4xl font-bold mb-10">What Can Lexi Do For You?</h2>
+      <h2 className="text-4xl font-bold mb-10">What Can Lexx Do For You?</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 gap-x-15 max-w-6xl mx-auto">
         {features.map((feature, index) => (

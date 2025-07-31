@@ -8,18 +8,18 @@ export default function WorkflowSection() {
     {
       step: "Step 2",
       title: "Describe Your Case or Context",
-      description: "Provide a brief description, and Lexi’s AI will understand the context to draft accurately.",
+      description: "Provide a brief description, and Lexx’s AI will understand the context to draft accurately.",
     },
     {
       step: "Step 3",
       title: "Review, Edit & Finalize",
-      description: "Lexi generates a polished draft. You can make edits, get suggestions, and export in preferred formats.",
+      description: "Lexx generates a polished draft. You can make edits, get suggestions, and export in preferred formats.",
     },
   ];
 
   return (
     <section className="min-h-screen py-16 px-6 text-white text-center">
-      <h2 className="text-4xl font-bold mb-10">How Lexi Works</h2>
+      <h2 className="text-4xl font-bold mb-10">How Lexx Works</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl min-h-4xl mx-auto">
         {steps.map((item, index) => (
