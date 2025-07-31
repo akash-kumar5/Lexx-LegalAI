@@ -11,7 +11,7 @@ export default function AuthPage() {
   const router = useRouter();
   const {login} = useAuth();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const endpoint = isLogin ? "/auth/login" : "/auth/signup";
     const res = await fetch(`http://localhost:8000${endpoint}`, {
