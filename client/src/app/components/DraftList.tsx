@@ -17,6 +17,7 @@ export default function DraftListPage() {
     timestamp: number; // Date.now()
   };
 
+
   useEffect(() => {
     const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]");
     setDrafts(savedDrafts);

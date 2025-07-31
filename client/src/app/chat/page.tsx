@@ -36,12 +36,12 @@ export default function ChatPage() {
       if (index === fullPrompt.length) clearInterval(typingInterval);
     }, 50);
     return () => clearInterval(typingInterval);
-  }, []);
+  }, [fullPrompt]);
 
   useEffect(() => {
     const el = chatContainerRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+  }, [messages, chatContainerRef]);
 
   useEffect(() => {
     const el = chatContainerRef.current;
@@ -52,6 +52,7 @@ export default function ChatPage() {
     };
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendMessage = async () => {
@@ -65,7 +66,7 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      let chatId = currentChatId;
+      const chatId = currentChatId;
 
       // Get assistant response
       const res = await fetch("http://localhost:8000/api/chat", {

@@ -1,31 +1,54 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { UploadIcon } from "@radix-ui/react-icons";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import {Spinner} from "@heroui/spinner";
+
 
 export default function SummarizePage() {
   const [inputText, setInputText] = useState("");
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const summaryRef = useRef<HTMLTextAreaElement | null>(null);
+
+
+  useEffect(() => {
+  if (summaryRef.current) {
+    summaryRef.current.scrollTop = summaryRef.current.scrollHeight;
+  }
+}, [summary]); 
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setUploading(true);
       const formData = new FormData();
       formData.append("file", file);
 
+      try {
       const res = await fetch("http://localhost:8000/extract-text", {
         method: "POST",
         body: formData,
       });
 
       const data = await res.json();
-      setInputText(data.content);
-      setFileName(file.name);
+      if (data.content?.trim()) {
+        setInputText(data.content);
+        setFileName(file.name);
+      } else {
+        alert("No text found in the uploaded file.");
+      }
+    } catch (error) {
+      console.error("File extraction failed", error);
+      alert("Failed to extract text. Please try again.");
+    } finally {
+      setUploading(false);
+    }
     }
   };
 
@@ -130,6 +153,11 @@ export default function SummarizePage() {
             )}
           </div>
 
+          {uploading && (
+  <div className="text-zinc-400 text-sm italic"><Spinner className="secondary"/>Extracting text...</div>
+)}
+
+
           <Textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
@@ -144,10 +172,11 @@ export default function SummarizePage() {
       {!summary && (
         <Button
           onClick={handleSummarize}
-          disabled={loading || !inputText.trim()}
+          disabled={loading || uploading || !inputText.trim()}
           className="bg-red-600 hover:bg-red-700"
         >
-          {loading ? "Summarizing..." : "Summarize"}
+          {loading ?  "Summarizing..." : "Summarize"}
+          {loading ? <Spinner className="default"/> : ""}
         </Button>
       )}
 
@@ -159,6 +188,7 @@ export default function SummarizePage() {
             value={summary}
             id="summary-content"
             readOnly
+            ref={summaryRef}
             className="bg-zinc-800 text-white border-none resize-none"
             rows={30}
           />
