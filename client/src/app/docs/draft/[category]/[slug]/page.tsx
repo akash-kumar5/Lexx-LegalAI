@@ -6,6 +6,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input"; // Import Input Component
 import { useEffect, useState } from "react";
+import { LockIcon, PencilIcon } from "lucide-react";
+import { jsPDF } from "jspdf";
+import paymentReminderExample from "@/lib/draftExamples/paymentReminder";
+import terminationNotice from "@/lib/draftExamples/terminationNotice";
+import legalDemandNotice from "@/lib/draftExamples/legalDemandNotice";
 
 export default function DraftEditorPage() {
   const params = useParams();
@@ -25,10 +30,15 @@ export default function DraftEditorPage() {
       { label: "Reference Number", key: "refNo" },
       { label: "Lawyer Name", key: "lawyerName" },
       { label: "Lawyer Address", key: "lawyerAddress" },
+      { label: "Lawyer Phone", key: "lawyerPhone"},
+      { label: "Lawyer Email", key: "lawyerEmail"},
       { label: "Recipient Name", key: "recipientName" },
       { label: "Recipient Address", key: "recipientAddress" },
       { label: "Outstanding Amount", key: "amount" },
       { label: "Your Company Name", key: "companyName" },
+      { label: "Business Description", key: "businessDescription" },
+      { label: "Agreement Date", key: "agreementDate" },
+      { label: "Invoice Details", key: "invoiceDetails" },
       { label: "Your Address", key: "yourAddress" },
       { label: "Bank Name", key: "bankName" },
       { label: "Account Holder", key: "accountHolder" },
@@ -50,91 +60,50 @@ export default function DraftEditorPage() {
   };
 
   const exampleDrafts: { [key: string]: string } = {
-    "payment-reminder": `
-  Date: {{date}}
-Ref. No.: {{refNo}}
-
-From:
-{{lawyerName}}
-{{lawyerAddress}}
-[Lawyer's/Firm's Phone Number]
-[Lawyer's/Firm's Email]
-
-To:
-{{recipientName}}
-{{recipientAddress}}
-
-Subject: Legal Notice for recovery of outstanding payment of ₹{{amount}}/- due towards my client, {{companyName}}.
-
-Dear [Mr./Ms./Mrs. Recipient's Last Name or Sir/Madam],
-
-Under the instructions and on behalf of my client, {{companyName}}, having their registered office/residence at {{yourAddress}} (hereinafter referred to as "my client"), I do hereby serve you with the following legal notice:
-
-That my client is engaged in the business of [Briefly describe your business, e.g., providing software development services, supplying industrial goods, etc.].
-
-That pursuant to an agreement/order dated [Date of Agreement/Purchase Order], you availed the services of/purchased goods from my client. My client provided you with [Specify the service rendered or goods supplied] (hereinafter "the Services/Goods").
-
-That my client duly performed all their obligations and duties as per the terms of the agreement and to your satisfaction. In lieu of the same, my client raised the following invoice(s):
-
-Invoice No.: [Invoice Number] dated [Date of Invoice] for an amount of ₹[Invoice Amount].
-
-(Add more invoices if applicable)
-
-That the total outstanding amount due and payable by you to my client is ₹{{amount}} ([Total Outstanding Amount in Words]).
-
-That despite my client fulfilling their commitments, you have failed, neglected, and/or refused to make the aforesaid payment. My client has sent you numerous reminders through emails, letters, and phone calls dated [Dates of previous communications, if any], but you have failed to clear the outstanding dues, without any valid reason or justification.
-
-Your failure to clear the dues has caused significant financial loss and hardship to my client.
-
-You are hereby called upon to pay my client the total outstanding principal sum of ₹{{amount}} ([Total Outstanding Amount in Words]) within [Number of Days, e.g., 15 or 30] days from the receipt of this legal notice.
-
-The payment can be made via cheque/demand draft in favour of "{{companyName}}" or via bank transfer to the following account:
-
-Bank Name: {{bankName}}
-
-Account Holder: {{accountHolder}}
-
-Account Number: {{accountNumber}}
-
-IFSC Code: {{ifscCode}}
-
-Kindly note that should you fail to comply with the requisitions made herein within the stipulated period, my client shall be constrained to initiate appropriate legal proceedings against you, both civil and criminal (where applicable), for the recovery of the aforesaid amount along with interest, damages, and costs. In such an event, you shall be solely responsible for all costs and consequences thereof.
-
-A copy of this notice has been retained in my office for record and further action.
-
-Sincerely,
-
-(Signature)
-
-[Name of the Lawyer/Sender]
-[Designation, e.g., Advocate]
-On behalf of {{companyName}}
-  `,
+    "payment-reminder": paymentReminderExample,
+    "termination-notice": terminationNotice,
+    "legal-demand-notice": legalDemandNotice
   };
 
   useEffect(() => {
-  const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]") as Draft[];
-  const existingDraft = savedDrafts.find((draft: Draft) => draft.slug === slug);
+    const savedDrafts = JSON.parse(
+      localStorage.getItem("savedDrafts") || "[]"
+    ) as Draft[];
+    const existingDraft = savedDrafts.find(
+      (draft: Draft) => draft.slug === slug
+    );
 
-  if (existingDraft) {
-    setDraftContent(existingDraft.draftContent);
-  } else {
-    const example = exampleDrafts[slug];
-    if (example) {
-      setDraftContent(example);
+    if (existingDraft) {
+      setDraftContent(existingDraft.draftContent);
+    } else {
+      const example = exampleDrafts[slug];
+      if (example) {
+        setDraftContent(example);
+      }
     }
-  }
-}, [slug]);
-
+  }, [slug]);
 
   const [draftContent, setDraftContent] = useState("");
   const currentFields = fieldSchema[slug] || [];
   const [formData, setFormData] = useState<{ [key: string]: string }>({});
   const [manualEdit, setManualEdit] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const handleGenerateDraft = () => {
-    let draft = exampleDrafts[slug]; // The template string you gave me.
+    if (!draftContent) {
+      alert("Draft content is empty!");
+      return;
+    }
 
+    if (draftContent.includes("________")) {
+      alert("Please fill all placeholders before generating PDF.");
+      return;
+    }
+    setShowPreview(true);
+  };
+
+  const handleViewExample = () => {
+    let draft = exampleDrafts[slug];
     currentFields.forEach((field) => {
       const value = formData[field.key] || "________";
       const placeholder = new RegExp(`{{${field.key}}}`, "g");
@@ -144,12 +113,17 @@ On behalf of {{companyName}}
     setDraftContent(draft);
   };
 
-  const handleViewExample = () => {
-    const example = exampleDrafts[slug];
-    if (example) {
-      setDraftContent(example);
-    }
-  };
+  const downloadPDF = () => {
+    const doc = new jsPDF();
+    const lines = doc.splitTextToSize(draftContent, 180)
+
+    doc.setFont("Times", "Normal")
+    doc.setFontSize(12);
+    doc.text(lines, 15,20);
+
+    doc.save(`${slug}-draft.pdf`);
+    setShowPreview(false);
+  }
 
   const handleSaveDraft = () => {
     const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]");
@@ -163,6 +137,8 @@ On behalf of {{companyName}}
     alert("Draft Saved!");
   };
 
+
+
   const handleDiscard = () => {
     if (window.confirm("Are you sure you want to discard your changes?")) {
       setDraftContent("");
@@ -171,45 +147,54 @@ On behalf of {{companyName}}
   };
 
   return (
-    <div className="flex bg-zinc-950 text-white">
+    <div className="flex flex-col md:flex-row bg-zinc-950 text-white">
       {/* Left Panel: Inputs & Actions */}
       <div className="w-full md:w-2/5 p-6 border-r border-zinc-800 overflow-y-auto">
         <h1 className="text-3xl font-bold mb-6 capitalize">
           {slug.replace(/-/g, " ")} Draft
         </h1>
 
-        <div className="grid grid-cols-1 gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <Button
             onClick={handleGenerateDraft}
             variant="default"
-            className="w-full bg-zinc-600 hover:bg-zinc-700"
+            className="w-full sm:w-1/2 bg-zinc-600 hover:bg-zinc-700 sm:p-1"
           >
             Generate Draft
           </Button>
           <Button
-            variant="outline"
-            className="w-full bg-zinc-800 hover:bg-zinc-700"
-          >
-            Upload Existing Draft
-          </Button>
-          <Button
             onClick={handleViewExample}
             variant="outline"
-            className="w-full bg-zinc-800 hover:bg-zinc-700"
+            className="w-full sm:w-1/2 bg-zinc-800 hover:bg-zinc-700 sm:px-1"
           >
-            View Example
-          </Button>
-          <Button
-            onClick={() => setManualEdit(!manualEdit)}
-            variant="outline"
-            className="w-full bg-zinc-800 hover:bg-zinc-700"
-          >
-            {manualEdit ? "Disable Manual Edit" : "Enable Manual Edit"}
+            Load Sample Format
           </Button>
         </div>
 
+        {showPreview && (
+          <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div className="bg-white text-black p-6 rounded-lg w-[80%] h-[80%] overflow-auto">
+              <h2 className="text-xl font-bold mb-4">Draft Preview</h2>
+              <pre className="whitespace-pre-wrap text-sm">{draftContent}</pre>
+
+              <div className="mt-6 flex justify-end gap-4">
+                <Button variant="outline" onClick={() => setShowPreview(false)}>
+                  Go Back
+                </Button>
+                <Button
+                  variant="default"
+                  className="bg-green-700"
+                  onClick={() => downloadPDF()}
+                >
+                  Download PDF
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Dynamic Form Fields */}
-        <Card className="bg-zinc-900 border border-zinc-700 mb-6">
+        <Card className="bg-zinc-900 border border-zinc-700 mb-6 hidden md:block">
           <CardContent className="p-4 space-y-4 text-zinc-300">
             {currentFields.map((field) => (
               <Input
@@ -241,7 +226,7 @@ On behalf of {{companyName}}
       </div>
 
       {/* Right Panel: Draft Preview */}
-      <div className="hidden md:block w-3/5 p-6 overflow-y-auto">
+      <div className="w-full md:w-3/5 p-6 sm:pt-0 lg:pt-6 overflow-y-auto">
         <Card className="bg-zinc-900 border border-zinc-700 h-full">
           <CardContent className=" h-full">
             <Textarea
@@ -256,6 +241,16 @@ On behalf of {{companyName}}
                 !manualEdit ? "cursor-default text-zinc-400" : "text-white"
               }`}
             />
+            <div className="fixed bottom-4 right-4 md:absolute md:top-24 md:right-14 z-50">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setManualEdit(!manualEdit)}
+                className="bg-white hover:bg-zinc-400"
+              >
+                {manualEdit ? <PencilIcon /> : <LockIcon />}
+              </Button>
+            </div>
           </CardContent>
           <hr className="my-1 border-zinc-700 rounded-full w-[32%] mx-[62%]" />
           <div className="flex justify-end gap-3 me-3">
