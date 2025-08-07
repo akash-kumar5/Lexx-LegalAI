@@ -1,4 +1,4 @@
-//  app/docs/draft/[category]/[slug]/page.tsx
+//  app/docs/[slug]/page.tsx
 "use client";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import legalDemandNotice from "@/lib/draftExamples/legalDemandNotice";
 
 export default function DraftEditorPage() {
   const params = useParams();
+
   const slug = params.slug as string;
   type Draft = {
     id: string; // UUID or timestamp based unique id
@@ -48,7 +49,7 @@ export default function DraftEditorPage() {
     ],
     "termination-notice": [
       { label: "To Employee", key: "toEmployee" },
-      { label: "From Company", key: "fromCompany" },
+      { label: "From Company", key: "fromCompanpay" },
       { label: "Reason", key: "reason" },
       { label: "Termination Date", key: "date" },
     ],
@@ -241,7 +242,7 @@ export default function DraftEditorPage() {
                 !manualEdit ? "cursor-default text-zinc-400" : "text-white"
               }`}
             />
-            <div className="fixed bottom-4 right-4 md:absolute md:top-24 md:right-14 z-50">
+            <div className="fixed bottom-4 right-4 md:absolute md:top-24 md:right-18 z-50">
               <Button
                 variant="ghost"
                 size="icon"

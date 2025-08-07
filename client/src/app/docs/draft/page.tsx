@@ -36,7 +36,9 @@ export default function DraftSelectorPage() {
                     </h2>
                     <ArrowRightIcon />
                   </div>
-                  <p className="text-zinc-400 text-sm italic">{item.description}</p>
+                  <p className="text-zinc-400 text-sm italic">
+                    {item.description}
+                  </p>
                 </CardContent>
               </Card>
             </Link>
@@ -45,19 +47,22 @@ export default function DraftSelectorPage() {
       </div>
       <hr className="my-12 border-zinc-700 rounded-full w-80 mx-auto" />
       <div className="mt-12 flex justify-center">
-  <Link href="/docs/draft/history">
-    <Card className="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 transition-colors w-64">
-      <CardContent className="p-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-zinc-200">Draft History</h2>
-          <p className="text-zinc-400 text-xs italic">View saved drafts</p>
-        </div>
-        <ArrowRightIcon className="text-zinc-400" />
-      </CardContent>
-    </Card>
-  </Link>
-</div>
-
+        <Link href="/docs/draft/history">
+          <Card className="bg-zinc-900 border border-zinc-700 hover:border-zinc-500 transition-colors w-64">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-zinc-200">
+                  Draft History
+                </h2>
+                <p className="text-zinc-400 text-xs italic">
+                  View saved drafts
+                </p>
+              </div>
+              <ArrowRightIcon className="text-zinc-400" />
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
     </div>
   );
 }

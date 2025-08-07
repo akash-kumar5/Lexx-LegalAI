@@ -186,7 +186,7 @@ export default function ChatPage() {
           ))}
 
           {loading && (
-            <div className="text-left bg-zinc-200/0 border-y-1 border-y-white text-white p-3 rounded-xl animate-pulse max-w-[80%]">
+            <div className="text-left bg-gradient-to-b from-zinc-950 via-zinc-900 to-black text-white p-3 rounded-xl animate-pulse max-w-[80%]">
               Typing...
             </div>
           )}

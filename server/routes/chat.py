@@ -12,10 +12,21 @@ from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 import os
 from datetime import datetime
+import tiktoken
+import re
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PERSIST_DIR = os.path.join(BASE_DIR, "../chroma_data") 
 load_dotenv()
+MAX_INPUT_TOKENS = 6000
+RESPONSE_TOKEN_BUFFER = 1000  # Tokens reserved for the assistant's reply
+MODEL_TOKEN_LIMIT = 64000  # DeepSeek's total limit
+
+tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo")  # Works well for OpenRouter API
+
+def count_tokens(text: str) -> int:
+    return len(tokenizer.encode(text))
+
 
 router = APIRouter(prefix="/api")
 
@@ -37,6 +48,34 @@ def get_relevant_context(query, top_k=5):
     )
     chunks = results["documents"][0]  # List of top_k chunks
     return chunks
+
+from datetime import datetime
+
+def build_contextual_messages(past_messages, new_prompt, context_text):
+    system_msg = {
+    "role": "system",
+    "content": (
+        f"You are a legal assistant specialized in Indian law. "
+        f"Today is {datetime.today().strftime('%B %d, %Y')}. "
+        f"Respond in a tone that is formal, precise, and easy for a layman to understand. If the user seems confused, explain gently. If it's a professional query, be concise and use legal terms."
+        f"Respond factually and clearly using the provided legal context and chat history. "
+        f"\n\nContext:\n{context_text.strip()}"
+    )
+}
+
+
+    total_tokens = count_tokens(system_msg["content"]) + count_tokens(new_prompt)
+    selected_messages = []
+
+    for msg in reversed(past_messages):  # latest messages first
+        msg_tokens = count_tokens(msg["content"])
+        if total_tokens + msg_tokens > (MAX_INPUT_TOKENS - RESPONSE_TOKEN_BUFFER):
+            break
+        selected_messages.insert(0, msg)
+        total_tokens += msg_tokens
+
+    return [system_msg] + selected_messages + [{"role": "user", "content": new_prompt}]
+
 
 
 # Pydantic Schemas
@@ -78,20 +117,24 @@ async def ask_llm(request: ChatRequest, user: User = Depends(get_current_user)):
 
 
         # Call LLM
+        # Fetch full chat history
+        chat_doc = await chats_collection.find_one({"_id": ObjectId(chat_id), "user_id": user.id})
+        past_messages = chat_doc.get("messages", []) if chat_doc else []
+
+        # Build token-aware message list
+        messages_for_llm = build_contextual_messages(past_messages, request.prompt, context_text)
+
+        # Call LLM
         response = llm_client.chat.completions.create(
             model="deepseek/deepseek-r1-0528:free",
-            messages=[
-                {"role": "user", "content": f"""You are an Indian legal assistant and advisor.
-                 Use your intelligence and the context below to answer factually.
-
-Context:{context_text}
-
-User: {request.prompt}
-Assistant:"""}
-            ],
+            messages=messages_for_llm,
+            temperature=0.6,
+            top_p=0.95
         )
 
+
         assistant_reply = response.choices[0].message.content.strip()
+        assistant_reply = re.sub(r'\n\s*\n+', '\n\n', assistant_reply)
 
         # Save Assistant Response
         assistant_message = {"role": "assistant", "content": assistant_reply}
