@@ -19,6 +19,7 @@ This is my proof-of-work project — a solo effort to streamline legal workflows
     <a href="public/homepage.png" target="_blank" rel="noopener noreferrer">
       <img src="public/homepage.png" alt="Lexx Landing Page" style="width:95%;max-width:320px;height:auto;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.35)"/>
     </a>
+    <br/>
     <figcaption style="margin-top:8px;font-size:13px;color:#9ca3af;">Lexx — Landing page</figcaption>
   </figure>
 
