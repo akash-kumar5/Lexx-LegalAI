@@ -27,6 +27,7 @@ This is my proof-of-work project — a solo effort to streamline legal workflows
     <a href="public/chatui.png" target="_blank" rel="noopener noreferrer">
       <img src="public/chatui.png" alt="Lexx Chat Section" style="width:95%;max-width:320px;height:auto;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.35)"/>
     </a>
+    <br/>
     <figcaption style="margin-top:8px;font-size:13px;color:#9ca3af;">Chat section</figcaption>
   </figure>
 
@@ -34,6 +35,7 @@ This is my proof-of-work project — a solo effort to streamline legal workflows
     <a href="public/chat3.png" target="_blank" rel="noopener noreferrer">
       <img src="public/chat3.png" alt="Lexx Chat screenshot" style="width:95%;max-width:320px;height:auto;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.35)"/>
     </a>
+    <br/>
     <figcaption style="margin-top:8px;font-size:13px;color:#9ca3af;">Chat — reply view</figcaption>
   </figure>
 
@@ -41,6 +43,7 @@ This is my proof-of-work project — a solo effort to streamline legal workflows
     <a href="public/chat2.png" target="_blank" rel="noopener noreferrer">
       <img src="public/chat2.png" alt="Lexx Chat screenshot 2" style="width:95%;max-width:320px;height:auto;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.35)"/>
     </a>
+    <br/>
     <figcaption style="margin-top:8px;font-size:13px;color:#9ca3af;">Chat — threaded view</figcaption>
   </figure>
 
@@ -48,6 +51,7 @@ This is my proof-of-work project — a solo effort to streamline legal workflows
     <a href="public/docsSection.png" target="_blank" rel="noopener noreferrer">
       <img src="public/docsSection.png" alt="Lexx Documents section" style="width:95%;max-width:320px;height:auto;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.35)"/>
     </a>
+    <br/>
     <figcaption style="margin-top:8px;font-size:13px;color:#9ca3af;">Docs section (WIP)</figcaption>
   </figure>
 
@@ -55,6 +59,7 @@ This is my proof-of-work project — a solo effort to streamline legal workflows
     <a href="public/docEditor.png" target="_blank" rel="noopener noreferrer">
       <img src="public/docEditor.png" alt="Lexx Document editor" style="width:95%;max-width:320px;height:auto;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.35)"/>
     </a>
+    <br/>
     <figcaption style="margin-top:8px;font-size:13px;color:#9ca3af;">Doc editor (WIP)</figcaption>
   </figure>
 </div>
