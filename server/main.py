@@ -4,6 +4,7 @@ from routes import chat  # import your chat router module
 from dotenv import load_dotenv
 from routes import auth
 from routes import summary
+from routes import docs
 
 load_dotenv()
 
@@ -20,3 +21,4 @@ app.add_middleware(
 app.include_router(chat.router)
 app.include_router(auth.router)
 app.include_router(summary.router)
+app.include_router(docs.router)
