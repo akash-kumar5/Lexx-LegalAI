@@ -1,19 +1,25 @@
 //  app/docs/[slug]/page.tsx
 "use client";
-import { useParams } from "next/navigation";
+import { redirect, useParams, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input"; // Import Input Component
 import { useEffect, useState } from "react";
 import { LockIcon, PencilIcon } from "lucide-react";
-import { jsPDF } from "jspdf";
-import paymentReminderExample from "@/lib/draftExamples/paymentReminder";
-import terminationNotice from "@/lib/draftExamples/terminationNotice";
-import legalDemandNotice from "@/lib/draftExamples/legalDemandNotice";
+import { exampleDrafts, fieldSchema } from "@/lib/utils/draftSchemas";
+import { downloadPDF } from "@/lib/utils/pdfUtils";
+import { downloadDOCX } from "@/lib/utils/docxUtils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function DraftEditorPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
 
   const slug = params.slug as string;
   type Draft = {
@@ -25,48 +31,14 @@ export default function DraftEditorPage() {
     timestamp: number; // Date.now()
   };
 
-  const fieldSchema: { [key: string]: { label: string; key: string }[] } = {
-    "payment-reminder": [
-      { label: "Date", key: "date" },
-      { label: "Reference Number", key: "refNo" },
-      { label: "Lawyer Name", key: "lawyerName" },
-      { label: "Lawyer Address", key: "lawyerAddress" },
-      { label: "Lawyer Phone", key: "lawyerPhone"},
-      { label: "Lawyer Email", key: "lawyerEmail"},
-      { label: "Recipient Name", key: "recipientName" },
-      { label: "Recipient Address", key: "recipientAddress" },
-      { label: "Outstanding Amount", key: "amount" },
-      { label: "Your Company Name", key: "companyName" },
-      { label: "Business Description", key: "businessDescription" },
-      { label: "Agreement Date", key: "agreementDate" },
-      { label: "Invoice Details", key: "invoiceDetails" },
-      { label: "Your Address", key: "yourAddress" },
-      { label: "Bank Name", key: "bankName" },
-      { label: "Account Holder", key: "accountHolder" },
-      { label: "Account Number", key: "accountNumber" },
-      { label: "IFSC Code", key: "ifscCode" },
-      { label: "Days to Comply", key: "days" },
-    ],
-    "termination-notice": [
-      { label: "To Employee", key: "toEmployee" },
-      { label: "From Company", key: "fromCompanpay" },
-      { label: "Reason", key: "reason" },
-      { label: "Termination Date", key: "date" },
-    ],
-    "legal-demand-notice": [
-      { label: "To Party", key: "toParty" },
-      { label: "From Lawyer", key: "fromLawyer" },
-      { label: "Claim Details", key: "claimDetails" },
-    ],
-  };
-
-  const exampleDrafts: { [key: string]: string } = {
-    "payment-reminder": paymentReminderExample,
-    "termination-notice": terminationNotice,
-    "legal-demand-notice": legalDemandNotice
-  };
-
   useEffect(() => {
+    const aiGeneratedBody = searchParams.get("body"); // Read 'body' from URL
+
+    if (aiGeneratedBody) {
+      // If AI-generated content exists, use it immediately
+      setDraftContent(aiGeneratedBody);
+      return; // Stop further processing
+    }
     const savedDrafts = JSON.parse(
       localStorage.getItem("savedDrafts") || "[]"
     ) as Draft[];
@@ -82,7 +54,7 @@ export default function DraftEditorPage() {
         setDraftContent(example);
       }
     }
-  }, [slug]);
+  }, [slug, searchParams]);
 
   const [draftContent, setDraftContent] = useState("");
   const currentFields = fieldSchema[slug] || [];
@@ -114,18 +86,6 @@ export default function DraftEditorPage() {
     setDraftContent(draft);
   };
 
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    const lines = doc.splitTextToSize(draftContent, 180)
-
-    doc.setFont("Times", "Normal")
-    doc.setFontSize(12);
-    doc.text(lines, 15,20);
-
-    doc.save(`${slug}-draft.pdf`);
-    setShowPreview(false);
-  }
-
   const handleSaveDraft = () => {
     const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]");
     savedDrafts.push({
@@ -137,8 +97,6 @@ export default function DraftEditorPage() {
     localStorage.setItem("savedDrafts", JSON.stringify(savedDrafts));
     alert("Draft Saved!");
   };
-
-
 
   const handleDiscard = () => {
     if (window.confirm("Are you sure you want to discard your changes?")) {
@@ -161,7 +119,7 @@ export default function DraftEditorPage() {
             variant="default"
             className="w-full sm:w-1/2 bg-zinc-600 hover:bg-zinc-700 sm:p-1"
           >
-            Generate Draft
+            Download Draft
           </Button>
           <Button
             onClick={handleViewExample}
@@ -173,26 +131,43 @@ export default function DraftEditorPage() {
         </div>
 
         {showPreview && (
-          <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-            <div className="bg-white text-black p-6 rounded-lg w-[80%] h-[80%] overflow-auto">
-              <h2 className="text-xl font-bold mb-4">Draft Preview</h2>
-              <pre className="whitespace-pre-wrap text-sm">{draftContent}</pre>
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+    <div className="bg-white text-black p-6 rounded-lg w-[80%] h-[80%] flex flex-col overflow-auto">
+      <h2 className="text-xl font-bold mb-4">Draft Preview</h2>
 
-              <div className="mt-6 flex justify-end gap-4">
-                <Button variant="outline" onClick={() => setShowPreview(false)}>
-                  Go Back
-                </Button>
-                <Button
-                  variant="default"
-                  className="bg-green-700"
-                  onClick={() => downloadPDF()}
-                >
-                  Download PDF
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+      <pre className="whitespace-pre-wrap text-sm flex-1 overflow-y-auto border border-gray-200 rounded p-4 bg-gray-50">
+        {draftContent}
+      </pre>
+
+      {/* Actions at bottom-right */}
+      <div className="mt-4 flex justify-end gap-3">
+        <Button
+          variant="outline"
+          onClick={() => setShowPreview(false)}
+          className="border-gray-400"
+        >
+          Cancel
+        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="default" className="bg-green-700">
+              Download
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => downloadPDF(draftContent, slug)}>
+              PDF
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => downloadDOCX(draftContent, slug)}>
+              DOCX
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  </div>
+)}
 
         {/* Dynamic Form Fields */}
         <Card className="bg-zinc-900 border border-zinc-700 mb-6 hidden md:block">
@@ -222,8 +197,6 @@ export default function DraftEditorPage() {
             ))}
           </CardContent>
         </Card>
-
-        {/* Save / Discard Actions */}
       </div>
 
       {/* Right Panel: Draft Preview */}
@@ -242,12 +215,12 @@ export default function DraftEditorPage() {
                 !manualEdit ? "cursor-default text-zinc-400" : "text-white"
               }`}
             />
-            <div className="fixed bottom-4 right-4 md:absolute md:top-24 md:right-18 z-50">
+            <div className="fixed lg:right-20 lg:top-37 sm:absolute sm:top-75 sm:right-20 z-50 sm:z-1 xs:top-12">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setManualEdit(!manualEdit)}
-                className="bg-white hover:bg-zinc-400"
+                className="bg-zinc-900 text-light hover:text-black hover:bg-zinc-400 border-zinc-500 border-1"
               >
                 {manualEdit ? <PencilIcon /> : <LockIcon />}
               </Button>

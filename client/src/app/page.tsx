@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import FeaturesSection from "./components/FeaturesGrid";
 import WorkflowSection from "./components/WorkflowSection";
 import Footer from "./components/Footer";
@@ -36,17 +35,6 @@ export default function Home() {
           </Link>
         </div>
       </section>
-
-      {/* <section className="min-h-screen grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl">
-        <div className="bg-zinc-800 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xl font-semibold mb-2">Simplify Legal Documents</h3>
-          <p className="text-zinc-400">Draft contracts, notices, and agreements faster with AI-assisted suggestions and templates.</p>
-        </div>
-        <div className="bg-zinc-800 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-xl font-semibold mb-2">Search Judgments by Description</h3>
-          <p className="text-zinc-400">Find relevant legal precedents by describing the case context in simple language.</p>
-        </div>
-      </section> */}
       <FeaturesSection />
       <WorkflowSection />
       <Footer />

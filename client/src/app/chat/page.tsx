@@ -14,6 +14,13 @@ type Message = {
   content: string;
 };
 
+type ChatSummary = {
+  _id: string;
+  title?: string;
+  preview: string;
+  createdAt: string;
+};
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -21,8 +28,10 @@ export default function ChatPage() {
   const [promptText, setPromptText] = useState("");
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [chats, setChats] = useState<ChatSummary[]>([]);
   const { token } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
+    const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const fullPrompt = "I'm Your LegalAI, Ask me anything legally...";
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -37,12 +46,14 @@ export default function ChatPage() {
       if (index === fullPrompt.length) clearInterval(typingInterval);
     }, 50);
     return () => clearInterval(typingInterval);
-  }, [fullPrompt]);
+  }, []);
 
   useEffect(() => {
     const el = chatContainerRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [messages, chatContainerRef]);
+  }, [messages]);
+
+
 
   useEffect(() => {
     const el = chatContainerRef.current;
@@ -53,8 +64,27 @@ export default function ChatPage() {
     };
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchChats = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_URL}/api/chats`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setChats(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch chats:", err);
+    }
+  };
+
+  // Fetch chats on initial load
+  useEffect(() => {
+    fetchChats();
+  }, [token]);
 
   const sendMessage = async () => {
     const trimmed = input.trim();
@@ -70,7 +100,7 @@ export default function ChatPage() {
       const chatId = currentChatId;
 
       // Get assistant response
-      const res = await fetch("http://localhost:8000/api/chat", {
+      const res = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +113,8 @@ export default function ChatPage() {
       const data = await res.json();
       console.log(data);
       if (data.chat_id && !currentChatId) {
-        setCurrentChatId(data.chat_id); // Update currentChatId on new chat
+        setCurrentChatId(data.chat_id);
+        fetchChats(); // Update currentChatId on new chat
       }
 
       const assistantMsg: Message = { role: "assistant", content: data.answer };
@@ -91,6 +122,10 @@ export default function ChatPage() {
       setMessages((prev) => [...prev, { ...assistantMsg }]);
     } catch (err) {
       console.error("Chat error:", err);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "Sorry, something went wrong." },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -106,7 +141,7 @@ export default function ChatPage() {
   const handleSelectChat = async (chatId: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/chats/${chatId}`, {
+      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -122,6 +157,7 @@ export default function ChatPage() {
   const handleNewChat = async () => {
     setCurrentChatId(null);
     setMessages([]);
+    inputRef.current?.focus();
   };
 
   return (
@@ -130,10 +166,12 @@ export default function ChatPage() {
         className={`transition-all duration-300 ${collapsed ? "w-14" : "w-64"}`}
       >
         <ChatSidebar
+          chats={chats}
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           onSelectChat={handleSelectChat}
           onNewChat={handleNewChat}
+          onRefresh={fetchChats}
           currentChatId={currentChatId}
         />
       </div>

@@ -9,11 +9,12 @@ export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const router = useRouter();
   const { login } = useAuth();
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const endpoint = isLogin ? "/auth/login" : "/auth/signup";
-    const res = await fetch(`http://localhost:8000${endpoint}`, {
+    const res = await fetch(`${API_URL}${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

@@ -114,10 +114,10 @@ export default function DocsSidebar() {
               <span>Browse Templates</span>
             </Link>
             <Link
-              href="/docs/draft/history"
+              href="/docs/history"
               className={`flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800 cursor-pointer
                 ${
-                  isActive("/docs/draft/history")
+                  isActive("/docs/history")
                     ? "bg-zinc-700 text-white font-semibold"
                     : "text-zinc-400"
                 }

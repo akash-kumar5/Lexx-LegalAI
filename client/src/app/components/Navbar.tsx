@@ -1,99 +1,231 @@
+"use client";
+
 import Link from "next/link";
+import React, { useState, useRef, forwardRef } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Settings, Menu, X } from "lucide-react";
+import { Menu, X, User, MoonIcon } from "lucide-react";
+import { useTheme } from "next-themes";
+
+// Nav links data
+const navItems = [
+  { href: "/chat", label: "Chat" },
+  { href: "/docs", label: "Docs" },
+  { href: "/casematching", label: "Case-Matching" },
+];
+
+// Reusable outside click hook
+const useClickOutside = (ref, handler) => {
+  React.useEffect(() => {
+    const listener = (event) => {
+      if (!ref.current || ref.current.contains(event.target)) return;
+      handler(event);
+    };
+    document.addEventListener("mousedown", listener);
+    return () => document.removeEventListener("mousedown", listener);
+  }, [ref, handler]);
+};
+
+// NavLinks component for desktop/mobile menu
+function NavLinks({ onLinkClick }) {
+  return (
+    <>
+      {navItems.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={onLinkClick}
+          className="hover:text-red-400 transition-colors duration-300 px-4 py-2 text-center md:text-left"
+        >
+          {item.label}
+        </Link>
+      ))}
+    </>
+  );
+}
+
+// ProfileMenu component (dropdown)
+const ProfileMenu = forwardRef(({ user, logout, onClose },ref) => {
+  const {theme, setTheme} = useTheme();
+  return (
+    <motion.div
+    ref={ref}
+      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+      transition={{ duration: 0.1 }}
+      className="absolute right-0 mt-2 w-48 origin-top-right bg-stone-900 border border-stone-700 rounded-md shadow-lg"
+    >
+      <div className="px-4 py-2 text-sm text-stone-400 border-b border-stone-700">
+        Signed in as
+        <br />
+        <span className="font-medium text-stone-200">{user?.fullName || "User"}</span>
+      </div>
+      <div className="py-1">
+        <Link
+          href="/profile"
+          onClick={onClose}
+          className="flex items-center w-full text-left px-4 py-2 text-sm text-stone-200 hover:bg-stone-800 transition-colors"
+        >
+          <User className="w-4 h-4 mr-2" />
+          Your Profile
+        </Link>
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="flex items-center w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-stone-800 transition-colors"
+        >
+          <MoonIcon className="w-4 h-4 mr-2" />
+          Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode
+        </button>
+        <button
+          onClick={logout}
+          className="flex items-center w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-stone-800 transition-colors"
+        >
+          <X className="w-4 h-4 mr-2" />
+          Logout
+        </button>
+      </div>
+    </motion.div>
+  );
+})
 
 export default function Navbar() {
-  const { token, logout } = useAuth();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { token, logout, user } = useAuth();
+
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
+
+  const mobileMenuRef = useRef(null);
+  const profileMenuRef = useRef(null);
+
+  
+
+  useClickOutside(mobileMenuRef, () => setMobileMenuOpen(false));
+  useClickOutside(profileMenuRef, () => setProfileMenuOpen(false));
+
+  const toggleProfileMenu = () => setProfileMenuOpen((v) => !v);
+  const toggleMobileMenu = () => setMobileMenuOpen((v) => !v);
+
+  const closeMenus = () => {
+    setMobileMenuOpen(false);
+    setProfileMenuOpen(false);
+  };
 
   return (
-    <nav className="sticky top-0 z-50 mx-auto w-[90%] px-4 bg-stone-900/40 backdrop-blur-md border-b border-stone-800 text-stone-100 shadow-sm rounded-full bg-gradient-to-r from-zinc-700/40 via-black/30 to-zinc-700/40">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
+    <nav className="sticky top-0 z-50 mx-auto w-full max-w-[97%] md:max-w-[96%] mt-2 bg-stone-900/40 backdrop-blur-md border border-stone-800 text-stone-100 shadow-lg rounded-full">
+      <div className="mx-auto flex max-w-[95%] items-center justify-between py-3">
         <Link href="/" className="text-xl font-bold tracking-tight text-white">
           Lexx
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
-          <Link href="/chat" className="hover:text-red-400 transition">Chat</Link>
-          <Link href="/docs" className="hover:text-red-400 transition">Docs</Link>
-          <Link href="/casematching" className="hover:text-red-400 transition">Case-Matching</Link>
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center space-x-2 text-sm font-medium">
+          <NavLinks />
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Mobile Menu Toggle */}
-          <button
-            className="md:hidden text-stone-200"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-
-          {/* Auth Settings */}
-          {token ? (
-            <>
-              <motion.button
-                onClick={() => setMenuOpen(!menuOpen)}
-                whileHover={{ scale: 1.08 }}
-                animate={{ rotate: menuOpen ? 60 : 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="hidden md:inline text-stone-200 hover:text-white-400"
-              >
-                <Settings size={22} />
-              </motion.button>
-              <AnimatePresence>
-                {menuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 0, x: -42 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 0, x: 12 }}
-                    className="absolute right-8 mt-12 w-40 bg-stone-900 border border-stone-700 rounded-md shadow-lg"
-                  >
-                    <button
-                      onClick={logout}
-                      className="block w-full text-left px-4 py-2 text-sm text-stone-200 hover:bg-stone-800 transition"
-                    >
-                      Logout
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </>
-          ) : (
-            <Link href="/auth" className="hidden md:inline hover:text-red-400 transition">
-              Login
-            </Link>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile Menu Items */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="md:hidden flex flex-col items-center space-y-4 py-4"
-          >
-            <Link href="/chat" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-400 transition">Chat</Link>
-            <Link href="/docs" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-400 transition">Docs</Link>
-            <Link href="/casematching" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-400 transition">Case-Matching</Link>
+          {/* Desktop Profile & Auth */}
+          <div className="hidden md:flex relative">
             {token ? (
-              <button
-                onClick={() => { logout(); setMobileMenuOpen(false); }}
-                className="hover:text-red-400 transition"
-              >
-                Logout
-              </button>
+              <>
+                <motion.button
+                  onClick={toggleProfileMenu}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-8 h-8 rounded-full overflow-hidden border-2 border-stone-600 hover:border-red-500 transition-colors"
+                >
+                  <img
+                    src={user?.profilePictureUrl || "/default-avatar.png"}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+                  />
+                </motion.button>
+                <AnimatePresence>
+                  {isProfileMenuOpen && (
+                    <ProfileMenu 
+                    ref={profileMenuRef}
+                     user={user} logout={logout} onClose={() => setProfileMenuOpen(false)} />
+                  )}
+                </AnimatePresence>
+              </>
             ) : (
-              <Link href="/auth" onClick={() => setMobileMenuOpen(false)} className="hover:text-red-400 transition">
+              <Link
+                href="/auth"
+                className="text-sm font-medium hover:text-red-400 transition-colors duration-300"
+              >
                 Login
               </Link>
             )}
+          </div>
+
+          {/* Mobile Menu & Profile */}
+          <div className="md:hidden flex items-center space-x-3">
+            <button
+              onClick={toggleMobileMenu}
+              className="text-stone-200"
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            {token && (
+              <div className="relative">
+                <motion.button
+                  onClick={toggleProfileMenu}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-8 h-8 rounded-full overflow-hidden border-2 border-stone-600 hover:border-red-500 transition-colors"
+                  aria-label="Profile menu"
+                >
+                  <img
+                    src={user?.profilePictureUrl || "/default-avatar.png"}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
+                  />
+                </motion.button>
+                <AnimatePresence>
+                  {isProfileMenuOpen && (
+                    <ProfileMenu
+                      user={user}
+                      logout={() => {
+                        logout();
+                        closeMenus();
+                      }}
+                      onClose={closeMenus}
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
+            
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile nav links */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            ref={mobileMenuRef}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden overflow-hidden"
+          >
+            <div className="flex flex-col items-center space-y-2 py-4 border-t border-stone-800">
+              <NavLinks onLinkClick={closeMenus} />
+              {!token && (
+                <Link
+                  href="/auth"
+                  onClick={closeMenus}
+                  className="px-4 py-2 w-full text-center hover:text-red-400 transition-colors"
+                >
+                  Login
+                </Link>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -12,40 +12,33 @@ interface ChatSummary {
 
 interface ChatSidebarProps {
   onSelectChat: (chatId: string) => void;
+  chats: ChatSummary[];
   onNewChat: () => void;
   currentChatId: string | null;
   navbarHeight?: string;
+  onRefresh: () => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
 }
 
 export default function ChatSidebar({
+  chats,
   onSelectChat,
   onNewChat,
+  onRefresh,
   currentChatId,
   navbarHeight = "64px",
   collapsed,
   setCollapsed,
 }: ChatSidebarProps) {
   const { token } = useAuth();
-  const [chats, setChats] = useState<ChatSummary[]>([]);
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
+    null
+  );
   const editingRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!token) return;
-    const fetchChats = async () => {
-      const res = await fetch("http://localhost:8000/api/chats", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setChats(data);
-      }
-    };
-    fetchChats();
-  }, [token]);
+ 
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -84,11 +77,12 @@ export default function ChatSidebar({
         body: JSON.stringify({ title: newTitle }),
       });
       if (res.ok) {
-        setChats((prev) =>
-          prev.map((chat) =>
-            chat._id === chatId ? { ...chat, title: newTitle } : chat
-          )
-        );
+        // setChats((prev) =>
+        //   prev.map((chat) =>
+        //     chat._id === chatId ? { ...chat, title: newTitle } : chat
+        //   )
+        // );
+        onRefresh();
         setEditingChatId(null);
       }
     } catch (err) {
@@ -103,7 +97,7 @@ export default function ChatSidebar({
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
-        setChats((prev) => prev.filter((chat) => chat._id !== chatId));
+        onRefresh()
         if (chatId === currentChatId) {
           onNewChat();
         }
@@ -172,14 +166,18 @@ export default function ChatSidebar({
             <div className="space-y-4">
               {Object.entries(groupedChats).map(([date, chatList]) => (
                 <div key={date}>
-                  <div className="text-zinc-400 text-xs font-medium mb-1">{date}</div>
+                  <div className="text-zinc-400 text-xs font-medium mb-1">
+                    {date}
+                  </div>
                   {chatList.map((chat) => (
                     <div key={chat._id} className="relative group">
                       {editingChatId === chat._id ? (
                         <input
                           ref={editingRef}
                           type="text"
-                          defaultValue={chat.title || chat.preview || "Untitled Chat"}
+                          defaultValue={
+                            chat.title || chat.preview || "Untitled Chat"
+                          }
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               e.preventDefault();
@@ -230,7 +228,9 @@ export default function ChatSidebar({
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-zinc-800 p-6 rounded shadow">
-            <p className="text-white mb-4">Are you sure you want to delete this chat?</p>
+            <p className="text-white mb-4">
+              Are you sure you want to delete this chat?
+            </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={confirmDelete}

@@ -6,17 +6,28 @@ interface AuthContextType {
     token: string | null; 
     login: (token: string) => void;
     logout: () => void;
+    user: string|null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({children}: {children: ReactNode}) => {
     const [token, setToken] = useState<string | null>(null);
+    const [user, setUser] = useState<string | null>(null);
     const [loading, setLoading] = useState(true)
     const router = useRouter();
 
     useEffect(() => {
     const storedToken = localStorage.getItem("token");
+    const profileData = localStorage.getItem("lexxProfile");
+    
+    if (profileData) {
+    try {
+      setUser(JSON.parse(profileData)); // now it's an object
+    } catch (err) {
+      console.error("Failed to parse lexxProfile:", err);
+    }
+  }
     if (storedToken) setToken(storedToken);
     setLoading(false);
   }, [router]);
@@ -30,6 +41,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("lexxProfile");
     setToken(null);
     router.push("/auth");
     router.refresh();
@@ -38,7 +50,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
    if (loading) return null;
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout, user }}>
       {children}
     </AuthContext.Provider>
   );
