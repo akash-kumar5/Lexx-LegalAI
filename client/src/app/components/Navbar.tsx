@@ -21,7 +21,7 @@ interface ClickOutsideHandler {
 }
 
 const useClickOutside = (
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   handler: ClickOutsideHandler
 ): void => {
   React.useEffect(() => {
