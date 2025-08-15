@@ -18,14 +18,24 @@ function useDebounce(value: string, delay: number) {
   return debouncedValue;
 }
 
+type Suggestion = {
+  slug: string;
+  title: string;
+  description?: string;
+  [key: string]: any; // optional, for extra fields
+};
+
+
 export default function Docs() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState([]); // State for AI-powered suggestions
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]); // State for AI-powered suggestions
   const router = useRouter();
 
   // Debounce the user's query to avoid sending too many requests
   const debouncedQuery = useDebounce(query, 300);
+
+  
 
   // This is the static list of all templates available for browsing
   const allTemplates = [
@@ -180,7 +190,7 @@ export default function Docs() {
           <div className="max-w-5xl mx-auto mb-12">
             <h2 className="text-lg text-zinc-400 mb-4">Recommendations</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {suggestions.map((draft: any) => (
+              {suggestions.map((draft: Suggestion ) => (
                 <DocsCard
                   key={draft.slug}
                   title={draft.title}
