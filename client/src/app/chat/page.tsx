@@ -31,7 +31,7 @@ export default function ChatPage() {
   const [chats, setChats] = useState<ChatSummary[]>([]);
   const { token } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
-    const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   const fullPrompt = "I'm Your LegalAI, Ask me anything legally...";
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -52,8 +52,6 @@ export default function ChatPage() {
     const el = chatContainerRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [messages]);
-
-
 
   useEffect(() => {
     const el = chatContainerRef.current;

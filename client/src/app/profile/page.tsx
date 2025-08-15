@@ -122,7 +122,8 @@ const InputField: FC<{
 };
 
 export default function Profile() {
-    const auth = useAuth();
+  const auth = useAuth();
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const [profile, setProfile] = useState<ProfileData>({
     fullName: "",
     professionalTitle: "",
@@ -145,7 +146,7 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token"); // assuming auth token
-        const res = await fetch("http://localhost:8000/user/me", {
+        const res = await fetch(`${API_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -193,7 +194,7 @@ export default function Profile() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/user/me", {
+      const res = await fetch(`${API_URL}/user/me`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -231,11 +232,11 @@ export default function Profile() {
     }
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/user/me", {
+      const res = await fetch(`${API_URL}/user/me`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         credentials: "include",
       });

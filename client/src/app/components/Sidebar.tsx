@@ -38,8 +38,7 @@ export default function ChatSidebar({
     null
   );
   const editingRef = useRef<HTMLInputElement>(null);
-
- 
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -69,7 +68,7 @@ export default function ChatSidebar({
 
   const updateChatTitle = async (chatId: string, newTitle: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/chats/${chatId}`, {
+      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -78,11 +77,6 @@ export default function ChatSidebar({
         body: JSON.stringify({ title: newTitle }),
       });
       if (res.ok) {
-        // setChats((prev) =>
-        //   prev.map((chat) =>
-        //     chat._id === chatId ? { ...chat, title: newTitle } : chat
-        //   )
-        // );
         onRefresh();
         setEditingChatId(null);
       }
@@ -93,12 +87,12 @@ export default function ChatSidebar({
 
   const deleteChat = async (chatId: string) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/chats/${chatId}`, {
+      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
-        onRefresh()
+        onRefresh();
         if (chatId === currentChatId) {
           onNewChat();
         }

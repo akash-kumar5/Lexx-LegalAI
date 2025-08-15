@@ -24,67 +24,68 @@ type Suggestion = {
   description?: string;
 };
 
-
 export default function Docs() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]); // State for AI-powered suggestions
   const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // Debounce the user's query to avoid sending too many requests
   const debouncedQuery = useDebounce(query, 300);
 
-  
-
   // This is the static list of all templates available for browsing
   const allTemplates = [
-  {
-    title: "Payment Reminder Notice",
-    description: "Recover outstanding payments from clients or tenants.",
-    route: "/docs/payment-reminder-notice",
-  },
-  {
-    title: "Termination Notice",
-    description: "Formally terminate an employee's contract with proper notice.",
-    route: "/docs/termination-notice",
-  },
-  {
-    title: "Legal Demand Notice",
-    description: "Send a formal legal demand for claims, dues, or compensation.",
-    route: "/docs/legal-demand-notice",
-  },
-  {
-    title: "Non-Disclosure Agreement",
-    description: "Protect confidential information shared between parties.",
-    route: "/docs/non-disclosure-agreement",
-  },
-  {
-    title: "Lease Agreement",
-    description: "Outline terms and conditions for renting property.",
-    route: "/docs/lease-agreement",
-  },
-  {
-    title: "Invoice for Services",
-    description: "Bill clients for services rendered with clear payment terms.",
-    route: "/docs/invoice-for-services",
-  },
-  {
-    title: "Loan Agreement",
-    description: "Specify loan terms, repayment schedule, and conditions.",
-    route: "/docs/loan-agreement",
-  },
-  {
-    title: "Employment Offer Letter",
-    description: "Formally offer a job role with agreed terms and benefits.",
-    route: "/docs/employment-offer-letter",
-  },
-  {
-    title: "Service Agreement",
-    description: "Define scope, deliverables, and payment for services provided.",
-    route: "/docs/service-agreement",
-  },
-];
-
+    {
+      title: "Payment Reminder Notice",
+      description: "Recover outstanding payments from clients or tenants.",
+      route: "/docs/payment-reminder-notice",
+    },
+    {
+      title: "Termination Notice",
+      description:
+        "Formally terminate an employee's contract with proper notice.",
+      route: "/docs/termination-notice",
+    },
+    {
+      title: "Legal Demand Notice",
+      description:
+        "Send a formal legal demand for claims, dues, or compensation.",
+      route: "/docs/legal-demand-notice",
+    },
+    {
+      title: "Non-Disclosure Agreement",
+      description: "Protect confidential information shared between parties.",
+      route: "/docs/non-disclosure-agreement",
+    },
+    {
+      title: "Lease Agreement",
+      description: "Outline terms and conditions for renting property.",
+      route: "/docs/lease-agreement",
+    },
+    {
+      title: "Invoice for Services",
+      description:
+        "Bill clients for services rendered with clear payment terms.",
+      route: "/docs/invoice-for-services",
+    },
+    {
+      title: "Loan Agreement",
+      description: "Specify loan terms, repayment schedule, and conditions.",
+      route: "/docs/loan-agreement",
+    },
+    {
+      title: "Employment Offer Letter",
+      description: "Formally offer a job role with agreed terms and benefits.",
+      route: "/docs/employment-offer-letter",
+    },
+    {
+      title: "Service Agreement",
+      description:
+        "Define scope, deliverables, and payment for services provided.",
+      route: "/docs/service-agreement",
+    },
+  ];
 
   // Effect to fetch semantic search results from the backend as the user types
   useEffect(() => {
@@ -96,7 +97,7 @@ export default function Docs() {
     const fetchSuggestions = async () => {
       try {
         // Assuming your FastAPI router is prefixed with /docs
-        const res = await fetch("http://localhost:8000/docs/search", {
+        const res = await fetch(`${API_URL}/docs/search`, {
           method: "POST",
           body: JSON.stringify({ query: debouncedQuery }),
           headers: { "Content-Type": "application/json" },
@@ -118,7 +119,7 @@ export default function Docs() {
     setLoading(true);
     try {
       // Assuming your FastAPI router is prefixed with /docs
-      const res = await fetch("http://localhost:8000/docs/generate-draft", {
+      const res = await fetch(`${API_URL}/docs/generate-draft`, {
         method: "POST",
         body: JSON.stringify({ situation: query }),
         headers: { "Content-Type": "application/json" },
@@ -189,7 +190,7 @@ export default function Docs() {
           <div className="max-w-5xl mx-auto mb-12">
             <h2 className="text-lg text-zinc-400 mb-4">Recommendations</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {suggestions.map((draft: Suggestion ) => (
+              {suggestions.map((draft: Suggestion) => (
                 <DocsCard
                   key={draft.slug}
                   title={draft.title}
