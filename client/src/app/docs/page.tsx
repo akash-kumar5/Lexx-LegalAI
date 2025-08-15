@@ -22,7 +22,6 @@ type Suggestion = {
   slug: string;
   title: string;
   description?: string;
-  [key: string]: any; // optional, for extra fields
 };
 
 
