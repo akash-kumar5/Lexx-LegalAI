@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
@@ -27,7 +29,6 @@ export default function ChatSidebar({
   onNewChat,
   onRefresh,
   currentChatId,
-  navbarHeight = "64px",
   collapsed,
   setCollapsed,
 }: ChatSidebarProps) {

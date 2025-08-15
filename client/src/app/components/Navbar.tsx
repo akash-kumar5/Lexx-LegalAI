@@ -6,6 +6,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, MoonIcon } from "lucide-react";
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 // Nav links data
 const navItems = [
@@ -15,10 +16,17 @@ const navItems = [
 ];
 
 // Reusable outside click hook
-const useClickOutside = (ref, handler) => {
+interface ClickOutsideHandler {
+  (event: MouseEvent): void;
+}
+
+const useClickOutside = (
+  ref: React.RefObject<HTMLElement>,
+  handler: ClickOutsideHandler
+): void => {
   React.useEffect(() => {
-    const listener = (event) => {
-      if (!ref.current || ref.current.contains(event.target)) return;
+    const listener = (event: MouseEvent) => {
+      if (!ref.current || ref.current.contains(event.target as Node)) return;
       handler(event);
     };
     document.addEventListener("mousedown", listener);
@@ -27,7 +35,11 @@ const useClickOutside = (ref, handler) => {
 };
 
 // NavLinks component for desktop/mobile menu
-function NavLinks({ onLinkClick }) {
+type NavLinksProps = {
+  onLinkClick?: React.MouseEventHandler<HTMLAnchorElement>;
+};
+
+function NavLinks({ onLinkClick }: NavLinksProps) {
   return (
     <>
       {navItems.map((item) => (
@@ -45,11 +57,20 @@ function NavLinks({ onLinkClick }) {
 }
 
 // ProfileMenu component (dropdown)
-const ProfileMenu = forwardRef(({ user, logout, onClose },ref) => {
-  const {theme, setTheme} = useTheme();
+type ProfileMenuProps = {
+  user: {
+    fullName?: string;
+    profilePictureUrl?: string;
+  } | null;
+  logout: () => void;
+  onClose: () => void;
+};
+
+const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(({ user, logout, onClose }, ref) => {
+  const { theme, setTheme } = useTheme();
   return (
     <motion.div
-    ref={ref}
+      ref={ref}
       initial={{ opacity: 0, y: -10, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -87,18 +108,27 @@ const ProfileMenu = forwardRef(({ user, logout, onClose },ref) => {
       </div>
     </motion.div>
   );
-})
+});
+ProfileMenu.displayName = "ProfileMenu";
+
 
 export default function Navbar() {
-  const { token, logout, user } = useAuth();
+  type UserType = {
+    fullName?: string;
+    profilePictureUrl?: string;
+  };
+
+  const { token, logout, user } = useAuth() as {
+    token: string | null;
+    logout: () => void;
+    user: UserType | null;
+  };
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
 
-  const mobileMenuRef = useRef(null);
-  const profileMenuRef = useRef(null);
-
-  
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   useClickOutside(mobileMenuRef, () => setMobileMenuOpen(false));
   useClickOutside(profileMenuRef, () => setProfileMenuOpen(false));
@@ -120,11 +150,10 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center space-x-2 text-sm font-medium">
-          <NavLinks />
+          <NavLinks onLinkClick={closeMenus} />
         </div>
 
         <div className="flex items-center space-x-4">
-          {/* Desktop Profile & Auth */}
           <div className="hidden md:flex relative">
             {token ? (
               <>
@@ -134,7 +163,7 @@ export default function Navbar() {
                   whileTap={{ scale: 0.95 }}
                   className="w-8 h-8 rounded-full overflow-hidden border-2 border-stone-600 hover:border-red-500 transition-colors"
                 >
-                  <img
+                  <Image
                     src={user?.profilePictureUrl || "/default-avatar.png"}
                     alt="Profile"
                     className="w-full h-full object-cover"
@@ -143,9 +172,12 @@ export default function Navbar() {
                 </motion.button>
                 <AnimatePresence>
                   {isProfileMenuOpen && (
-                    <ProfileMenu 
-                    ref={profileMenuRef}
-                     user={user} logout={logout} onClose={() => setProfileMenuOpen(false)} />
+                    <ProfileMenu
+                      ref={profileMenuRef}
+                      user={user}
+                      logout={logout}
+                      onClose={() => setProfileMenuOpen(false)}
+                    />
                   )}
                 </AnimatePresence>
               </>
@@ -177,7 +209,7 @@ export default function Navbar() {
                   className="w-8 h-8 rounded-full overflow-hidden border-2 border-stone-600 hover:border-red-500 transition-colors"
                   aria-label="Profile menu"
                 >
-                  <img
+                  <Image
                     src={user?.profilePictureUrl || "/default-avatar.png"}
                     alt="Profile"
                     className="w-full h-full object-cover"
@@ -187,6 +219,7 @@ export default function Navbar() {
                 <AnimatePresence>
                   {isProfileMenuOpen && (
                     <ProfileMenu
+                      ref={profileMenuRef}
                       user={user}
                       logout={() => {
                         logout();
@@ -198,8 +231,6 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
             )}
-
-            
           </div>
         </div>
       </div>

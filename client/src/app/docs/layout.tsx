@@ -1,7 +1,7 @@
 // app/docs/layout.tsx
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import DocsSidebar from "../components/DocsSidebar";
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {

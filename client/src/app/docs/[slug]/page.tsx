@@ -1,6 +1,6 @@
 //  app/docs/[slug]/page.tsx
 "use client";
-import { redirect, useParams, useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";

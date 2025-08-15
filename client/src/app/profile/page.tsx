@@ -2,7 +2,6 @@
 
 import { useState, useEffect, FormEvent, FC } from "react";
 import { CheckCircle, AlertTriangle, Loader2, X } from "lucide-react";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../../../context/AuthContext";
 

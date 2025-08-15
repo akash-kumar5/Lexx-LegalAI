@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 
@@ -7,7 +6,6 @@ export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
-  const router = useRouter();
   const { login } = useAuth();
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
