@@ -9,6 +9,10 @@ export default function AuthPage() {
   const { login } = useAuth();
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+  if (!API_URL) {
+  throw new Error("NEXT_PUBLIC_API_BASE_URL is not defined");
+}
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const endpoint = isLogin ? "/auth/login" : "/auth/signup";

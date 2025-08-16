@@ -165,6 +165,8 @@ export default function Navbar() {
                 >
                   <Image
                     src={user?.profilePictureUrl || "/default-avatar.png"}
+                    width={23}
+                    height={23}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
@@ -211,6 +213,8 @@ export default function Navbar() {
                 >
                   <Image
                     src={user?.profilePictureUrl || "/default-avatar.png"}
+                    width={23}
+                    height={23}
                     alt="Profile"
                     className="w-full h-full object-cover"
                     onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
