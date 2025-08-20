@@ -134,7 +134,7 @@ async def generate_draft(request: DraftRequest):
     query_embedding = embedder.encode(situation, convert_to_tensor=True)
 
     best_match_slug, best_score = None, -1
-    threshold = 0.45
+    threshold = 0.25
     for draft in TEMPLATES_WITH_EMBEDDINGS:
         score = util.pytorch_cos_sim(query_embedding, draft["embedding"]).item()
         if score > best_score:

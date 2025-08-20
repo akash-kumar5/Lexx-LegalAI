@@ -39,7 +39,7 @@ export default function Docs() {
     {
       title: "Payment Reminder Notice",
       description: "Recover outstanding payments from clients or tenants.",
-      route: "/docs/payment-reminder-notice",
+      route: "/docs/payment-reminder",
     },
     {
       title: "Termination Notice",

@@ -15,52 +15,72 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import { timeStamp } from "console";
+import { useAuth } from "../../../../context/AuthContext";
 
 export default function DraftEditorPage() {
+  const [draftContent, setDraftContent] = useState("");
+  const [formData, setFormData] = useState<{ [key: string]: string }>({});
+  const [manualEdit, setManualEdit] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [existingTimestamp, setExistingTimestamp] = useState<number | null>(
+    null
+  );
   const params = useParams();
   const searchParams = useSearchParams();
+  const auth = useAuth();
+  const token = auth.token;
+  const profile = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
   const slug = params.slug as string;
   type Draft = {
     id: string; // UUID or timestamp based unique id
-    category: string; // e.g., "notices"
     slug: string; // e.g., "payment-reminder"
-    draftContent: string;
+    draft_content: string;
     formData: { [key: string]: string };
     timestamp: number; // Date.now()
   };
 
   useEffect(() => {
-    const aiGeneratedBody = searchParams.get("body"); // Read 'body' from URL
+    const aiGeneratedBody = searchParams.get("body");
+    const timestampStr = searchParams.get("timestamp");
 
-    if (aiGeneratedBody) {
-      // If AI-generated content exists, use it immediately
-      setDraftContent(aiGeneratedBody);
-      return; // Stop further processing
-    }
-    const savedDrafts = JSON.parse(
-      localStorage.getItem("savedDrafts") || "[]"
-    ) as Draft[];
-    const existingDraft = savedDrafts.find(
-      (draft: Draft) => draft.slug === slug
-    );
+    async function loadDraft() {
+      try {
+        const res = await fetch("http://localhost:8000/drafts", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // FIX
+          },
+        });
+        const drafts = await res.json();
+        const existingDraft = drafts.find((d: Draft) => d.slug === slug);
 
-    if (existingDraft) {
-      setDraftContent(existingDraft.draftContent);
-    } else {
-      const example = exampleDrafts[slug];
-      if (example) {
-        setDraftContent(example);
+        if (existingDraft) {
+          setDraftContent(existingDraft.draft_content);
+          return;
+        }
+      } catch (err) {
+        console.warn("Falling back to local/example drafts");
+      }
+
+      if (aiGeneratedBody) {
+        setDraftContent(decodeURIComponent(aiGeneratedBody));
+        if (timestampStr) {
+          setExistingTimestamp(Number(timestampStr));
+        }
+        return;
+      } else {
+        setDraftContent(exampleDrafts[slug] || "");
       }
     }
+
+    loadDraft();
   }, [slug, searchParams]);
 
-  const [draftContent, setDraftContent] = useState("");
   const currentFields = fieldSchema[slug] || [];
-  const [formData, setFormData] = useState<{ [key: string]: string }>({});
-  const [manualEdit, setManualEdit] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
 
   const handleGenerateDraft = () => {
     if (!draftContent) {
@@ -75,27 +95,70 @@ export default function DraftEditorPage() {
     setShowPreview(true);
   };
 
-  const handleViewExample = () => {
-    let draft = exampleDrafts[slug];
-    currentFields.forEach((field) => {
-      const value = formData[field.key] || "________";
-      const placeholder = new RegExp(`{{${field.key}}}`, "g");
-      draft = draft.replace(placeholder, value);
-    });
+  useEffect(() => {
+    function autoFillDraft(template: string) {
+      const profile = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
-    setDraftContent(draft);
+      let filledDraft = template;
+      Object.keys(profile).forEach((key) => {
+        const placeholder = new RegExp(`{{${key}}}`, "g"); // e.g., {{fullName}}
+        filledDraft = filledDraft.replace(
+          placeholder,
+          profile[key] || "________"
+        );
+      });
+
+      return filledDraft;
+    }
+
+    const template = exampleDrafts[slug]; // or your current draft
+    const filledDraft = autoFillDraft(template);
+    setDraftContent(filledDraft);
+  }, [slug]);
+
+  const handleViewExample = () => {
+    let template = exampleDrafts[slug];
+    const finalDraft = currentFields.reduce((acc, field) => {
+      const value = formData[field.key] || "________";
+      return acc.replace(new RegExp(`{{${field.key}}}`, "g"), value);
+    }, template);
+
+    setDraftContent(finalDraft);
   };
 
-  const handleSaveDraft = () => {
-    const savedDrafts = JSON.parse(localStorage.getItem("savedDrafts") || "[]");
-    savedDrafts.push({
-      category: params.category,
-      slug,
-      draftContent,
-      timestamp: Date.now(),
-    });
-    localStorage.setItem("savedDrafts", JSON.stringify(savedDrafts));
-    alert("Draft Saved!");
+  // Save draft
+  const handleSaveDraft = async () => {
+    const isUpdating = existingTimestamp !== null;
+
+    try {
+      const url = isUpdating
+        ? `http://localhost:8000/drafts/${existingTimestamp}`
+        : "http://localhost:8000/drafts";
+
+      const method = isUpdating ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          slug,
+          draft_content: draftContent,
+          timestamp: existingTimestamp || Date.now(),
+        }),
+        credentials: "include", // so JWT cookie works
+      });
+
+      if (!res.ok)
+        throw new Error(`Failed to ${isUpdating ? "Update" : "Save"} draft.`);
+
+      alert(`Draft ${isUpdating ? "Updated" : "Saved"}!`);
+    } catch (err) {
+      console.error(err);
+      alert(`Could not ${isUpdating ? "update" : "save"} draft`);
+    }
   };
 
   const handleDiscard = () => {
@@ -131,43 +194,47 @@ export default function DraftEditorPage() {
         </div>
 
         {showPreview && (
-  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-    <div className="bg-white text-black p-6 rounded-lg w-[80%] h-[80%] flex flex-col overflow-auto">
-      <h2 className="text-xl font-bold mb-4">Draft Preview</h2>
+          <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+            <div className="bg-white text-black p-6 rounded-lg w-[80%] h-[80%] flex flex-col overflow-auto">
+              <h2 className="text-xl font-bold mb-4">Draft Preview</h2>
 
-      <pre className="whitespace-pre-wrap text-sm flex-1 overflow-y-auto border border-gray-200 rounded p-4 bg-gray-50">
-        {draftContent}
-      </pre>
+              <pre className="whitespace-pre-wrap text-sm flex-1 overflow-y-auto border border-gray-200 rounded p-4 bg-gray-50">
+                {draftContent}
+              </pre>
 
-      {/* Actions at bottom-right */}
-      <div className="mt-4 flex justify-end gap-3">
-        <Button
-          variant="outline"
-          onClick={() => setShowPreview(false)}
-          className="border-gray-400"
-        >
-          Cancel
-        </Button>
+              {/* Actions at bottom-right */}
+              <div className="mt-4 flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowPreview(false)}
+                  className="border-gray-400"
+                >
+                  Cancel
+                </Button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="default" className="bg-green-700">
-              Download
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => downloadPDF(draftContent, slug)}>
-              PDF
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => downloadDOCX(draftContent, slug)}>
-              DOCX
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
-  </div>
-)}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="default" className="bg-green-700">
+                      Download
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => downloadPDF(draftContent, slug)}
+                    >
+                      PDF
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => downloadDOCX(draftContent, slug)}
+                    >
+                      DOCX
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Dynamic Form Fields */}
         <Card className="bg-zinc-900 border border-zinc-700 mb-6 hidden md:block">

@@ -165,6 +165,7 @@ export default function ChatPage() {
       >
         <ChatSidebar
           chats={chats}
+          chatMessages={messages}
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           onSelectChat={handleSelectChat}

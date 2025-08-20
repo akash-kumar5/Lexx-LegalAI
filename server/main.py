@@ -6,6 +6,7 @@ from routes import auth
 from routes import summary
 from routes import docs
 from routes import user
+from routes import drafts
 
 load_dotenv()
 
@@ -24,3 +25,4 @@ app.include_router(auth.router)
 app.include_router(summary.router)
 app.include_router(docs.router)
 app.include_router(user.router)
+app.include_router(drafts.router)

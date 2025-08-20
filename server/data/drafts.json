@@ -39,5 +39,81 @@
     "description": "A formal letter notifying an employee of their termination, citing reasons and final settlement details.",
     "body": "Date: {{date}}\n\nTo:\n{{toEmployee}}\n[Employee's Address]\n[Employee's Contact Information]\n\nFrom:\n{{fromCompany}}\n[Company's Address]\n[Company's Contact Information]\n\nSubject: Termination of Employment\n\nDear {{toEmployee}},\n\nThis letter serves as a formal notice of termination of your employment with {{fromCompany}}, effective from {{date}}.\n\nThe reason for termination is as follows:\n{{reason}}\n\nDespite prior discussions and warnings, there has been no satisfactory improvement/resolution. As a result, the management has decided to terminate your employment as per the terms and conditions outlined in your employment contract.\n\nFinal settlements, including dues, salary, and any other benefits, will be processed as per company policy and applicable labor laws. You are requested to return any company property in your possession, including identification cards, electronic devices, documents, etc., on or before your last working day.\n\nPlease acknowledge the receipt of this termination letter and contact the HR department for any clarifications regarding your final settlements.\n\nWe wish you the best for your future endeavors.\n\nSincerely,\n\n(Signature)\n\n[Authorized Signatory Name]\n[Designation]\n{{fromCompany}}",
     "placeholders": ["toEmployee", "fromCompany", "reason", "date"]
-  }
+  },
+  {
+  "slug": "employment-offer-letter",
+  "title": "Employment Offer Letter",
+  "description": "A formal letter offering employment to a candidate with details of position, salary, benefits, probation, and terms of employment.",
+  "body": "[Company Letterhead]\n\nDate: {{date}}\n\nTo:\n{{candidateName}}\n{{candidateAddress}}\n\nSubject: Employment Offer\n\nDear {{candidateName}},\n\nWe are pleased to offer you the position of {{jobTitle}} at {{companyName}}. Your skills and experience are an excellent match for our team, and we are excited to have you on board.\n\nYour employment with us will be subject to the following terms and conditions:\n\n1. **Position & Reporting**  \n   You will serve as {{jobTitle}}, reporting to {{reportingManager}} or such other person as the Company may designate.\n\n2. **Start Date**  \n   Your employment will commence on {{startDate}}.\n\n3. **Compensation**  \n   Your annual compensation will be {{annualSalary}} ({{salaryInWords}}) payable in accordance with the Company's standard payroll practices.\n\n4. **Probation Period**  \n   You will be on probation for a period of {{probationPeriod}} from your start date. Upon satisfactory completion, your employment will be confirmed in writing.\n\n5. **Benefits**  \n   You will be entitled to benefits as per Company policy, including {{benefitsDetails}}.\n\n6. **Work Location**  \n   Your primary place of work will be {{workLocation}}. You may be required to travel or relocate as per Company requirements.\n\n7. **Termination**  \n   Either party may terminate this agreement by providing {{noticePeriod}} written notice or payment in lieu thereof, subject to applicable laws.\n\n8. **Confidentiality**  \n   You shall maintain strict confidentiality of all proprietary and confidential information of the Company during and after your employment.\n\nPlease sign and return a copy of this letter as a token of your acceptance of the terms and conditions.\n\nWe look forward to working with you.\n\nSincerely,\n\nFor {{companyName}},\n\n(Signature)  \n{{authorizedSignatoryName}}  \n{{authorizedSignatoryTitle}}\n\nAcknowledged and Accepted by:  \n(Signature)  \n{{candidateName}}  \nDate: ______________________",
+  "placeholders": [
+    "date",
+    "candidateName",
+    "candidateAddress",
+    "jobTitle",
+    "companyName",
+    "reportingManager",
+    "startDate",
+    "annualSalary",
+    "salaryInWords",
+    "probationPeriod",
+    "benefitsDetails",
+    "workLocation",
+    "noticePeriod",
+    "authorizedSignatoryName",
+    "authorizedSignatoryTitle"
+  ]
+},
+{
+  "slug": "invoice-for-services",
+  "title": "Invoice for Services",
+  "description": "A professional invoice template for services rendered, including provider and client details, payment terms, and account information.",
+  "body": "INVOICE FOR SERVICES RENDERED\n\nInvoice Number: {{invoiceNumber}}\nDate of Issue: {{invoiceDate}}\n\nFrom (Service Provider):\n{{serviceProviderName}}\n{{serviceProviderAddress}}\n{{serviceProviderContact}}\n\nTo (Client):\n{{clientName}}\n{{clientAddress}}\n{{clientContact}}\n\nDescription of Services Provided:\n{{serviceDescription}}\n\nService Period: {{serviceStartDate}} to {{serviceEndDate}}\n\nAmount Due:\nService Fee: {{serviceFeeAmount}}\nTaxes (if applicable): {{taxAmount}}\nOther Charges: {{otherCharges}}\nTotal Amount Payable: {{totalAmount}}\n\nPayment Terms: {{paymentTerms}}\nPayment Due Date: {{paymentDueDate}}\nAccepted Payment Methods: {{paymentMethods}}\n\nPlease make the payment to the following account:\nAccount Name: {{accountName}}\nBank Name: {{bankName}}\nAccount Number: {{accountNumber}}\nIFSC/SWIFT Code: {{ifscOrSwiftCode}}\n\nThank you for your business.\n\nSincerely,\n(Signature)\n{{serviceProviderName}}",
+  "placeholders": [
+    "invoiceNumber",
+    "invoiceDate",
+    "serviceProviderName",
+    "serviceProviderAddress",
+    "serviceProviderContact",
+    "clientName",
+    "clientAddress",
+    "clientContact",
+    "serviceDescription",
+    "serviceStartDate",
+    "serviceEndDate",
+    "serviceFeeAmount",
+    "taxAmount",
+    "otherCharges",
+    "totalAmount",
+    "paymentTerms",
+    "paymentDueDate",
+    "paymentMethods",
+    "accountName",
+    "bankName",
+    "accountNumber",
+    "ifscOrSwiftCode"
+  ]
+},
+{
+  "slug": "lease-agreement",
+  "title": "Lease Agreement",
+  "description": "A standard residential lease agreement outlining terms such as rent, security deposit, maintenance, utilities, and termination conditions.",
+  "body": "LEASE AGREEMENT\n\nThis Lease Agreement (\"Agreement\") is made and entered into on {{agreementDate}}, by and between:\n\n**Lessor (Landlord):**  \n{{lessorName}}  \n{{lessorAddress}}\n\n**Lessee (Tenant):**  \n{{lesseeName}}  \n{{lesseeAddress}}\n\n**Property Address:**  \n{{propertyAddress}}\n\n1. **Term of Lease**  \n   The term of this lease shall commence on {{leaseStartDate}} and shall continue until {{leaseEndDate}}, unless terminated earlier in accordance with this Agreement.\n\n2. **Rent**  \n   The Lessee agrees to pay rent of {{monthlyRent}} per month, payable on or before the {{rentDueDate}} day of each month, to the Lessor at {{rentPaymentAddress}} or such other place as the Lessor may designate.\n\n3. **Security Deposit**  \n   The Lessee shall pay a security deposit of {{securityDepositAmount}} prior to taking possession of the Property. The deposit will be returned upon termination of the lease, subject to deductions for damages, unpaid rent, or other charges.\n\n4. **Use of Property**  \n   The Lessee shall use the Property solely for residential purposes and shall not sublet or assign the Property without the Lessor’s prior written consent.\n\n5. **Maintenance and Repairs**  \n   The Lessee shall keep the Property clean and in good condition and shall promptly notify the Lessor of any damage or need for repair. The Lessor shall be responsible for major repairs unless caused by the Lessee's negligence.\n\n6. **Utilities**  \n   The Lessee shall be responsible for payment of all utilities and services for the Property, except {{utilitiesProvidedByLessor}}.\n\n7. **Termination**  \n   Either party may terminate this Agreement by giving {{terminationNoticePeriod}} written notice, subject to applicable laws.\n\n8. **Governing Law**  \n   This Agreement shall be governed by the laws of {{jurisdiction}}.\n\nIN WITNESS WHEREOF, the parties have executed this Lease Agreement on the date first above written.\n\n**Lessor:**  \nName: {{lessorName}}  \nSignature: ______________________  \nDate: ___________________________\n\n**Lessee:**  \nName: {{lesseeName}}  \nSignature: ______________________  \nDate: ___________________________",
+  "placeholders": [
+    "agreementDate",
+    "lessorName",
+    "lessorAddress",
+    "lesseeName",
+    "lesseeAddress",
+    "propertyAddress",
+    "leaseStartDate",
+    "leaseEndDate",
+    "monthlyRent",
+    "rentDueDate",
+    "rentPaymentAddress",
+    "securityDepositAmount",
+    "utilitiesProvidedByLessor",
+    "terminationNoticePeriod",
+    "jurisdiction"
+  ]
+}
 ]

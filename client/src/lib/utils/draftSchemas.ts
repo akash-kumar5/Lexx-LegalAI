@@ -147,7 +147,6 @@ import terminationNotice from "../draftExamples/terminationNotice";
   { label: "Collateral Details", key: "collateralDetails" },
   { label: "Jurisdiction", key: "jurisdiction" }
 ]
-
   };
 
   export const exampleDrafts: { [key: string]: string } = {
@@ -155,12 +154,11 @@ import terminationNotice from "../draftExamples/terminationNotice";
     "termination-notice": terminationNotice,
     "legal-demand-notice": legalDemandNotice,
     "non-disclosure-agreement" : nonDisclosureAgreement,
-    "employee-offer-letter": employmentOfferLetter,
+    "employment-offer-letter": employmentOfferLetter,
     "lease-agreement": leaseAgreement,
     "service-agreement": serviceAgreement,
     "invoice-for-service": invoiceForServices,
     "loan-agreement": loanAgreement
-
   };
 
   

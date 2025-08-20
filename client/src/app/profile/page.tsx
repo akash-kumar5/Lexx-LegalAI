@@ -163,10 +163,10 @@ export default function Profile() {
         }));
 
         // also store in localStorage as backup
-        localStorage.setItem("lexxProfile", JSON.stringify(data));
+        localStorage.setItem("userProfile", JSON.stringify(data));
       } catch {
         // fallback: try localStorage
-        const saved = localStorage.getItem("lexxProfile");
+        const saved = localStorage.getItem("userProfile");
         if (saved) {
           setProfile(JSON.parse(saved));
         } else {
@@ -211,7 +211,7 @@ export default function Profile() {
       });
 
       // sync to localStorage too
-      localStorage.setItem("lexxProfile", JSON.stringify(profile));
+      localStorage.setItem("userProfile", JSON.stringify(profile));
     } catch {
       setNotification({ message: "Failed to save profile.", type: "error" });
     } finally {
@@ -256,7 +256,7 @@ export default function Profile() {
     <div className="max-w-3xl mx-auto p-6 md:p-8 bg-zinc-900 rounded-lg shadow-xl text-white">
       <h1 className="text-3xl font-bold mb-2">Your Profile</h1>
       <p className="text-stone-400 mb-6">
-        We’ll use this info to auto-fill your legal drafts.
+        We will use this info to auto-fill your legal drafts.
       </p>
 
       {notification && (

@@ -19,13 +19,13 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
     useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    const profileData = localStorage.getItem("lexxProfile");
+    const profileData = localStorage.getItem("userProfile");
     
     if (profileData) {
     try {
       setUser(JSON.parse(profileData)); // now it's an object
     } catch (err) {
-      console.error("Failed to parse lexxProfile:", err);
+      console.error("Failed to parse userProfile:", err);
     }
   }
     if (storedToken) setToken(storedToken);
@@ -41,7 +41,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("lexxProfile");
+    localStorage.removeItem("userProfile");
     setToken(null);
     router.push("/auth");
     router.refresh();
