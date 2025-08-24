@@ -27,7 +27,7 @@ export const exportChatToPDF = (title: string, messages: ChatMessage[]) => {
     const line = `${senderText}${msg.text}${timeText}`;
 
     const splitLines = doc.splitTextToSize(line, 500); // wrap text within page width
-    splitLines.forEach((l) => {
+    splitLines.forEach((l:string) => {
       if (y > 800) { // start new page if needed
         doc.addPage();
         y = margin;
