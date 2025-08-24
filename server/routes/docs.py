@@ -29,9 +29,6 @@ TEMPLATES_WITH_EMBEDDINGS: List[Dict] = []
 ORIGINAL_TEMPLATES: Dict[str, Dict] = {}
 
 def clean_legal_draft(text: str) -> str:
-    # Remove markdown bold/italic asterisks around words but keep placeholders intact
-    # Assumes placeholders are {{...}} and should stay untouched
-    # Removes * or ** only when around normal words or phrases, not placeholders
     
     # Remove asterisks around words (bold/italic in markdown)
     cleaned = re.sub(r'\*\*(.*?)\*\*', r'\1', text)  # bold

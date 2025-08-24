@@ -3,34 +3,38 @@ Date: {{date}}
 
 To:
 {{toParty}}
-{{recipientAddress}}
+[Recipient's Address]
+[Recipient's Contact Information]
 
 From:
-{{fromLawyer}}
-[Lawyer's Address]
-[Lawyer's Contact Information]
+{{fromParty}}
+[Sender's Address]
+[Sender's Contact Information]
 
-Subject: Legal Demand Notice for {{claimDetails}}
+Subject: Legal Demand Notice
 
 Dear {{toParty}},
 
-Under instructions from my client, I am hereby issuing you this legal notice in connection with {{claimDetails}}.
+This is to formally notify you that despite repeated reminders, the outstanding amount of INR {{amountDue}} remains unpaid as of {{date}}.  
 
-My client has been continuously requesting you to fulfill your obligations, however, despite several reminders, you have failed to comply with the same. This non-compliance has caused my client significant loss and inconvenience.
+Details of the transaction are as follows:
+- Invoice Number: {{invoiceNumber}}
+- Invoice Date: {{invoiceDate}}
+- Amount Due: INR {{amountDue}}
 
-You are hereby called upon to immediately take necessary steps to resolve the matter within {{days}} days from the receipt of this notice. Failing to do so shall compel my client to initiate appropriate legal proceedings against you at your sole risk, cost, and consequences.
+You are hereby demanded to make the payment of the aforesaid amount within {{dueDays}} days from the date of receipt of this notice, failing which we shall be constrained to initiate appropriate legal proceedings against you at your risk, cost, and consequence.
 
-This notice is being sent without prejudice to any other legal rights and remedies available to my client.
+We sincerely hope that legal recourse will not be necessary and that you will take immediate steps to settle this outstanding amount.
 
-A copy of this notice is retained for record and future legal action.
+Kindly treat this notice with urgency.
 
 Sincerely,
 
 (Signature)
 
-{{fromLawyer}}
-[Designation, e.g., Advocate]
-On behalf of [Client Name]
-`
+[Authorized Representative Name]  
+[Designation]  
+{{fromParty}}
+`;
 
 export default legalDemandNotice;
