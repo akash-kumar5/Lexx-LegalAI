@@ -16,7 +16,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { timeStamp } from "console";
 import { useAuth } from "../../../../context/AuthContext";
 
 export default function DraftEditorPage() {
@@ -117,7 +116,7 @@ export default function DraftEditorPage() {
   }, [slug]);
 
   const handleViewExample = () => {
-    let template = exampleDrafts[slug];
+    const template = exampleDrafts[slug];
     const finalDraft = currentFields.reduce((acc, field) => {
       const value = formData[field.key] || "________";
       return acc.replace(new RegExp(`{{${field.key}}}`, "g"), value);
