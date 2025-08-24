@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState, useRef, forwardRef, useEffect } from "react";
+import React, { useState, forwardRef, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext"; // Assuming path is correct
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, MoonIcon, LogOut } from "lucide-react";
@@ -30,7 +30,7 @@ const navItems = [
 
 // Generic click outside hook (Correctly implemented)
 const useClickOutside = (
-  refs: React.RefObject<HTMLElement>[],
+  refs: React.RefObject<Element>[],
   handler: (event: MouseEvent | TouchEvent) => void
 ) => {
   useEffect(() => {
@@ -141,20 +141,26 @@ export default function Navbar() {
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
 
   // REFS: Use separate refs for each interactive element to avoid conflicts.
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
-  const profileMenuRef = useRef<HTMLDivElement>(null);
-  const profileButtonRef = useRef<HTMLButtonElement>(null); // Only one ref needed now
+  const mobileMenuRef = React.createRef<HTMLDivElement>();
+  const mobileMenuButtonRef = React.createRef<HTMLButtonElement>();
+  const profileMenuRef = React.createRef<HTMLDivElement>();
+  const profileButtonRef = React.createRef<HTMLButtonElement>(); // Only one ref needed now
 
   // BUG FIX: Separate click-outside hooks for each menu.
   // This prevents one menu from interfering with the other.
-  useClickOutside([mobileMenuRef, mobileMenuButtonRef], () => {
-    if (isMobileMenuOpen) setMobileMenuOpen(false);
-  });
+  useClickOutside(
+    [mobileMenuRef as React.RefObject<Element>, mobileMenuButtonRef as React.RefObject<Element>],
+    () => {
+      if (isMobileMenuOpen) setMobileMenuOpen(false);
+    }
+  );
 
-  useClickOutside([profileMenuRef, profileButtonRef], () => {
-    if (isProfileMenuOpen) setProfileMenuOpen(false);
-  });
+  useClickOutside(
+    [profileMenuRef as React.RefObject<Element>, profileButtonRef as React.RefObject<Element>],
+    () => {
+      if (isProfileMenuOpen) setProfileMenuOpen(false);
+    }
+  );
 
   const toggleMobileMenu = () => {
     setProfileMenuOpen(false); // Close profile menu when opening mobile menu
@@ -208,7 +214,7 @@ export default function Navbar() {
               <AnimatePresence>
                 {isProfileMenuOpen && (
                   <ProfileMenu
-                    ref={profileMenuRef}
+                    ref={profileMenuRef as React.RefObject<HTMLDivElement>}
                     user={user}
                     logout={logout}
                     onClose={closeAllMenus}
@@ -246,7 +252,7 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            ref={mobileMenuRef}
+            ref={mobileMenuRef as React.RefObject<HTMLDivElement>}
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
