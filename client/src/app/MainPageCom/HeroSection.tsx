@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { easeInOut, motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 
 export default function HeroSection() {
@@ -28,7 +28,7 @@ export default function HeroSection() {
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "easeInOut",
+        ease: easeInOut,
       },
     },
   };
