@@ -1,6 +1,6 @@
 "use client";
 import { FileText, MessageSquare, FileCheck } from "lucide-react";
-import { motion } from "framer-motion";
+import { easeOut, motion } from "framer-motion";
 
 const steps = [
   {
@@ -34,7 +34,7 @@ export default function WorkflowSection() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
-    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: easeOut } },
   };
 
   return (

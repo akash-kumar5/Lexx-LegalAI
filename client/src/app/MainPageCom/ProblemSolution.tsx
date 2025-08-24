@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { easeOut, motion } from "framer-motion";
 import { MinusCircle, PlusCircle } from "lucide-react";
 
 export default function ProblemSolutionSection() {
@@ -15,7 +15,7 @@ export default function ProblemSolutionSection() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: easeOut } },
   };
 
   return (
