@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import {
@@ -77,11 +77,11 @@ export default function ChatSidebar({
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
   const editingInputRef = useRef<HTMLInputElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = React.createRef<HTMLDivElement>();
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   // UX IMPROVEMENT: Use the custom hook to close the context menu when clicking outside.
-  useClickOutside(menuRef, () => setOpenMenuChatId(null));
+  useClickOutside(menuRef as React.RefObject<HTMLDivElement>, () => setOpenMenuChatId(null));
 
   // UX IMPROVEMENT: Automatically focus the input when editing starts.
   useEffect(() => {
