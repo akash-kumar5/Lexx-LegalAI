@@ -23,7 +23,7 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     
     if (profileData) {
     try {
-      setUser(JSON.parse(profileData)); // now it's an object
+      setUser(JSON.parse(profileData));
     } catch (err) {
       console.error("Failed to parse userProfile:", err);
     }
