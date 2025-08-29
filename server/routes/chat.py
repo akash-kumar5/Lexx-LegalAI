@@ -19,13 +19,14 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PERSIST_DIR = os.path.join(BASE_DIR, "../chroma_data") 
 load_dotenv()
 MAX_INPUT_TOKENS = 6000
-RESPONSE_TOKEN_BUFFER = 1000  # Tokens reserved for the assistant's reply
-MODEL_TOKEN_LIMIT = 64000  # DeepSeek's total limit
+RESPONSE_TOKEN_BUFFER = 1000
+MODEL_TOKEN_LIMIT = 64000  
 
 tokenizer = tiktoken.encoding_for_model("gpt-3.5-turbo")  # Works well for OpenRouter API
 
 def count_tokens(text: str) -> int:
     return len(tokenizer.encode(text))
+
 
 
 router = APIRouter(prefix="/api")
@@ -93,6 +94,14 @@ def serialize_chat(chat):
     return chat
 
 # ---- Routes ---- #
+
+class TokenCountRequest(BaseModel):
+    text: str
+
+@router.post("/count-tokens")
+async def count_tokens_api(req: TokenCountRequest):
+    return {"tokens": count_tokens(req.text)}
+
 
 @router.post("/chat")
 async def ask_llm(request: ChatRequest, user: User = Depends(get_current_user)):
@@ -189,7 +198,6 @@ async def rename_chat(chat_id: str, payload: dict, user: User = Depends(get_curr
     )
     return {"success": True}
 
-
 @router.post("/chats")
 async def create_chat(user: User = Depends(get_current_user)):
     chat = {"user_id": user.id, "messages": []}
@@ -206,3 +214,26 @@ async def add_message(chat_id: str, message: Message, user: User = Depends(get_c
     if update_result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Chat not found")
     return {"status": "Message added"}
+
+class FileTextRequest(BaseModel):
+    text: str
+
+@router.post("/process-file")
+async def process_file(request: FileTextRequest, user: User = Depends(get_current_user)):
+    text = request.text.strip()
+    if not text:
+        raise HTTPException(status_code=400, detail="Empty text")
+
+    token_count = count_tokens(text)
+    if token_count > MAX_INPUT_TOKENS:
+        return {
+            "status": "too_long",
+            "message": "File too large, please use summarization.",
+            "tokens": token_count
+        }
+
+    # If within limits → create a new chat and insert
+    chat = {"user_id": user.id, "messages": [{"role": "user", "content": text}], "createdAt": datetime.now()}
+    result = await chats_collection.insert_one(chat)
+
+    return {"status": "ok", "chat_id": str(result.inserted_id)}

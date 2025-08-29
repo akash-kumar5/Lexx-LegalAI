@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import { useAuth } from "../../../context/AuthContext";
+// To make this component self-contained, we'll pass the token as a prop
+// instead of relying on a context that may not be available.
+// import { useAuth } from "../../../context/AuthContext";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import {
   Pencil,
@@ -11,7 +13,15 @@ import {
   Copy,
   Upload,
 } from "lucide-react";
-import { exportChatToPDF } from "./ExportChat";
+// The export function is assumed to be in a separate utility file.
+// For this example, a placeholder is defined below.
+// import { exportChatToPDF } from "./ExportChat";
+
+// Placeholder for the PDF export functionality
+const exportChatToPDF = (title: string, messages: any[]) => {
+  console.log("Exporting to PDF:", title, messages);
+  alert(`Exporting chat "${title}" to PDF... (feature placeholder)`);
+};
 
 // A reusable hook for detecting clicks outside of a given element.
 const useClickOutside = (
@@ -44,7 +54,7 @@ interface ChatSummary {
 interface Message {
   role: "user" | "assistant";
   content: string;
-};
+}
 
 interface ChatSidebarProps {
   onSelectChat: (chatId: string) => void;
@@ -55,6 +65,7 @@ interface ChatSidebarProps {
   onRefresh: () => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
+  token: string | null; // Token is now a prop
 }
 
 export default function ChatSidebar({
@@ -66,29 +77,91 @@ export default function ChatSidebar({
   currentChatId,
   collapsed,
   setCollapsed,
+  token, // Use the token from props
 }: ChatSidebarProps) {
-  const { token } = useAuth();
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
     null
   );
-  const [openMenuChatId, setOpenMenuChatId] = useState<string | null>(null);
-  const [copiedChatId, setCopiedChatId] = useState<string | null>(null);
+  // State to manage menu visibility, ID, and position
+  const [openMenu, setOpenMenu] = useState<{
+    id: string | null;
+    dir: "up" | "down";
+  }>({
+    id: null,
+    dir: "down",
+  });
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
   const editingInputRef = useRef<HTMLInputElement>(null);
-  const menuRef = React.createRef<HTMLDivElement>();
-  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const menuRef = useRef<HTMLDivElement>(null);
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
-  // UX IMPROVEMENT: Use the custom hook to close the context menu when clicking outside.
-  useClickOutside(menuRef as React.RefObject<HTMLDivElement>, () => setOpenMenuChatId(null));
+  useClickOutside(menuRef, () => setOpenMenu({ id: null, dir: "down" }));
 
-  // UX IMPROVEMENT: Automatically focus the input when editing starts.
   useEffect(() => {
     if (editingChatId && editingInputRef.current) {
       editingInputRef.current.focus();
     }
   }, [editingChatId]);
+
+  const updateChatTitle = async (chatId: string, newTitle: string) => {
+    if (!token) {
+      setSnackbarMessage("Authentication error.");
+      setTimeout(() => setSnackbarMessage(null), 3000);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: newTitle }),
+      });
+      if (res.ok) {
+        onRefresh();
+        setSnackbarMessage("Chat renamed.");
+        setTimeout(() => setSnackbarMessage(null), 3000);
+      } else {
+        throw new Error("Failed to rename chat");
+      }
+    } catch (err) {
+      console.error("Failed to rename chat:", err);
+      setSnackbarMessage("Error: Could not rename chat.");
+      setTimeout(() => setSnackbarMessage(null), 3000);
+    }
+  };
+
+  const deleteChat = async (chatId: string) => {
+    if (!token) {
+      setSnackbarMessage("Authentication error.");
+      setTimeout(() => setSnackbarMessage(null), 3000);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        onRefresh();
+        setSnackbarMessage("Chat deleted.");
+        setTimeout(() => setSnackbarMessage(null), 3000);
+        if (chatId === currentChatId) onNewChat();
+      } else {
+        throw new Error("Failed to delete chat");
+      }
+    } catch (err) {
+      console.error("Failed to delete chat:", err);
+      setSnackbarMessage("Error: Could not delete chat.");
+      setTimeout(() => setSnackbarMessage(null), 3000);
+    }
+  };
 
   const saveTitle = () => {
     if (editingChatId && editingInputRef.current) {
@@ -105,46 +178,29 @@ export default function ChatSidebar({
       e.preventDefault();
       saveTitle();
     } else if (e.key === "Escape") {
-      // UX IMPROVEMENT: Allow canceling edit with the Escape key.
       setEditingChatId(null);
     }
   };
 
+  const handleMenuToggle = (e: React.MouseEvent, chatId: string) => {
+    if (openMenu.id === chatId) {
+      setOpenMenu({ id: null, dir: "down" });
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    // Check if there's enough space below for the menu (approx. 150px)
+    const opensUp = window.innerHeight - rect.bottom < 150;
+    setOpenMenu({ id: chatId, dir: opensUp ? "up" : "down" });
+  };
+
   const handleStartEditing = (chatId: string) => {
-    setOpenMenuChatId(null); // Close menu when starting edit
+    setOpenMenu({ id: null, dir: "down" });
     setEditingChatId(chatId);
   };
 
   const handleStartDelete = (chatId: string) => {
-    setOpenMenuChatId(null); // Close menu when opening delete confirm
+    setOpenMenu({ id: null, dir: "down" });
     setShowDeleteConfirm(chatId);
-  };
-
-  const updateChatTitle = async (chatId: string, newTitle: string) => {
-    // ... (fetch logic is unchanged)
-    try {
-      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
-        /* ... */
-      });
-      if (res.ok) onRefresh();
-    } catch (err) {
-      console.error("Failed to rename chat:", err);
-    }
-  };
-
-  const deleteChat = async (chatId: string) => {
-    // ... (fetch logic is unchanged)
-    try {
-      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
-        /* ... */
-      });
-      if (res.ok) {
-        onRefresh();
-        if (chatId === currentChatId) onNewChat();
-      }
-    } catch (err) {
-      console.error("Failed to delete chat:", err);
-    }
   };
 
   const confirmDelete = async () => {
@@ -153,34 +209,28 @@ export default function ChatSidebar({
     setShowDeleteConfirm(null);
   };
 
-  // UX IMPROVEMENT: Provide instant feedback without a disruptive `alert`.
   const copyChatLink = (chatId: string) => {
     const chatLink = `${window.location.origin}/chat/${chatId}`;
     navigator.clipboard.writeText(chatLink).then(() => {
-      setSnackbarMessage("Chat link Copied!");
-      setTimeout(() => setSnackbarMessage(null), 2000); // Reset after 2 seconds
+      setSnackbarMessage("Chat link copied!");
+      setTimeout(() => setSnackbarMessage(null), 2000);
     });
-    setOpenMenuChatId(null);
+    setOpenMenu({ id: null, dir: "down" });
   };
 
-  // PERFORMANCE: Memoize the grouped chats to prevent recalculation on every render.
   const groupedChats = useMemo(() => {
     const groups: Record<string, ChatSummary[]> = {};
     const sortedChats = [...chats].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-
-    // UX IMPROVEMENT: Use human-friendly date grouping.
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
-
     const isSameDay = (d1: Date, d2: Date) =>
       d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();
-
     sortedChats.forEach((chat) => {
       const chatDate = new Date(chat.createdAt);
       let key: string;
@@ -191,7 +241,6 @@ export default function ChatSidebar({
           month: "long",
           day: "numeric",
         });
-
       if (!groups[key]) groups[key] = [];
       groups[key].push(chat);
     });
@@ -240,7 +289,7 @@ export default function ChatSidebar({
         {Object.entries(groupedChats).map(([date, chatList]) => (
           <div key={date}>
             {!collapsed && (
-              <div className="text-zinc-400 text-xs font-medium mb-1 px-2">
+              <div className="text-zinc-400 text-xs font-medium mb-1 px-2 pt-2">
                 {date}
               </div>
             )}
@@ -253,12 +302,10 @@ export default function ChatSidebar({
                   <input
                     ref={editingInputRef}
                     type="text"
-                    defaultValue={chat.preview || chat.title}
+                    defaultValue={chat.preview || "New Chat"}
                     autoFocus
                     onKeyDown={handleEditKeyDown}
-                    onBlur={() => {
-                      if (editingChatId === chat._id) saveTitle();
-                    }} // Save when input loses focus
+                    onBlur={saveTitle}
                     className="w-full bg-zinc-800 text-white text-sm px-3 py-2 rounded border border-zinc-600 outline-none"
                   />
                 ) : (
@@ -268,64 +315,60 @@ export default function ChatSidebar({
                       chat._id === currentChatId ? "bg-zinc-800" : ""
                     }`}
                   >
-                    {collapsed ? "C" : chat.preview || chat.title || "Untitled"}
+                    {collapsed ? "C" : chat.preview || "Untitled"}
                   </button>
                 )}
 
                 {!collapsed && editingChatId !== chat._id && (
-                  <div className="absolute top-1/2 -translate-y-1/2 right-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                    <button
-                      onClick={() =>
-                        setOpenMenuChatId(
-                          openMenuChatId === chat._id ? null : chat._id
-                        )
-                      }
-                      className="text-zinc-400 hover:text-white p-1"
-                      aria-label="Chat options"
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-                    {openMenuChatId === chat._id && (
-                      <div
-                        ref={menuRef}
-                        className="absolute right-0 mt-2 w-32 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg flex flex-col z-10 text-sm"
+                  <div className="absolute top-1/2 -translate-y-1/2 right-2">
+                    <div className="relative group backdrop-blur-sm">
+                      <button
+                        onClick={(e) => handleMenuToggle(e, chat._id)}
+                        className="text-zinc-200 hover:text-white p-1"
+                        aria-label="Chat options"
                       >
-                        <button
-                          onClick={() => handleStartEditing(chat._id)}
-                          className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700"
+                        <MoreVertical size={16} />
+                      </button>
+
+                      {openMenu.id === chat._id && (
+                        <div
+                          ref={menuRef}
+                          className={`absolute right-0 w-36 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg flex flex-col z-20 text-sm backdrop-blur-sm
+          ${openMenu.dir === "up" ? "bottom-full mb-1" : "top-full mt-1"}`}
                         >
-                          <Pencil size={14} /> Edit
-                        </button>
-                        <button
-                          onClick={() => copyChatLink(chat._id)}
-                          className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700"
-                        >
-                          <Copy size={14} />{" "}
-                          {copiedChatId === chat._id ? "Copied!" : "Share"}
-                        </button>
-                        <button
-                          onClick={() =>
-                            exportChatToPDF(
-                              chat.title || "Untitled Chat",
-                              chatMessages.map((msg) => ({
-                                sender: msg.role,
-                                text: msg.content,
-                              }))
-                            )
-                          }
-                          className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700"
-                        >
-                          <Upload size={14} /> Export
-                        </button>
-                        <div className="border-t border-zinc-700 my-1"></div>
-                        <button
-                          onClick={() => handleStartDelete(chat._id)}
-                          className="flex items-center gap-2 px-3 py-2 text-left text-red-500 hover:bg-zinc-700"
-                        >
-                          <Trash size={14} /> Delete
-                        </button>
-                      </div>
-                    )}
+                          <button
+                            onClick={() => handleStartEditing(chat._id)}
+                            className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700 rounded-t-md"
+                          >
+                            <Pencil size={14} /> Edit
+                          </button>
+                          <button
+                            onClick={() => copyChatLink(chat._id)}
+                            className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700"
+                          >
+                            <Copy size={14} /> Share
+                          </button>
+                          <button
+                            onClick={() =>
+                              exportChatToPDF(
+                                chat.preview || "Untitled Chat",
+                                chatMessages
+                              )
+                            }
+                            className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700"
+                          >
+                            <Upload size={14} /> Export
+                          </button>
+                          <div className="border-t border-zinc-700 my-1"></div>
+                          <button
+                            onClick={() => handleStartDelete(chat._id)}
+                            className="flex items-center gap-2 px-3 py-2 text-left text-red-500 hover:bg-zinc-700 rounded-b-md"
+                          >
+                            <Trash size={14} /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -334,32 +377,41 @@ export default function ChatSidebar({
         ))}
       </div>
 
-      {/* Delete Confirmation */}
+      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-zinc-800 p-6 rounded shadow">
-            <p className="text-white mb-4">
-              Are you sure you want to delete this chat?
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+          
+          <div className="bg-zinc-800 p-6 rounded-lg shadow-xl w-full max-w-sm">
+            <h3 className="text-white text-lg font-semibold mb-2">
+              Delete Chat
+            </h3>
+            <p className="text-zinc-300 mb-4">
+              Are you sure you want to permanently delete this chat? This action
+              cannot be undone.
             </p>
             <div className="flex gap-3 justify-end">
               <button
-                onClick={confirmDelete}
-                className="bg-red-500 px-3 py-1 rounded"
+                onClick={() => setShowDeleteConfirm(null)}
+                className="bg-zinc-600 hover:bg-zinc-500 text-white font-bold px-4 py-2 rounded-md transition-colors backdrop-blur-sm"
               >
-                Delete
+                {" "}
+                Cancel{" "}
               </button>
               <button
-                onClick={() => setShowDeleteConfirm(null)}
-                className="bg-zinc-600 px-3 py-1 rounded"
+                onClick={confirmDelete}
+                className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-md transition-colors"
               >
-                Cancel
+                {" "}
+                Delete{" "}
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* Snackbar for notifications */}
       {snackbarMessage && (
-        <div className="fixed bottom-4 text-2ml left-1/2 -translate-x-1/2 bg-zinc-800 text-white px-4 py-2 rounded shadow-md z-50 transition-opacity">
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-zinc-800 border border-zinc-700 text-white px-4 py-2 rounded-lg shadow-md z-50 animate-pulse">
           {snackbarMessage}
         </div>
       )}

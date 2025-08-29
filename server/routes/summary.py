@@ -11,9 +11,15 @@ class SummarizeRequest(BaseModel):
     content: str
 
 # Load BART Summarization Pipeline
-summarizer = pipeline("summarization", model="google/pegasus-xsum")
+summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 
 # --- Helper Functions ---
+
+def clean_text(text: str) -> str:
+    text = re.sub(r'\n+', '\n', text)  # collapse multiple newlines
+    text = re.sub(r'\s+', ' ', text)   # collapse spaces
+    return text.strip()
+
 
 def split_by_headings(text: str):
     sections = []
@@ -72,7 +78,8 @@ def summarize_text(req: SummarizeRequest):
         para_chunks = fine_grained_paragraph_chunker(body)
         chunk_summaries = []
         for chunk in para_chunks:
-            summary = summarizer(chunk, max_length=150, min_length=80, do_sample=False)[0]['summary_text']
+            prompted_chunk = f"Summarize the following strictly based on the text. Do NOT add external knowledge:\n\n{chunk}"
+            summary = summarizer(prompted_chunk, max_length=150, min_length=80, do_sample=False)[0]['summary_text']
             chunk_summaries.append(summary)
 
         section_summary = "\n\n".join(chunk_summaries)
@@ -107,5 +114,7 @@ async def extract_text(file: UploadFile = File(...)):
 
     elif file.content_type == "text/plain":
         content = (await file.read()).decode('utf-8')
+        
+    content = clean_text(content)
 
     return {"content": content.strip()}

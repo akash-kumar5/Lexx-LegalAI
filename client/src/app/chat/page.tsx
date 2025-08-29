@@ -6,8 +6,10 @@ import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../context/AuthContext";
 import ChatSidebar from "../components/Sidebar";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, FileText, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import SummerizationBtn from "../components/SummerizationBtn";
+import { useRouter } from "next/navigation";
 
 type Message = {
   role: "user" | "assistant";
@@ -32,6 +34,10 @@ export default function ChatPage() {
   const { token } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const router = useRouter();
+
+  const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
+  const [fileKey, setFileKey] = useState(Date.now());
 
   const fullPrompt = "I'm Your LegalAI, Ask me anything legally...";
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -88,8 +94,6 @@ export default function ChatPage() {
     const trimmed = input.trim();
     if (!trimmed) return;
 
-    // const userMsg: Message = { role: "user", content: trimmed };
-
     setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
     setInput("");
     setLoading(true);
@@ -97,7 +101,6 @@ export default function ChatPage() {
     try {
       const chatId = currentChatId;
 
-      // Get assistant response
       const res = await fetch(`${API_URL}/api/chat`, {
         method: "POST",
         headers: {
@@ -109,15 +112,14 @@ export default function ChatPage() {
 
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      console.log(data);
+      
       if (data.chat_id && !currentChatId) {
         setCurrentChatId(data.chat_id);
-        fetchChats(); // Update currentChatId on new chat
+        fetchChats();
       }
 
       const assistantMsg: Message = { role: "assistant", content: data.answer };
-      console.log("Updating Messages State:", [...messages, assistantMsg]);
-      setMessages((prev) => [...prev, { ...assistantMsg }]);
+      setMessages((prev) => [...prev, assistantMsg]);
     } catch (err) {
       console.error("Chat error:", err);
       setMessages((prev) => [
@@ -132,12 +134,14 @@ export default function ChatPage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      checkTokensAndSend(input);
     }
   };
 
   const handleSelectChat = async (chatId: string) => {
+    if (currentChatId === chatId) return;
     setLoading(true);
+    setAttachedFileName(null);
     try {
       const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -155,18 +159,60 @@ export default function ChatPage() {
   const handleNewChat = async () => {
     setCurrentChatId(null);
     setMessages([]);
+    setAttachedFileName(null);
     inputRef.current?.focus();
+  };
+
+  const handleRemoveFile = () => {
+    setAttachedFileName(null);
+    setFileKey(Date.now()); // Update key to force-reset the child component
+  };
+
+  // This function is called when the file is within the token limit.
+  const handleUploadSuccess = async (chatId: string, fileName: string) => {
+    setAttachedFileName(fileName); // Display the file pill
+    await fetchChats(); // Refresh the chat list in the sidebar
+    await handleSelectChat(chatId); // Load the new chat's content
+  };
+
+  const checkTokensAndSend = async (text: string) => {
+    if (!text.trim()) return;
+
+    try {
+      const res = await fetch(`${API_URL}/api/count-tokens`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text }),
+      });
+
+      const data = await res.json();
+
+      if (data.tokens > 6000) {
+        router.push("/docs/summarize");
+      } else {
+        await sendMessage();
+      }
+    } catch (err) {
+      console.error("Token check failed:", err);
+      sendMessage(); // fallback
+    }
   };
 
   return (
     <div className="flex w-full overflow-hidden h-[calc(100vh-4rem)]">
       <div
-        className={`transition-all duration-300 ${collapsed ? "w-14" : "w-64"}`}
+        className={`transition-all duration-300 ${
+          collapsed ? "w-14" : "w-64"
+        }`}
       >
         <ChatSidebar
           chats={chats}
           chatMessages={messages}
           collapsed={collapsed}
+          token={token}
           setCollapsed={setCollapsed}
           onSelectChat={handleSelectChat}
           onNewChat={handleNewChat}
@@ -230,58 +276,64 @@ export default function ChatPage() {
         </div>
 
         {/* Typing Prompt */}
-        <AnimatePresence>
-          {messages.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center text-lg text-white mb-4 absolute top-[30%] left-0 right-0 pb-211"
-            >
-              {promptText}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="border-t border-white/10 bg-zinc-950/70 px-4 py-3 shadow-[0_0_30px_rgba(0,0,0,0.4)] backdrop-blur-lg">
+          <div className="relative mx-auto flex w-full max-w-3xl flex-col gap-2">
+            {/* Attached File Indicator (Pill) */}
+            <AnimatePresence>
+              {attachedFileName && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="flex items-center w-[53%] justify-between rounded-full border border-zinc-700 bg-zinc-800/80 px-3 py-1.5 text-sm text-zinc-200"
+                >
+                  <div className="flex min-w-0  items-center gap-2">
+                    <FileText className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate" title={attachedFileName}>
+                      {attachedFileName}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleRemoveFile}
+                    className="ml-2 rounded-full p-0.5 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white"
+                  >
+                    <X size={16} />
+                    <span className="sr-only">Remove file</span>
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-        {/* Scroll-To-Bottom */}
-        {showScrollButton && (
-          <button
-            onClick={() =>
-              chatContainerRef.current?.scrollTo({
-                top: chatContainerRef.current.scrollHeight,
-                behavior: "smooth",
-              })
-            }
-            className="fixed bottom-24 right-9 z-50 bg-zinc-800 text-white p-2 rounded-full shadow"
-          >
-            <ArrowDown size={18} />
-          </button>
-        )}
-
-        {/* Chat Input */}
-        <div className="px-4 py-3 bg-gradient-to-r from-zinc-700/70 via-black/80 to-zinc-700/70 backdrop-blur-lg border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.4)]">
-          <div className="flex gap-2 items-center w-full max-w-[50%] mx-auto">
-            <TextareaAutosize
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Type your legal query…"
-              maxRows={2}
-              className="flex-grow resize-none bg-transparent text-white border border-zinc-700 rounded-full px-3 py-3 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-neutral-400 transition-all duration-200 [&::-webkit-scrollbar]:w-2"
-              style={{ lineHeight: "1.5" }}
-            />
-            <Button
-              onClick={sendMessage}
-              aria-label="Send message"
-              className="bg-zinc-700 hover:bg-zinc-800 rounded-full px-3 py-2 h-fit transition-all duration-200"
-              disabled={loading}
-            >
-              <PaperPlaneIcon className="w-5 h-5" />
-            </Button>
+            {/* Main Input Bar */}
+            <div className="flex w-full items-center gap-2">
+              <SummerizationBtn
+                key={fileKey}
+                setAttachedFileName={setAttachedFileName}
+                onUploadSuccess={handleUploadSuccess}
+                token={token}
+              />
+              <TextareaAutosize
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your legal query…"
+                maxRows={5}
+                className="flex-grow resize-none rounded-full border border-zinc-700 bg-transparent px-9 py-2 text-sm text-white placeholder:text-neutral-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+              />
+              <Button
+                onClick={() => checkTokensAndSend(input)}
+                aria-label="Send message"
+                className="h-9 w-9 rounded-full bg-zinc-700 p-0 transition-all duration-200 hover:bg-zinc-800"
+                disabled={loading || !input.trim()}
+              >
+                <PaperPlaneIcon className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
