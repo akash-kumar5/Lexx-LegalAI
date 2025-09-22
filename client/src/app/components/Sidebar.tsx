@@ -34,10 +34,12 @@ interface ChatMessageExport {
   timestamp?: string;
 }
 
-// Placeholder export function. Replace with your real exporter.
-const exportChatToPDF = async (title: string, messages: ChatMessageExport[]) => {
+type ExportResult = { ok: boolean; url?: string; message?: string };
+
+// Placeholder export function — typed return so callers can check `.ok` without casting.
+const exportChatToPDF = async (title: string, messages: ChatMessageExport[]): Promise<ExportResult> => {
   console.log("Export to PDF (placeholder):", title, messages);
-  // Return a simple success to simulate async work
+  // Simulate async success
   return { ok: true };
 };
 
@@ -54,7 +56,6 @@ const useClickOutside = (
     if (!refs || refs.length === 0) return;
 
     const listener = (event: MouseEvent | TouchEvent) => {
-      // If any ref contains the target, do nothing
       for (const ref of refs) {
         const el = ref.current;
         if (el && el.contains(event.target as Node)) {
@@ -95,6 +96,7 @@ export default function ChatSidebar({
 
   const editingInputRef = useRef<HTMLInputElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const snackbarTimeoutRef = useRef<number | null>(null);
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
   // Stable refs & handler for useClickOutside to avoid re-attaching listeners every render
@@ -109,13 +111,27 @@ export default function ChatSidebar({
     }
   }, [editingChatId]);
 
-  const showSnackbar = useCallback((msg: string, type: "info" | "error" | "success" = "info", ms = 2500) => {
-    setSnackbarMessage(msg);
-    setSnackbarType(type);
-    window.clearTimeout((showSnackbar as any)._timeout);
-    (showSnackbar as any)._timeout = window.setTimeout(() => {
-      setSnackbarMessage(null);
-    }, ms);
+  const showSnackbar = useCallback(
+    (msg: string, type: "info" | "error" | "success" = "info", ms = 2500) => {
+      setSnackbarMessage(msg);
+      setSnackbarType(type);
+      if (snackbarTimeoutRef.current) {
+        window.clearTimeout(snackbarTimeoutRef.current);
+      }
+      const id = window.setTimeout(() => {
+        setSnackbarMessage(null);
+      }, ms);
+      snackbarTimeoutRef.current = id;
+    },
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      if (snackbarTimeoutRef.current) {
+        window.clearTimeout(snackbarTimeoutRef.current);
+      }
+    };
   }, []);
 
   const updateChatTitle = useCallback(
@@ -146,7 +162,9 @@ export default function ChatSidebar({
           showSnackbar("Failed to rename chat.", "error");
         }
       } catch (err) {
-        console.error("Failed to rename chat:", err);
+        // handle unknown error object safely
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("Failed to rename chat:", message);
         showSnackbar("Error: Could not rename chat.", "error");
       }
     },
@@ -180,7 +198,8 @@ export default function ChatSidebar({
           showSnackbar("Failed to delete chat.", "error");
         }
       } catch (err) {
-        console.error("Failed to delete chat:", err);
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("Failed to delete chat:", message);
         showSnackbar("Error: Could not delete chat.", "error");
       }
     },
@@ -209,15 +228,18 @@ export default function ChatSidebar({
     [saveTitle]
   );
 
-  const handleMenuToggle = useCallback((e: React.MouseEvent, chatId: string) => {
-    if (openMenu.id === chatId) {
-      setOpenMenu({ id: null, dir: "down" });
-      return;
-    }
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-    const opensUp = window.innerHeight - rect.bottom < 150;
-    setOpenMenu({ id: chatId, dir: opensUp ? "up" : "down" });
-  }, [openMenu.id]);
+  const handleMenuToggle = useCallback(
+    (e: React.MouseEvent, chatId: string) => {
+      if (openMenu.id === chatId) {
+        setOpenMenu({ id: null, dir: "down" });
+        return;
+      }
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const opensUp = window.innerHeight - rect.bottom < 150;
+      setOpenMenu({ id: chatId, dir: opensUp ? "up" : "down" });
+    },
+    [openMenu.id]
+  );
 
   const handleStartEditing = useCallback((chatId: string) => {
     setOpenMenu({ id: null, dir: "down" });
@@ -235,14 +257,17 @@ export default function ChatSidebar({
     setShowDeleteConfirm(null);
   }, [deleteChat, showDeleteConfirm]);
 
-  const copyChatLink = useCallback((chatId: string) => {
-    const chatLink = `${window.location.origin}/chat/${chatId}`;
-    navigator.clipboard.writeText(chatLink).then(
-      () => showSnackbar("Chat link copied!", "success", 2000),
-      () => showSnackbar("Failed to copy link", "error", 2000)
-    );
-    setOpenMenu({ id: null, dir: "down" });
-  }, [showSnackbar]);
+  const copyChatLink = useCallback(
+    (chatId: string) => {
+      const chatLink = `${window.location.origin}/chat/${chatId}`;
+      navigator.clipboard.writeText(chatLink).then(
+        () => showSnackbar("Chat link copied!", "success", 2000),
+        () => showSnackbar("Failed to copy link", "error", 2000)
+      );
+      setOpenMenu({ id: null, dir: "down" });
+    },
+    [showSnackbar]
+  );
 
   // Export: fetch messages for chosen chat then export so we always get right content
   const handleExportChat = useCallback(
@@ -272,13 +297,15 @@ export default function ChatSidebar({
           timestamp: undefined,
         }));
         const result = await exportChatToPDF(title ?? "Untitled Chat", exportMsgs);
-        if (result && (result as any).ok) {
+        if (result.ok) {
           showSnackbar("Export started.", "success");
         } else {
-          showSnackbar("Export failed.", "error");
+          // show server-provided message if present
+          showSnackbar(result.message ?? "Export failed.", "error");
         }
       } catch (err) {
-        console.error("Export error:", err);
+        const message = err instanceof Error ? err.message : String(err);
+        console.error("Export error:", message);
         showSnackbar("Export failed.", "error");
       } finally {
         setOpenMenu({ id: null, dir: "down" });

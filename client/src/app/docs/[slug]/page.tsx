@@ -30,7 +30,6 @@ export default function DraftEditorPage() {
   const searchParams = useSearchParams();
   const auth = useAuth();
   const token = auth.token;
-  const profile = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
   const slug = params.slug as string;
   type Draft = {
