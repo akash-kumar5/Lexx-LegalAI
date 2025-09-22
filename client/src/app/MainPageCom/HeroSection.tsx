@@ -34,8 +34,8 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-black text-center px-6 overflow-hidden">
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,255,255,0.1),rgba(255,255,255,0))]"></div>
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-zinc-900 via-zinc-900/30 to-black text-center px-6 overflow-hidden">
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_70%_70%_at_50%_-30%,rgba(131, 129, 129, 0.8),rgba(255,255,255,0))]"></div>
 
       <motion.div
         className="relative z-10 flex flex-col items-center"

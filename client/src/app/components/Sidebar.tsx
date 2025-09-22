@@ -1,9 +1,6 @@
 "use client";
 
 import React, { useEffect, useState, useRef, useMemo } from "react";
-// To make this component self-contained, we'll pass the token as a prop
-// instead of relying on a context that may not be available.
-// import { useAuth } from "../../../context/AuthContext";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import {
   Pencil,
@@ -13,17 +10,11 @@ import {
   Copy,
   Upload,
 } from "lucide-react";
-// The export function is assumed to be in a separate utility file.
-// For this example, a placeholder is defined below.
-// import { exportChatToPDF } from "./ExportChat";
-
-// Placeholder for the PDF export functionality
 const exportChatToPDF = (title: string, messages: any[]) => {
   console.log("Exporting to PDF:", title, messages);
   alert(`Exporting chat "${title}" to PDF... (feature placeholder)`);
 };
 
-// A reusable hook for detecting clicks outside of a given element.
 const useClickOutside = (
   ref: React.RefObject<HTMLElement>,
   handler: () => void
@@ -65,7 +56,7 @@ interface ChatSidebarProps {
   onRefresh: () => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
-  token: string | null; // Token is now a prop
+  token: string | null;
 }
 
 export default function ChatSidebar({
@@ -77,13 +68,12 @@ export default function ChatSidebar({
   currentChatId,
   collapsed,
   setCollapsed,
-  token, // Use the token from props
+  token,
 }: ChatSidebarProps) {
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
     null
   );
-  // State to manage menu visibility, ID, and position
   const [openMenu, setOpenMenu] = useState<{
     id: string | null;
     dir: "up" | "down";
@@ -187,8 +177,7 @@ export default function ChatSidebar({
       setOpenMenu({ id: null, dir: "down" });
       return;
     }
-    const rect = e.currentTarget.getBoundingClientRect();
-    // Check if there's enough space below for the menu (approx. 150px)
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const opensUp = window.innerHeight - rect.bottom < 150;
     setOpenMenu({ id: chatId, dir: opensUp ? "up" : "down" });
   };
@@ -254,21 +243,24 @@ export default function ChatSidebar({
       } h-full bg-zinc-900/90 backdrop-blur-md border-r border-zinc-700 flex flex-col`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between shrink-0 h-14 px-3 border-b border-zinc-700 relative group">
-        {!collapsed && (
-          <span className="text-white text-lg font-bold">Conversations</span>
-        )}
+      <div className="flex items-center justify-between shrink-0 h-14 px-3 border-b border-zinc-700">
+        <div className="flex items-center gap-2">
+          {!collapsed && (
+            <span className="text-white text-lg font-bold">Chats</span>
+          )}
+        </div>
+
+        {/* Collapse Toggle: always visible and accessible */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className={`absolute top-1/2 -translate-y-1/2 -right-3 z-10 bg-zinc-700 hover:bg-zinc-600 text-white p-1 rounded-full transition-all duration-300 ${
-            collapsed ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}
+          className="ml-auto flex items-center justify-center p-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500"
+          title={collapsed ? "Expand" : "Collapse"}
         >
           {collapsed ? (
-            <ChevronRightIcon className="w-5 h-5" />
+            <ChevronRightIcon className="w-4 h-4" />
           ) : (
-            <ChevronLeftIcon className="w-5 h-5" />
+            <ChevronLeftIcon className="w-4 h-4" />
           )}
         </button>
       </div>
@@ -315,7 +307,7 @@ export default function ChatSidebar({
                       chat._id === currentChatId ? "bg-zinc-800" : ""
                     }`}
                   >
-                    {collapsed ? "C" : chat.preview || "Untitled"}
+                    {collapsed ? "" : chat.preview || "Untitled"}
                   </button>
                 )}
 
@@ -380,7 +372,6 @@ export default function ChatSidebar({
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          
           <div className="bg-zinc-800 p-6 rounded-lg shadow-xl w-full max-w-sm">
             <h3 className="text-white text-lg font-semibold mb-2">
               Delete Chat
@@ -394,15 +385,13 @@ export default function ChatSidebar({
                 onClick={() => setShowDeleteConfirm(null)}
                 className="bg-zinc-600 hover:bg-zinc-500 text-white font-bold px-4 py-2 rounded-md transition-colors backdrop-blur-sm"
               >
-                {" "}
-                Cancel{" "}
+                Cancel
               </button>
               <button
                 onClick={confirmDelete}
                 className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-md transition-colors"
               >
-                {" "}
-                Delete{" "}
+                Delete
               </button>
             </div>
           </div>

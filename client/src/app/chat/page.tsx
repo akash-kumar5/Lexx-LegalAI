@@ -6,7 +6,7 @@ import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../context/AuthContext";
 import ChatSidebar from "../components/Sidebar";
-import { ArrowDown, FileText, X } from "lucide-react";
+import {  FileText, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import SummerizationBtn from "../components/SummerizationBtn";
 import { useRouter } from "next/navigation";
@@ -112,7 +112,7 @@ export default function ChatPage() {
 
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      
+
       if (data.chat_id && !currentChatId) {
         setCurrentChatId(data.chat_id);
         fetchChats();
@@ -204,9 +204,7 @@ export default function ChatPage() {
   return (
     <div className="flex w-full overflow-hidden h-[calc(100vh-4rem)]">
       <div
-        className={`transition-all duration-300 ${
-          collapsed ? "w-14" : "w-64"
-        }`}
+        className={`transition-all duration-300 ${collapsed ? "w-14" : "w-64"}`}
       >
         <ChatSidebar
           chats={chats}
@@ -221,7 +219,21 @@ export default function ChatPage() {
         />
       </div>
       <div className="flex-1 flex flex-col relative bg-gradient-to-b from-zinc-950 via-zinc-900 to-black">
-        {/* Messages */}
+        {messages.length === 0 && !loading && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <motion.p
+              key={promptText} // ensures it animates with changes
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+              className="text-xl md:text-2xl font-mono text-zinc-400 text-center max-w-2xl px-4"
+            >
+              {promptText}
+              <span className="typing-cursor">|</span>
+            </motion.p>
+          </div>
+        )}
+
         <div
           ref={chatContainerRef}
           className=" flex-1 overflow-y-auto space-y-4 px-4 py-6"
@@ -336,4 +348,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
