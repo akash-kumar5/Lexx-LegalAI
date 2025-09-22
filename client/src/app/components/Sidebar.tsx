@@ -16,15 +16,16 @@ const exportChatToPDF = (title: string, messages: any[]) => {
 };
 
 const useClickOutside = (
-  ref: React.RefObject<HTMLElement>,
-  handler: () => void
+  refs: React.RefObject<Element>[],
+  handler: (event: MouseEvent | TouchEvent) => void
 ) => {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
-      if (!ref.current || ref.current.contains(event.target as Node)) {
+      // Do nothing if clicking one of the ref's elements or descendent elements
+      if (refs.some((ref) => ref.current?.contains(event.target as Node))) {
         return;
       }
-      handler();
+      handler(event);
     };
     document.addEventListener("mousedown", listener);
     document.addEventListener("touchstart", listener);
@@ -32,7 +33,7 @@ const useClickOutside = (
       document.removeEventListener("mousedown", listener);
       document.removeEventListener("touchstart", listener);
     };
-  }, [ref, handler]);
+  }, [refs, handler]);
 };
 
 interface ChatSummary {
@@ -88,7 +89,7 @@ export default function ChatSidebar({
   const API_URL =
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
-  useClickOutside(menuRef, () => setOpenMenu({ id: null, dir: "down" }));
+  useClickOutside([menuRef as React.RefObject<Element>], () => setOpenMenu({ id: null, dir: "down" }));
 
   useEffect(() => {
     if (editingChatId && editingInputRef.current) {
