@@ -5,6 +5,7 @@ import { AuthProvider } from "../../context/AuthContext";
 import ProtectedLayout from "./components/ProtectedLayer";
 import { ThemeProvider } from "next-themes";
 import { Analytics } from "@vercel/analytics/next"
+import { LoadingProvider } from "./components/Loading";
 
 
 const geistSans = Geist({
@@ -36,7 +37,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark">
         <AuthProvider>
           <ProtectedLayout>
-            {children}
+            <LoadingProvider>
+              {children}
+            </LoadingProvider>
             <Analytics />
           </ProtectedLayout>
         </AuthProvider>
