@@ -6,8 +6,12 @@ import pdfplumber
 import os
 import asyncio
 import httpx
+from dotenv import load_dotenv
 from typing import List, Tuple
 
+
+
+load_dotenv(".env.local")
 router = APIRouter()
 
 # --- Config from env ---

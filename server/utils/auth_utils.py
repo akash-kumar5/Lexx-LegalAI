@@ -8,7 +8,7 @@ from fastapi import Depends, HTTPException, Header
 from dotenv import load_dotenv
 from bson import ObjectId
 
-load_dotenv()
+load_dotenv(".env.local")
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 client = MongoClient(os.getenv("MONGO_URI"))

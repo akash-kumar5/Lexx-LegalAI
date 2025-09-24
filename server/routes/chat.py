@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PERSIST_DIR = os.path.join(BASE_DIR, "../chroma_data")
-load_dotenv()
+load_dotenv(".env.local")
 
 MAX_INPUT_TOKENS = 6000
 RESPONSE_TOKEN_BUFFER = 1000

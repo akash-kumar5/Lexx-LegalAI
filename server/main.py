@@ -7,8 +7,9 @@ from routes import summary
 from routes import docs
 from routes import user
 from routes import drafts
+from routes.oauth_google import router as oauth_router
 
-load_dotenv()
+load_dotenv(".env.local")
 
 app = FastAPI()
 
@@ -26,3 +27,4 @@ app.include_router(summary.router)
 app.include_router(docs.router)
 app.include_router(user.router)
 app.include_router(drafts.router)
+app.include_router(oauth_router)
