@@ -34,7 +34,6 @@ export default function SummerizationBtn({
 }: SummarizationBtnProps) {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  // Use a clear default and guard before using. If you prefer to fail fast, you could throw when missing.
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +41,6 @@ export default function SummerizationBtn({
     if (!file) return;
 
     if (!token) {
-      // keep UX simple for now; you may replace with a nicer in-app toast/snackbar
       window.alert("Authentication failed. Please ensure you are logged in.");
       return;
     }
@@ -62,7 +60,6 @@ export default function SummerizationBtn({
     setAttachedFileName(`Processing ${file.name}...`);
 
     try {
-      // Read file as ArrayBuffer
       const arrayBuffer = await file.arrayBuffer();
 
       // Load PDF with pdfjs
@@ -101,7 +98,6 @@ export default function SummerizationBtn({
       try {
         data = await resp.json();
       } catch (err) {
-        // if body isn't json, still handle status
         console.error("Failed to parse JSON response from /api/process-file", err);
       }
 
@@ -113,14 +109,12 @@ export default function SummerizationBtn({
         throw new Error(detail);
       }
 
-      // Expect data to be an object with status and possibly chat_id / tokens
       if (data && typeof data === "object") {
         const d = data as Record<string, unknown>;
 
         if (d.status === "too_long") {
           const tokens = typeof d.tokens === "number" ? d.tokens : "unknown";
           window.alert(`File is too large (${tokens} tokens). Redirecting to the summarization page.`);
-          // redirect to summarize page
           window.location.href = "/docs/summarize";
           return;
         }
@@ -130,7 +124,6 @@ export default function SummerizationBtn({
           return;
         }
 
-        // Fallback: unexpected but returned ok
         console.warn("Unexpected response shape from process-file:", d);
         window.alert("File processed but server returned unexpected response. Check logs.");
         return;
@@ -145,11 +138,10 @@ export default function SummerizationBtn({
     } finally {
       setIsProcessing(false);
       if (fileInputRef.current) {
-        // Reset input so the same file can be re-selected if needed
         try {
           fileInputRef.current.value = "";
         } catch (e) {
-          // some browsers restrict setting File input value; ignore safely
+          // ignore
         }
       }
     }
@@ -172,18 +164,35 @@ export default function SummerizationBtn({
               onClick={() => fileInputRef.current?.click()}
               variant="outline"
               size="icon"
-              className="rounded-full border-zinc-600 bg-zinc-800/50 text-zinc-300 transition-all duration-300 hover:border-zinc-500 hover:bg-zinc-700/80 hover:text-white"
+              className={`
+                rounded-full
+                transition-all duration-300
+                /* Light mode */
+                border-zinc-300 bg-white text-zinc-700 hover:border-zinc-400 hover:bg-zinc-50
+                /* Dark mode */
+                dark:border-zinc-600 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-zinc-700/80 dark:hover:text-white
+                disabled:opacity-60 disabled:cursor-not-allowed
+              `}
               disabled={isProcessing}
             >
               {isProcessing ? (
-                <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />
+                <Loader2 className="h-4 w-4 animate-spin text-zinc-400 dark:text-zinc-300" />
               ) : (
                 <Paperclip className="h-4 w-4" />
               )}
               <span className="sr-only">Attach PDF</span>
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="top" className="border-zinc-700 bg-zinc-800 text-white">
+          <TooltipContent
+            side="top"
+            className={`
+              border
+              /* Light */
+              border-zinc-200 bg-white text-zinc-800
+              /* Dark */
+              dark:border-stone-700 dark:bg-zinc-900 dark:text-zinc-100
+            `}
+          >
             <p>Attach PDF</p>
           </TooltipContent>
         </Tooltip>

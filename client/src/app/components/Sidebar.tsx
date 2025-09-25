@@ -39,15 +39,9 @@ type ExportResult = { ok: boolean; url?: string; message?: string };
 // Placeholder export function — typed return so callers can check `.ok` without casting.
 const exportChatToPDF = async (title: string, messages: ChatMessageExport[]): Promise<ExportResult> => {
   console.log("Export to PDF (placeholder):", title, messages);
-  // Simulate async success
   return { ok: true };
 };
 
-/**
- * Hook: useClickOutside
- * Accepts an array of refs and a stable handler.
- * Attaches listeners only when refs/handler change.
- */
 const useClickOutside = (
   refs: React.RefObject<HTMLElement>[],
   handler: (event: MouseEvent | TouchEvent) => void
@@ -87,10 +81,7 @@ export default function ChatSidebar({
 }: ChatSidebarProps) {
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [openMenu, setOpenMenu] = useState<{ id: string | null; dir: "up" | "down" }>({
-    id: null,
-    dir: "down",
-  });
+  const [openMenu, setOpenMenu] = useState<{ id: string | null; dir: "up" | "down" }>({ id: null, dir: "down" });
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
   const [snackbarType, setSnackbarType] = useState<"info" | "error" | "success">("info");
 
@@ -99,7 +90,6 @@ export default function ChatSidebar({
   const snackbarTimeoutRef = useRef<number | null>(null);
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
-  // Stable refs & handler for useClickOutside to avoid re-attaching listeners every render
   const stableRefs = useMemo(() => [menuRef] as React.RefObject<HTMLElement>[], [menuRef]);
   const closeMenu = useCallback(() => setOpenMenu({ id: null, dir: "down" }), []);
   useClickOutside(stableRefs, closeMenu);
@@ -162,7 +152,6 @@ export default function ChatSidebar({
           showSnackbar("Failed to rename chat.", "error");
         }
       } catch (err) {
-        // handle unknown error object safely
         const message = err instanceof Error ? err.message : String(err);
         console.error("Failed to rename chat:", message);
         showSnackbar("Error: Could not rename chat.", "error");
@@ -269,7 +258,6 @@ export default function ChatSidebar({
     [showSnackbar]
   );
 
-  // Export: fetch messages for chosen chat then export so we always get right content
   const handleExportChat = useCallback(
     async (chatId: string, title?: string) => {
       if (!API_URL) {
@@ -300,7 +288,6 @@ export default function ChatSidebar({
         if (result.ok) {
           showSnackbar("Export started.", "success");
         } else {
-          // show server-provided message if present
           showSnackbar(result.message ?? "Export failed.", "error");
         }
       } catch (err) {
@@ -343,21 +330,32 @@ export default function ChatSidebar({
   }, [chats]);
 
   return (
-    <div className={`transition-all duration-300 ${collapsed ? "w-16" : "w-64"} h-full bg-zinc-900/90 backdrop-blur-md border-r border-zinc-700 flex flex-col`}>
+    <div
+      className={`
+        transition-all duration-300
+        ${collapsed ? "w-16" : "w-64"}
+        h-full
+        bg-white text-zinc-900 border-r border-zinc-200
+        dark:bg-stone-900 dark:text-stone-100 dark:border-stone-700
+        flex flex-col
+      `}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between shrink-0 h-14 px-3 border-b border-zinc-700">
+      <div className="flex items-center justify-between shrink-0 h-14 px-3 border-b border-zinc-200 dark:border-stone-700">
         <div className="flex items-center gap-2">
-          {!collapsed && <span className="text-white text-lg font-bold">Chats</span>}
+          {!collapsed && <span className="text-zinc-900 dark:text-stone-100 text-lg font-bold">Chats</span>}
         </div>
 
         {/* Collapse Toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="ml-auto flex items-center justify-center p-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-500"
+          className="ml-auto flex items-center justify-center p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-stone-500"
           title={collapsed ? "Expand" : "Collapse"}
         >
-          {collapsed ? <ChevronRightIcon className="w-4 h-4" /> : <ChevronLeftIcon className="w-4 h-4" />}
+          <span className="text-zinc-700 dark:text-stone-200">
+            {collapsed ? <ChevronRightIcon className="w-4 h-4" /> : <ChevronLeftIcon className="w-4 h-4" />}
+          </span>
         </button>
       </div>
 
@@ -365,7 +363,9 @@ export default function ChatSidebar({
       <div className="p-2">
         <button
           onClick={onNewChat}
-          className="flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 py-2 rounded-md w-full text-white text-sm font-medium transition-colors"
+          className="flex items-center justify-center gap-2 py-2 rounded-md w-full transition-colors
+            bg-zinc-900 text-white hover:bg-zinc-800
+            dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600"
         >
           <PlusIcon className="w-5 h-5" />
           {!collapsed && "New Chat"}
@@ -376,7 +376,7 @@ export default function ChatSidebar({
       <div className="flex-1 overflow-y-auto px-2 space-y-4">
         {Object.entries(groupedChats).map(([date, chatList]) => (
           <div key={date}>
-            {!collapsed && <div className="text-zinc-400 text-xs font-medium mb-1 px-2 pt-2">{date}</div>}
+            {!collapsed && <div className="text-zinc-500 dark:text-zinc-400 text-xs font-medium mb-1 px-2 pt-2">{date}</div>}
             {chatList.map((chat) => (
               <div key={chat._id} className="relative group/item flex items-center">
                 {editingChatId === chat._id ? (
@@ -387,12 +387,15 @@ export default function ChatSidebar({
                     autoFocus
                     onKeyDown={handleEditKeyDown}
                     onBlur={saveTitle}
-                    className="w-full bg-zinc-800 text-white text-sm px-3 py-2 rounded border border-zinc-600 outline-none"
+                    className="w-full bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-sm px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 outline-none"
                   />
                 ) : (
                   <button
                     onClick={() => onSelectChat(chat._id)}
-                    className={`block w-full text-left px-3 py-2 rounded text-white text-sm truncate hover:bg-zinc-700 transition-colors ${chat._id === currentChatId ? "bg-zinc-800" : ""}`}
+                    className={`block w-full text-left px-3 py-2 rounded text-sm truncate transition-colors
+                      ${chat._id === currentChatId ? "bg-zinc-100 dark:bg-zinc-800" : "hover:bg-zinc-50 dark:hover:bg-zinc-800"}
+                      text-zinc-900 dark:text-zinc-100
+                    `}
                   >
                     {collapsed ? "" : chat.preview || "Untitled"}
                   </button>
@@ -401,30 +404,30 @@ export default function ChatSidebar({
                 {!collapsed && editingChatId !== chat._id && (
                   <div className="absolute top-1/2 -translate-y-1/2 right-2">
                     <div className="relative group backdrop-blur-sm">
-                      <button onClick={(e) => handleMenuToggle(e, chat._id)} className="text-zinc-200 hover:text-white p-1" aria-label="Chat options">
+                      <button onClick={(e) => handleMenuToggle(e, chat._id)} className="text-zinc-700 dark:text-zinc-200 hover:text-black dark:hover:text-white p-1" aria-label="Chat options">
                         <MoreVertical size={16} />
                       </button>
 
                       {openMenu.id === chat._id && (
                         <div
                           ref={menuRef}
-                          className={`absolute right-0 w-36 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg flex flex-col z-20 text-sm backdrop-blur-sm ${openMenu.dir === "up" ? "bottom-full mb-1" : "top-full mt-1"}`}
+                          className={`absolute right-0 w-44 bg-white border border-zinc-200 rounded-md shadow-lg flex flex-col z-20 text-sm backdrop-blur-sm ${openMenu.dir === "up" ? "bottom-full mb-1" : "top-full mt-1"} dark:bg-zinc-900 dark:border-stone-700`}
                         >
-                          <button onClick={() => handleStartEditing(chat._id)} className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700 rounded-t-md">
+                          <button onClick={() => handleStartEditing(chat._id)} className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-t-md">
                             <Pencil size={14} /> Edit
                           </button>
 
-                          <button onClick={() => copyChatLink(chat._id)} className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700">
+                          <button onClick={() => copyChatLink(chat._id)} className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800">
                             <Copy size={14} /> Share
                           </button>
 
-                          <button onClick={() => handleExportChat(chat._id, chat.preview)} className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-700">
+                          <button onClick={() => handleExportChat(chat._id, chat.preview)} className="flex items-center gap-2 px-3 py-2 text-left hover:bg-zinc-50 dark:hover:bg-zinc-800">
                             <Upload size={14} /> Export
                           </button>
 
-                          <div className="border-t border-zinc-700 my-1"></div>
+                          <div className="border-t border-zinc-200/40 my-1 dark:border-stone-700/40"></div>
 
-                          <button onClick={() => handleStartDelete(chat._id)} className="flex items-center gap-2 px-3 py-2 text-left text-red-500 hover:bg-zinc-700 rounded-b-md">
+                          <button onClick={() => handleStartDelete(chat._id)} className="flex items-center gap-2 px-3 py-2 text-left text-red-600 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-b-md">
                             <Trash size={14} /> Delete
                           </button>
                         </div>
@@ -440,15 +443,16 @@ export default function ChatSidebar({
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-zinc-800 p-6 rounded-lg shadow-xl w-full max-w-sm">
-            <h3 className="text-white text-lg font-semibold mb-2">Delete Chat</h3>
-            <p className="text-zinc-300 mb-4">Are you sure you want to permanently delete this chat? This action cannot be undone.</p>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="absolute inset-0 bg-black/50 dark:bg-black/60" aria-hidden />
+          <div className="relative z-10 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 p-6 rounded-lg shadow-xl w-full max-w-sm">
+            <h3 className="text-lg font-semibold mb-2">Delete Chat</h3>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">Are you sure you want to permanently delete this chat? This action cannot be undone.</p>
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setShowDeleteConfirm(null)} className="bg-zinc-600 hover:bg-zinc-500 text-white font-bold px-4 py-2 rounded-md transition-colors backdrop-blur-sm">
+              <button onClick={() => setShowDeleteConfirm(null)} className="px-4 py-2 rounded-md transition-colors bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100">
                 Cancel
               </button>
-              <button onClick={confirmDelete} className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-md transition-colors">
+              <button onClick={confirmDelete} className="px-4 py-2 rounded-md transition-colors bg-red-600 hover:bg-red-500 text-white">
                 Delete
               </button>
             </div>
@@ -458,7 +462,12 @@ export default function ChatSidebar({
 
       {/* Snackbar */}
       {snackbarMessage && (
-        <div className={`fixed bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-lg shadow-md z-50 ${snackbarType === "error" ? "bg-red-600 text-white" : snackbarType === "success" ? "bg-emerald-600 text-white" : "bg-zinc-800 text-white"}`}>
+        <div
+          className={`fixed bottom-5 left-1/2 -translate-x-1/2 px-4 py-2 rounded-lg shadow-md z-50
+            ${snackbarType === "error" ? "bg-red-600 text-white" : snackbarType === "success" ? "bg-emerald-600 text-white" : "bg-zinc-800 text-white"}
+            dark:bg-zinc-800
+          `}
+        >
           {snackbarMessage}
         </div>
       )}

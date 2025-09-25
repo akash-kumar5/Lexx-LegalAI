@@ -2,43 +2,37 @@
 
 import Link from "next/link";
 import React, { useState, forwardRef, useEffect } from "react";
-import { useAuth } from "../../../context/AuthContext"; // Assuming path is correct
+import { useAuth } from "../../../context/AuthContext"; // adjust path if needed
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, MoonIcon, LogOut } from "lucide-react";
+import { Menu, X, User, LogOut, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 
-// Define a proper type for the user object to be used across components
 type UserType = {
   fullName?: string;
   profilePictureUrl?: string;
 };
 
-// Define the type for the AuthContext value to avoid using 'as'
 interface AuthContextType {
   token: string | null;
   logout: () => void;
   user: UserType | null;
 }
 
-// Nav links data remains the same
 const navItems = [
   { href: "/chat", label: "Chat" },
   { href: "/docs", label: "Docs" },
   { href: "/casematching", label: "Case-Matching" },
 ];
 
-// Generic click outside hook (Correctly implemented)
 const useClickOutside = (
   refs: React.RefObject<Element>[],
   handler: (event: MouseEvent | TouchEvent) => void
 ) => {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
-      // Do nothing if clicking one of the ref's elements or descendent elements
-      if (refs.some((ref) => ref.current?.contains(event.target as Node))) {
+      if (refs.some((ref) => ref.current?.contains(event.target as Node)))
         return;
-      }
       handler(event);
     };
     document.addEventListener("mousedown", listener);
@@ -50,10 +44,7 @@ const useClickOutside = (
   }, [refs, handler]);
 };
 
-// NavLinks component (Unchanged, but benefits from better props)
-type NavLinksProps = {
-  onLinkClick?: () => void;
-};
+type NavLinksProps = { onLinkClick?: () => void };
 
 const NavLinks = ({ onLinkClick }: NavLinksProps) => (
   <>
@@ -70,7 +61,6 @@ const NavLinks = ({ onLinkClick }: NavLinksProps) => (
   </>
 );
 
-// ProfileMenu component (Refactored slightly for clarity)
 type ProfileMenuProps = {
   user: UserType | null;
   logout: () => void;
@@ -79,49 +69,88 @@ type ProfileMenuProps = {
 
 const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
   ({ user, logout, onClose }, ref) => {
-    const { theme, setTheme } = useTheme();
+    const { resolvedTheme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => setMounted(true), []);
 
     const handleLogout = () => {
       logout();
-      onClose(); // Ensure menu closes on logout
+      onClose();
     };
+
+    // avoid rendering theme-dependent UI until mounted to prevent hydration mismatch
+    if (!mounted) {
+      return (
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.12 }}
+          className="absolute right-0 mt-2 w-56 origin-top-right bg-white border border-zinc-200 rounded-md shadow-lg z-50 dark:bg-stone-900 dark:border-stone-700"
+        >
+          <div className="px-4 py-3 text-sm text-zinc-500 border-b border-zinc-100 dark:border-stone-700">
+            <p>Signed in as</p>
+            <p className="font-medium text-zinc-900 truncate dark:text-stone-200">
+              User
+            </p>
+          </div>
+          <div className="py-1">
+            {/* simple placeholders until mounted */}
+            <div className="px-4 py-2 text-sm text-zinc-700 dark:text-stone-200">
+              Loading…
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
 
     return (
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+        initial={{ opacity: 0, y: -10, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-        transition={{ duration: 0.1 }}
-        className="absolute right-0 mt-2 w-56 origin-top-right bg-stone-900 border border-stone-700 rounded-md shadow-lg z-50"
+        exit={{ opacity: 0, y: -8, scale: 0.98 }}
+        transition={{ duration: 0.12 }}
+        className="absolute right-0 mt-2 w-56 origin-top-right bg-white border border-zinc-200 rounded-md shadow-lg z-50 dark:bg-stone-900 dark:border-stone-700"
       >
-        <div className="px-4 py-3 text-sm text-stone-400 border-b border-stone-700">
+        <div className="px-4 py-3 text-sm text-zinc-600 border-b border-zinc-100 dark:text-stone-400 dark:border-stone-700">
           <p>Signed in as</p>
-          <p className="font-medium text-stone-200 truncate">
+          <p className="font-medium text-zinc-900 truncate dark:text-stone-200">
             {user?.fullName || "User"}
           </p>
         </div>
+
         <div className="py-1">
           <Link
             href="/profile"
             onClick={onClose}
-            className="flex items-center w-full text-left px-4 py-2 text-sm text-stone-200 hover:bg-stone-800 transition-colors"
+            className="flex items-center w-full text-left px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-100 transition-colors dark:text-stone-200 dark:hover:bg-stone-800"
           >
             <User className="w-4 h-4 mr-3" />
             Your Profile
           </Link>
+
           <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="flex items-center w-full text-left px-4 py-2 text-sm text-stone-200 hover:bg-stone-800 transition-colors"
+            onClick={() =>
+              setTheme(resolvedTheme === "dark" ? "light" : "dark")
+            }
+            className="flex items-center w-full text-left px-4 py-2 text-sm text-zinc-900 hover:bg-zinc-100 transition-colors dark:text-stone-200 dark:hover:bg-stone-800"
           >
-            <MoonIcon className="w-4 h-4 mr-3" />
+            {resolvedTheme === "dark" ? (
+              <Sun className="w-4 h-4 mr-3" />
+            ) : (
+              <Moon className="w-4 h-4 mr-3" />
+            )}
             <span>
-              Switch to {theme === "dark" ? "Light" : "Dark"} Mode
+              Switch to {resolvedTheme === "dark" ? "Light" : "Dark"} Mode
             </span>
           </button>
+
           <button
             onClick={handleLogout}
-            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-stone-800 transition-colors"
+            className="flex items-center w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-zinc-100 transition-colors dark:hover:bg-stone-800"
           >
             <LogOut className="w-4 h-4 mr-3" />
             Logout
@@ -133,43 +162,45 @@ const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
 );
 ProfileMenu.displayName = "ProfileMenu";
 
-// Navbar component
 export default function Navbar() {
   const { token, logout, user } = useAuth() as AuthContextType;
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
 
-  // REFS: Use separate refs for each interactive element to avoid conflicts.
   const mobileMenuRef = React.createRef<HTMLDivElement>();
   const mobileMenuButtonRef = React.createRef<HTMLButtonElement>();
   const profileMenuRef = React.createRef<HTMLDivElement>();
-  const profileButtonRef = React.createRef<HTMLButtonElement>(); // Only one ref needed now
+  const profileButtonRef = React.createRef<HTMLButtonElement>();
 
-  // BUG FIX: Separate click-outside hooks for each menu.
-  // This prevents one menu from interfering with the other.
   useClickOutside(
-    [mobileMenuRef as React.RefObject<Element>, mobileMenuButtonRef as React.RefObject<Element>],
+    [
+      mobileMenuRef as React.RefObject<Element>,
+      mobileMenuButtonRef as React.RefObject<Element>,
+    ],
     () => {
       if (isMobileMenuOpen) setMobileMenuOpen(false);
     }
   );
 
   useClickOutside(
-    [profileMenuRef as React.RefObject<Element>, profileButtonRef as React.RefObject<Element>],
+    [
+      profileMenuRef as React.RefObject<Element>,
+      profileButtonRef as React.RefObject<Element>,
+    ],
     () => {
       if (isProfileMenuOpen) setProfileMenuOpen(false);
     }
   );
 
   const toggleMobileMenu = () => {
-    setProfileMenuOpen(false); // Close profile menu when opening mobile menu
-    setMobileMenuOpen((prev) => !prev);
+    setProfileMenuOpen(false);
+    setMobileMenuOpen((p) => !p);
   };
 
   const toggleProfileMenu = () => {
-    setMobileMenuOpen(false); // Close mobile menu when opening profile menu
-    setProfileMenuOpen((prev) => !prev);
+    setMobileMenuOpen(false);
+    setProfileMenuOpen((p) => !p);
   };
 
   const closeAllMenus = () => {
@@ -178,39 +209,51 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 mx-auto w-full max-w-[97%] md:max-w-[96%] mt-2 bg-stone-900/40 backdrop-blur-md border border-stone-800 text-stone-100 shadow-lg rounded-full">
+    <nav
+      className={`
+    sticky top-0 z-50 mx-auto w-full max-w-[97%] md:max-w-[96%] mt-2
+    backdrop-blur-md border text-zinc-900 dark:text-stone-100 shadow-lg rounded-full
+    /* Light mode gradient */
+    bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-100 border-zinc-400
+    /* Dark mode gradient */
+    dark:bg-gradient-to-r dark:from-black/20 dark:via-zinc-800 dark:to-black/20 dark:border-stone-700
+  `}
+    >
       <div className="mx-auto flex max-w-[95%] items-center justify-between py-3">
-        <Link href="/" onClick={closeAllMenus} className="text-xl font-bold tracking-tight text-white">
-          Lexx
+        <Link
+          href="/"
+          onClick={closeAllMenus}
+          className="text-xl font-bold tracking-tight"
+        >
+          <span className="text-black dark:text-white">Lexx</span>
         </Link>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center space-x-2 text-sm font-medium">
           <NavLinks onLinkClick={closeAllMenus} />
         </div>
 
-        {/* Auth and Menu Toggles */}
         <div className="flex items-center space-x-4">
           {token ? (
             <div className="relative">
               <motion.button
                 ref={profileButtonRef}
                 onClick={toggleProfileMenu}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-8 h-8 rounded-full overflow-hidden border-2 border-stone-600 hover:border-red-500 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-stone-900"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="w-8 h-8 rounded-full overflow-hidden border-2 border-zinc-300 hover:border-red-500 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-stone-900"
                 aria-label="Toggle profile menu"
                 aria-expanded={isProfileMenuOpen}
               >
                 <Image
                   src={user?.profilePictureUrl || "/default-avatar.png"}
-                  width={40} // Increased size for better quality
+                  width={40}
                   height={40}
                   alt="Profile"
                   className="w-full h-full object-cover"
                   onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
                 />
               </motion.button>
+
               <AnimatePresence>
                 {isProfileMenuOpen && (
                   <ProfileMenu
@@ -233,12 +276,11 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Mobile Menu Burger */}
           <div className="md:hidden flex items-center">
             <button
               ref={mobileMenuButtonRef}
               onClick={toggleMobileMenu}
-              className="text-stone-200"
+              className="text-zinc-900 dark:text-stone-100"
               aria-label="Toggle mobile navigation"
               aria-expanded={isMobileMenuOpen}
             >
@@ -248,7 +290,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile nav links */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -258,7 +299,7 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden overflow-hidden"
           >
-            <div className="flex flex-col items-center space-y-2 py-4 border-t border-stone-800">
+            <div className="flex flex-col items-center space-y-2 py-4 border-t border-zinc-200 dark:border-stone-700">
               <NavLinks onLinkClick={closeAllMenus} />
               {!token && (
                 <Link

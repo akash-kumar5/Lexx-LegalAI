@@ -1,15 +1,17 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 type Draft = {
-  id: string; // UUID or timestamp based unique id
-  category: string; // e.g., "notices"
-  slug: string; // e.g., "payment-reminder"
+  id: string;
+  category: string;
+  slug: string;
   draftContent: string;
   formData: { [key: string]: string };
-  timestamp: number; // Date.now()
+  timestamp: number;
 };
 
 export default function DraftListPage() {
@@ -30,72 +32,111 @@ export default function DraftListPage() {
     }
   };
 
-  const filteredDrafts =
-    filter === "all" ? drafts : drafts.filter((d) => d.category === filter);
+  const filteredDrafts = filter === "all" ? drafts : drafts.filter((d) => d.category === filter);
 
   return (
-    <div className="max-w-5xl mx-auto py-10 text-white">
-      <h1 className="text-3xl font-bold mb-6">Draft History</h1>
+    <div
+      className={`
+        min-h-screen py-10
+        bg-white text-zinc-900
+        dark:bg-black dark:text-zinc-100
+      `}
+    >
+      <div className="max-w-5xl mx-auto px-4">
+        <h1 className="text-3xl font-bold mb-6">Draft History</h1>
 
-      {/* Filter Dropdown */}
-      <div className="mb-6">
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="bg-zinc-900 border border-zinc-700 p-2 rounded"
-        >
-          <option value="all">All</option>
-          <option value="notices">Notices</option>
-          <option value="affidavits">Affidavits</option>
-          <option value="pleadings">Pleadings</option>
-        </select>
+        {/* Filter + CTA row */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:gap-4">
+          <label htmlFor="draft-filter" className="sr-only">Filter drafts</label>
+          <select
+            id="draft-filter"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className={`
+              px-3 py-2 rounded border shadow-sm
+              bg-zinc-50 border-zinc-200 text-zinc-900
+              dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-100
+              focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-zinc-300 dark:focus:ring-stone-700
+            `}
+          >
+            <option value="all">All</option>
+            <option value="notices">Notices</option>
+            <option value="affidavits">Affidavits</option>
+            <option value="pleadings">Pleadings</option>
+          </select>
+
+          <div className="mt-3 sm:mt-0 sm:ml-auto">
+            <Button onClick={() => router.push("/docs/draft")} className="px-4 py-2">
+              Start Drafting
+            </Button>
+          </div>
+        </div>
+
+        {filteredDrafts.length === 0 ? (
+          <div className="text-center text-zinc-600 dark:text-zinc-400 py-24">
+            <p>No drafts found.</p>
+            <div className="mt-4">
+              <Button onClick={() => router.push("/docs/draft")}>Start Drafting</Button>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {filteredDrafts.map((draft) => (
+              <Card
+                key={draft.id}
+                className={`
+                  overflow-hidden
+                  bg-zinc-50 border border-zinc-200
+                  dark:bg-zinc-900 dark:border-zinc-700
+                `}
+              >
+                <CardContent className="p-4">
+                  <h2 className="text-xl font-semibold mb-2 capitalize">
+                    {draft.slug.replace(/-/g, " ")}
+                  </h2>
+
+                  <p className="text-sm mb-2 text-zinc-600 dark:text-zinc-400">
+                    Category: <span className="font-medium text-zinc-800 dark:text-zinc-200">{draft.category}</span>
+                  </p>
+
+                  <p className="text-xs mb-4 text-zinc-500 dark:text-zinc-400">
+                    Saved on: {new Date(draft.timestamp).toLocaleString()}
+                  </p>
+
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() =>
+                        router.push(
+                          `/docs/draft/${draft.category}/${draft.slug}?draftId=${draft.id}`
+                        )
+                      }
+                      className={`
+                        flex-1 px-3 py-2
+                        bg-zinc-800 text-white hover:bg-zinc-700
+                        dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600
+                      `}
+                    >
+                      View / Edit
+                    </Button>
+
+                    <Button
+                      onClick={() => handleDelete(draft.id)}
+                      variant="outline"
+                      className={`
+                        flex-1 px-3 py-2
+                        bg-red-600 text-white hover:bg-red-500
+                        dark:bg-red-700 dark:hover:bg-red-600
+                      `}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
-
-      {filteredDrafts.length === 0 ? (
-        <div className="text-center text-zinc-400">
-          <p>No drafts found.</p>
-          <Button onClick={() => router.push("/docs/draft")} className="mt-4">
-            Start Drafting
-          </Button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {filteredDrafts.map((draft) => (
-            <Card key={draft.id} className="bg-zinc-900 border border-zinc-700">
-              <CardContent className="p-4">
-                <h2 className="text-xl font-semibold mb-2">
-                  {draft.slug.replace(/-/g, " ")}
-                </h2>
-                <p className="text-sm text-zinc-400 mb-2 capitalize">
-                  Category: {draft.category}
-                </p>
-                <p className="text-xs text-zinc-500 mb-4">
-                  Saved on: {new Date(draft.timestamp).toLocaleString()}
-                </p>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() =>
-                      router.push(
-                        `/docs/draft/${draft.category}/${draft.slug}?draftId=${draft.id}`
-                      )
-                    }
-                    className="flex-1 bg-zinc-700 hover:bg-zinc-600"
-                  >
-                    View/Edit
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(draft.id)}
-                    variant="outline"
-                    className="flex-1 bg-red-800 hover:bg-red-700"
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

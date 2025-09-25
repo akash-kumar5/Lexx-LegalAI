@@ -3,12 +3,11 @@
 import { motion } from "framer-motion";
 import { BookCheck, BrainCircuit, Search, Triangle } from "lucide-react";
 
-// It's better to manage complex items as an array of objects
 const techItems = [
-  { name: "Indian Bare Acts", icon: <BookCheck className="w-5 h-5" /> },
-  { name: "LLM + RAG Architecture", icon: <BrainCircuit className="w-5 h-5" /> },
-  { name: "Next.js & Vercel", icon: <Triangle className="w-5 h-5" /> },
-  { name: "Semantic Search", icon: <Search className="w-5 h-5" /> },
+  { name: "Indian Bare Acts", icon: BookCheck },
+  { name: "LLM + RAG Architecture", icon: BrainCircuit },
+  { name: "Next.js & Vercel", icon: Triangle },
+  { name: "Semantic Search", icon: Search },
 ];
 
 export default function TechBar() {
@@ -24,11 +23,24 @@ export default function TechBar() {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
-  
+
   return (
-    <section className="relative w-full bg-black py-16 sm:py-20">
-      {/* --- New: Background Beam Effect --- */}
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-24 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.08)_0%,_transparent_70%)] opacity-70"></div>
+    <section
+      className={`
+        relative w-full py-16 sm:py-20
+        bg-white text-zinc-900
+        dark:bg-black dark:text-zinc-100
+      `}
+    >
+      {/* Background beam */}
+      <div
+        className={`
+          absolute inset-x-0 top-1/2 -translate-y-1/2 h-24 opacity-70
+          bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0.05)_0%,_transparent_70%)]
+          dark:bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.08)_0%,_transparent_70%)]
+        `}
+        aria-hidden
+      ></div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 text-center">
         <motion.h3
@@ -36,7 +48,7 @@ export default function TechBar() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-10"
+          className="text-sm font-semibold uppercase tracking-wider mb-10 text-zinc-600 dark:text-zinc-400"
         >
           Grounded in reliable sources & built with modern tech
         </motion.h3>
@@ -48,16 +60,19 @@ export default function TechBar() {
           viewport={{ once: true, amount: 0.5 }}
           className="flex flex-wrap justify-center items-center gap-x-10 gap-y-6"
         >
-          {techItems.map((item) => (
-            <motion.div
-              key={item.name}
-              variants={itemVariants}
-              className="flex items-center gap-3 text-zinc-300"
-            >
-              {item.icon}
-              <span className="font-medium text-lg">{item.name}</span>
-            </motion.div>
-          ))}
+          {techItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={item.name}
+                variants={itemVariants}
+                className="flex items-center gap-3 text-zinc-800 dark:text-zinc-300"
+              >
+                <Icon className="w-5 h-5" />
+                <span className="font-medium text-lg">{item.name}</span>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

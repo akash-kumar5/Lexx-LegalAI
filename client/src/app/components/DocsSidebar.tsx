@@ -1,142 +1,127 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   PlusIcon,
   BookTemplateIcon,
   HistoryIcon,
-  MenuIcon,
   ChevronRightIcon,
   ChevronLeftIcon,
-  ArrowRightCircleIcon,
 } from "lucide-react";
 
 export default function DocsSidebar() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false); // full sidebar open/close (for sm)
-  const [expanded, setExpanded] = useState(false); // lg+ sidebar expanded or collapsed
 
-  const sidebarRef = useRef<HTMLDivElement>(null);
+  // collapsed by default on small screens
+  const [expanded, setExpanded] = useState(true);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
 
-  // Close sidebar on click outside (only for sm open)
+  // Detect screen size on mount
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        open &&
-        sidebarRef.current &&
-        !sidebarRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setExpanded(false);
     }
-    if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open]);
+  }, []);
 
   const isActive = (path: string) => pathname === path;
 
   return (
-    <>
-      {/* Mobile toggle button (hamburger) */}
-      <button
-        onClick={() => setOpen(!open)}
-        className="fixed top-14 left-4 z-50 p-2 bg-zinc-800 text-white rounded-md lg:hidden focus:outline-none focus:ring-2 focus:ring-white"
-        aria-label={open ? "Close sidebar" : "Open sidebar"}
-      >
-        {open ? <ArrowRightCircleIcon size={24} /> : <MenuIcon size={24} />}
-      </button>
+    <aside
+      ref={sidebarRef}
+      className={`
+        fixed top-0 left-0 h-full z-40
+        lg:static lg:h-auto
+        transition-all duration-300 ease-in-out
+        ${expanded ? "w-64" : "w-16"}
 
-      {/* Sidebar */}
-      <aside
-        ref={sidebarRef}
-        className={`
-          fixed top-0 left-0 h-full bg-zinc-900 border-r border-zinc-700 z-40
-          transform transition-transform duration-1300 ease-in-out
-          
-          ${open ? "translate-x-0" : "-translate-x-full"}  // Mobile slide in/out
-
-          lg:static lg:h-auto lg:flex lg:flex-col
-          lg:translate-x-0
-          ${expanded ? "w-64" : "w-14"}  // width changes on lg+
-        `}
-      >
-        <div className="flex flex-col p-2 h-full">
-          {/* Toggle expand/collapse on lg+ */}
+        bg-white text-zinc-900 border-r border-zinc-200
+        dark:bg-stone-900 dark:text-stone-100 dark:border-stone-700
+      `}
+    >
+      <div className="flex flex-col h-full p-3">
+        {/* Toggle expand/collapse */}
+        <div className="flex justify-end mb-4">
           <button
-            onClick={() => setExpanded(!expanded)}
-            className="hidden lg:flex items-center justify-center mb-6 p-2 rounded-md text-zinc-400 hover:text-white transition self-end"
+            onClick={() => setExpanded((s) => !s)}
             aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+            className="p-1 rounded-md text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition"
           >
-            {expanded ? <ChevronLeftIcon size={20} /> : <ChevronRightIcon size={20} />}
+            {expanded ? (
+              <ChevronLeftIcon size={20} />
+            ) : (
+              <ChevronRightIcon size={20} />
+            )}
           </button>
+        </div>
 
+        {/* Content */}
+        <nav className="flex-1">
           {/* New Draft always visible */}
-          <Link
-            href="/docs/new"
-            className={`flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800 cursor-pointer
-              ${
-                isActive("/docs/new")
-                  ? "bg-zinc-700 text-white font-semibold"
-                  : "text-zinc-300"
-              }
-              ${expanded ? "justify-start" : "justify-center"}
-            `}
-            onClick={() => {
-              setOpen(false); // close mobile sidebar on click
-            }}
-          >
-            <PlusIcon size={20} />
-            {expanded && <span>New Draft</span>}
-          </Link>
+          <div className="mb-2">
+            <Link
+              href="/docs/new"
+              className={`
+                flex items-center gap-3 px-2 py-2 rounded-md transition-colors
+                ${
+                  isActive("/docs/new")
+                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
+                    : "text-zinc-700 dark:text-zinc-200"
+                }
+                hover:bg-zinc-50 dark:hover:bg-zinc-800
+                ${expanded ? "justify-start" : "justify-center"}
+              `}
+            >
+              <PlusIcon size={18} />
+              {expanded && <span>New Draft</span>}
+            </Link>
+          </div>
 
-
-
-          {/* Other links hidden when collapsed */}
-          <div className={`${expanded ? "block mt-6" : "hidden"}`}>
+          {/* Expand-only links */}
+          <div className={`${expanded ? "block mt-4" : "hidden"}`}>
             <Link
               href="/docs"
-              className={`flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800 cursor-pointer
+              className={`
+                flex items-center gap-3 px-2 py-2 rounded-md transition-colors
                 ${
                   isActive("/docs")
-                    ? "bg-zinc-700 text-white font-semibold"
-                    : "text-zinc-400"
+                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
+                    : "text-zinc-700 dark:text-zinc-200"
                 }
+                hover:bg-zinc-50 dark:hover:bg-zinc-800
               `}
-              onClick={() => setOpen(false)}
             >
-              <BookTemplateIcon size={20} />
+              <BookTemplateIcon size={18} />
               <span>Browse Templates</span>
             </Link>
+
             <Link
               href="/docs/history"
-              className={`flex items-center gap-2 px-3 py-2 rounded-md hover:bg-zinc-800 cursor-pointer
+              className={`
+                flex items-center gap-3 px-2 py-2 rounded-md mt-1 transition-colors
                 ${
                   isActive("/docs/history")
-                    ? "bg-zinc-700 text-white font-semibold"
-                    : "text-zinc-400"
+                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
+                    : "text-zinc-700 dark:text-zinc-200"
                 }
+                hover:bg-zinc-50 dark:hover:bg-zinc-800
               `}
-              onClick={() => setOpen(false)}
             >
-              <HistoryIcon size={20} />
+              <HistoryIcon size={18} />
               <span>Draft History</span>
             </Link>
 
             {/* Recent drafts */}
-            <div className="mt-6 px-3 text-zinc-400 text-sm">
-              <h3 className="mb-2 font-semibold text-zinc-200">Recent Drafts</h3>
+            <div className="mt-6 px-2 text-zinc-500 dark:text-zinc-400 text-sm">
+              <h3 className="mb-2 font-semibold text-zinc-700 dark:text-zinc-200">
+                Recent Drafts
+              </h3>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/docs/payment-reminder"
-                    className="block hover:text-white"
-                    onClick={() => setOpen(false)}
+                    className="block hover:text-zinc-900 dark:hover:text-white"
                   >
                     Payment Reminder Notice
                   </Link>
@@ -144,8 +129,7 @@ export default function DocsSidebar() {
                 <li>
                   <Link
                     href="/docs/termination-notice"
-                    className="block hover:text-white"
-                    onClick={() => setOpen(false)}
+                    className="block hover:text-zinc-900 dark:hover:text-white"
                   >
                     Termination Notice
                   </Link>
@@ -153,8 +137,7 @@ export default function DocsSidebar() {
                 <li>
                   <Link
                     href="/docs/legal-demand-notice"
-                    className="block hover:text-white"
-                    onClick={() => setOpen(false)}
+                    className="block hover:text-zinc-900 dark:hover:text-white"
                   >
                     Legal Demand Notice
                   </Link>
@@ -162,13 +145,8 @@ export default function DocsSidebar() {
               </ul>
             </div>
           </div>
-        </div>
-      </aside>
-
-      {/* Overlay behind sidebar on mobile */}
-      {open && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"></div>
-      )}
-    </>
+        </nav>
+      </div>
+    </aside>
   );
 }

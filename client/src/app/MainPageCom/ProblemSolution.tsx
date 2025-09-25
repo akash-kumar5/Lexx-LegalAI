@@ -4,7 +4,6 @@ import { easeOut, motion } from "framer-motion";
 import { MinusCircle, PlusCircle } from "lucide-react";
 
 export default function ProblemSolutionSection() {
-  // Framer Motion variants for staggered animations
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -21,17 +20,39 @@ export default function ProblemSolutionSection() {
   return (
     <section
       id="problemsolutionsection"
-      className="relative w-full bg-black py-20 sm:py-24 px-6 overflow-hidden"
+      className={`
+        relative w-full py-20 sm:py-24 px-6 overflow-hidden
+        bg-white text-zinc-900
+        dark:bg-black dark:text-zinc-100
+      `}
     >
-      {/* Static Background Grid */}
+      {/* Static background grid: light uses faint gray, dark uses faint white */}
       <div
-        className="absolute inset-0 z-0 h-full w-full bg-transparent"
+        className="absolute inset-0 z-0 h-full w-full"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px)",
+            "linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)",
           backgroundSize: "3rem 3rem",
         }}
-      ></div>
+      />
+      <div
+        className="absolute inset-0 z-0 h-full w-full dark:hidden"
+        aria-hidden
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)",
+          backgroundSize: "3rem 3rem",
+        }}
+      />
+      <div
+        className="absolute inset-0 z-0 h-full w-full hidden dark:block"
+        aria-hidden
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+          backgroundSize: "3rem 3rem",
+        }}
+      />
 
       <div className="relative z-10 max-w-7xl mx-auto text-center">
         <motion.h2
@@ -39,7 +60,12 @@ export default function ProblemSolutionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-bold mb-16 text-transparent bg-clip-text bg-gradient-to-b from-zinc-100 to-zinc-400 tracking-tight"
+          className={`
+            text-4xl md:text-5xl font-bold mb-16 tracking-tight
+            text-transparent bg-clip-text
+            bg-gradient-to-b from-zinc-900 to-zinc-600
+            dark:from-zinc-100 dark:to-zinc-300
+          `}
         >
           Why Lexx?
         </motion.h2>
@@ -54,22 +80,29 @@ export default function ProblemSolutionSection() {
           {/* Problem Card */}
           <motion.div
             variants={itemVariants}
-            className="group relative bg-white/5 backdrop-blur-md rounded-2xl p-8 text-left shadow-2xl transition-all duration-300 hover:bg-zinc-900/10 hover:text-black"
+            className={`
+              group relative rounded-2xl p-8 text-left shadow-2xl transition-all duration-300
+              bg-zinc-50 border border-zinc-100/40
+              hover:bg-zinc-100/60 hover:shadow-2xl
+              dark:bg-stone-900 dark:border-stone-700/40 dark:hover:bg-stone-800/60
+            `}
           >
-            {/* --- New: Glowing Border Effect --- */}
-            <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-zinc-500 to-zinc-800 opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+            {/* Glowing border (subtle in light, subtle in dark) */}
+            <div className="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none">
+              <div className="h-full w-full rounded-2xl bg-gradient-to-r from-zinc-300 to-zinc-500 dark:from-stone-700 dark:to-stone-900 opacity-30" />
+            </div>
+
             <div className="relative">
               <div className="flex items-center gap-3 mb-4">
-                <MinusCircle className="w-7 h-7 text-zinc-400" />
-                <h3 className="text-zinc-200 font-semibold text-2xl">
+                <MinusCircle className="w-7 h-7 text-zinc-600 dark:text-zinc-300" />
+                <h3 className="font-semibold text-2xl text-zinc-900 dark:text-white">
                   The Problem
                 </h3>
               </div>
-              <p className="text-zinc-400 text-lg leading-relaxed">
-                Drafting legal documents is{" "}
-                <span className="text-white">slow</span>, repetitive, and error-prone.
+              <p className="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed">
+                Drafting legal documents is <span className="font-semibold text-zinc-900 dark:text-white">slow</span>, repetitive, and error-prone.
                 Research takes hours across scattered sources, and{" "}
-                <span className="text-white">missing one clause</span> can change an outcome.
+                <span className="font-semibold text-zinc-900 dark:text-white">missing one clause</span> can change an outcome.
               </p>
             </div>
           </motion.div>
@@ -77,29 +110,33 @@ export default function ProblemSolutionSection() {
           {/* Solution Card */}
           <motion.div
             variants={itemVariants}
-            className="group relative bg-white/5 backdrop-blur-md rounded-2xl p-8 text-left shadow-2xl transition-all duration-300 hover:bg-zinc-800/10"
+            className={`
+              group relative rounded-2xl p-8 text-left shadow-2xl transition-all duration-300
+              bg-zinc-50 border border-zinc-100/40
+              hover:bg-zinc-100/60
+              dark:bg-stone-900 dark:border-stone-700/40 dark:hover:bg-stone-800/60
+            `}
           >
-            {/* --- New: Glowing Border Effect --- */}
-            <div className="absolute -inset-px rounded-2xl bg-gradient-to-r from-zinc-500 to-zinc-800 opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+            <div className="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 pointer-events-none">
+              <div className="h-full w-full rounded-2xl bg-gradient-to-r from-zinc-300 to-zinc-500 dark:from-stone-700 dark:to-stone-900 opacity-30" />
+            </div>
+
             <div className="relative">
               <div className="flex items-center gap-3 mb-4">
-                <PlusCircle className="w-7 h-7 text-white" />
-                <h3 className="text-white font-semibold text-2xl">
+                <PlusCircle className="w-7 h-7 text-white bg-zinc-900 rounded-full p-1 dark:bg-white dark:text-zinc-900" />
+                <h3 className="text-zinc-900 dark:text-white font-semibold text-2xl">
                   The Lexx Solution
                 </h3>
               </div>
-              <p className="text-zinc-300 text-lg leading-relaxed">
-                Lexx combines <span className="text-white">AI-powered drafting</span> with
-                citation-backed research, so you can go from a{" "}
-                <span className="text-white">single question</span> to a ready legal draft in
+              <p className="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed">
+                Lexx combines <span className="font-semibold text-zinc-900 dark:text-white">AI-powered drafting</span> with
+                citation-backed research, so you can go from a <span className="font-semibold text-zinc-900 dark:text-white">single question</span> to a ready legal draft in
                 minutes. Accurate, fast, and built for Indian law.
               </p>
             </div>
           </motion.div>
         </motion.div>
       </div>
-      {/* Note: The scroll-down button is removed from individual sections for better page flow. 
-          The main page layout will handle the overall scroll experience. */}
     </section>
   );
 }
