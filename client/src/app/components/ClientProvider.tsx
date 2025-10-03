@@ -8,7 +8,7 @@ import { LoadingProvider } from "./Loading"; // adjust path if needed
 
 export default function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light">
+    <ThemeProvider attribute="class" defaultTheme="dark">
       <AuthProvider>
         <LoadingProvider>
           {children}

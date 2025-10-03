@@ -1,8 +1,7 @@
 "use client";
-
 import Link from "next/link";
 import React, { useState, forwardRef, useEffect } from "react";
-import { useAuth } from "../../../context/AuthContext"; // adjust path if needed
+import { useAuth } from "../../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, LogOut, Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -209,18 +208,16 @@ export default function Navbar() {
   };
 
   return (
-    <nav
-      className={`
-    sticky top-0 z-50 mx-auto w-full max-w-[97%] md:max-w-[96%] mt-2
-    backdrop-blur-md border text-zinc-900 dark:text-stone-100 shadow-lg rounded-full
-    /* Light mode gradient */
-    bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-100 border-zinc-400
-    /* Dark mode gradient */
-    dark:bg-gradient-to-r dark:from-black/20 dark:via-zinc-800 dark:to-black/20 dark:border-stone-700
-  `}
-    >
-      <div className="mx-auto flex max-w-[95%] items-center justify-between py-3">
-        <Link
+<nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
+  <div
+    className="
+      mx-auto mt-4 w-[96%] max-w-screen-xl 
+      backdrop-blur-md border text-zinc-900 dark:text-stone-100 shadow-lg rounded-full
+      bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-100 border-zinc-400
+      dark:bg-gradient-to-r dark:from-black/20 dark:via-zinc-800 dark:to-black/20 dark:border-stone-700
+      px-6 py-3 flex items-center justify-between
+    "
+  >        <Link
           href="/"
           onClick={closeAllMenus}
           className="text-xl font-bold tracking-tight"
