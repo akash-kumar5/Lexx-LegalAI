@@ -211,7 +211,7 @@ export default function Navbar() {
 <nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
   <div
     className="
-      mx-auto mt-4 w-[96%] max-w-screen-xl 
+      mx-auto mt-2 w-[99%] max-w-screen-2xl 
       backdrop-blur-md border text-zinc-900 dark:text-stone-100 shadow-lg rounded-full
       bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-100 border-zinc-400
       dark:bg-gradient-to-r dark:from-black/20 dark:via-zinc-800 dark:to-black/20 dark:border-stone-700

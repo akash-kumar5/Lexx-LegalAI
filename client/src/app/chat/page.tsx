@@ -6,7 +6,7 @@ import { PaperPlaneIcon } from "@radix-ui/react-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../../../context/AuthContext";
 import ChatSidebar from "../components/Sidebar";
-import {  FileText, X } from "lucide-react";
+import { ArrowBigDown, ArrowDown, FileText, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import SummerizationBtn from "../components/SummerizationBtn";
 import { useRouter } from "next/navigation";
@@ -39,20 +39,8 @@ export default function ChatPage() {
   const [attachedFileName, setAttachedFileName] = useState<string | null>(null);
   const [fileKey, setFileKey] = useState(Date.now());
 
-  const fullPrompt = "I'm Your LegalAI, Ask me anything legally...";
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    let index = 0;
-    inputRef.current?.focus();
-    const typingInterval = setInterval(() => {
-      setPromptText(fullPrompt.slice(0, index + 1));
-      index++;
-      if (index === fullPrompt.length) clearInterval(typingInterval);
-    }, 50);
-    return () => clearInterval(typingInterval);
-  }, []);
 
   useEffect(() => {
     const el = chatContainerRef.current;
@@ -202,9 +190,11 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex w-full overflow-hidden h-[calc(100vh-4rem)]">
+    <div className="flex w-full overflow-hidden h-screen pt-18">
       <div
-        className={`transition-all duration-300 ${collapsed ? "w-14" : "w-64"}`}
+        className={`${
+          collapsed ? "w-14" : "w-64"
+        } transition-all duration-300 border-r border-white/10 bg-zinc-950/40 backdrop-blur-sm`}
       >
         <ChatSidebar
           chats={chats}
@@ -218,43 +208,34 @@ export default function ChatPage() {
           currentChatId={currentChatId}
         />
       </div>
-      <div className="flex-1 flex flex-col relative bg-gradient-to-b from-zinc-950 via-zinc-900 to-black">
+      <div className="flex-1 flex flex-col relative bg-gradient-to-b from-zinc-950 via-zinc-900/70 to-black">
         {messages.length === 0 && !loading && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <motion.p
-              key={promptText} // ensures it animates with changes
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
-              className="text-xl md:text-2xl font-mono text-zinc-400 text-center max-w-2xl px-4"
-            >
-              {promptText}
-              <span className="typing-cursor">|</span>
-            </motion.p>
+            <p className="text-2xl">What are we working on?</p>
           </div>
         )}
 
         <div
           ref={chatContainerRef}
-          className=" flex-1 overflow-y-auto space-y-4 px-4 py-6"
+          aria-live="polite"
+          className=" flex-1 overflow-y-auto space-y-4 px-6 md:px-10 pb-32 pt-6"
         >
           {messages.map((msg, idx) => (
-            <div
-              key={`${msg.role}-${idx}-${msg.content.slice(0, 10)}`}
-              className={`flex w-[75%] mx-auto ${
-                msg.role === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
+            <div key={`${msg.role}-${idx}`} className={`flex w-full`}>
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`px-4 py-3 rounded-2xl whitespace-pre-wrap break-words shadow-sm ${
-                  msg.role === "user"
-                    ? "bg-zinc-800/70 text-white text-right w-fit"
-                    : "bg-zinc-700/50 text-white text-left max-w-[85%]"
-                }`}
+                className={`
+        max-w-[min(85%,48rem)] px-4 py-3 rounded-2xl shadow-sm whitespace-pre-wrap break-words
+        ${
+          msg.role === "user"
+            ? "ml-auto bg-zinc-800/80 text-white"
+            : "mr-auto bg-zinc-800/50 text-zinc-100 border border-white/10"
+        }
+      `}
               >
                 <ReactMarkdown
+                  // className="prose prose-invert prose-zinc max-w-none prose-p:my-2 prose-li:my-1"
                   components={{
                     p: ({ children }) => <p className="mb-2">{children}</p>,
                     strong: ({ children }) => (
@@ -281,14 +262,33 @@ export default function ChatPage() {
           ))}
 
           {loading && (
-            <div className="text-left bg-gradient-to-b from-zinc-950 via-zinc-900 to-black text-white p-3 rounded-xl animate-pulse max-w-[80%]">
-              Typing...
+            <div className="mr-auto bg-zinc-800/50 text-zinc-200 px-4 py-3 rounded-2xl">
+              <span className="inline-flex gap-1">
+                <span>Typing</span>
+                <span className="animate-pulse">●</span>
+                <span className="animate-pulse [animation-delay:120ms]">●</span>
+                <span className="animate-pulse [animation-delay:240ms]">●</span>
+              </span>
             </div>
           )}
         </div>
 
+        {showScrollButton && (
+          <button
+            onClick={() =>
+              chatContainerRef.current?.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: "smooth",
+              })
+            }
+            className="fixed bottom-28 right-6 z-40 rounded-full border border-white/50 bg-zinc-900/80 backdrop-blur p-1 text-zinc-200 hover:bg-zinc-800"
+          >              <ArrowDown size={21} />
+          
+          </button>
+        )}
+
         {/* Typing Prompt */}
-        <div className="border-t border-white/10 bg-zinc-950/70 px-4 py-3 shadow-[0_0_30px_rgba(0,0,0,0.4)] backdrop-blur-lg">
+        <div className="sticky bottom-5 left-0 right-0 bg-zinc-950/70 backdrop-blur-xl">
           <div className="relative mx-auto flex w-full max-w-3xl flex-col gap-2">
             {/* Attached File Indicator (Pill) */}
             <AnimatePresence>
@@ -331,7 +331,7 @@ export default function ChatPage() {
                 onKeyDown={handleKeyDown}
                 placeholder="Type your legal query…"
                 maxRows={5}
-                className="flex-grow resize-none rounded-full border border-zinc-700 bg-transparent px-9 py-2 text-sm text-white placeholder:text-neutral-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                className="flex-grow resize-none rounded-full border-2 border-zinc-500 bg-zinc-900 px-9 py-2 text-sm text-white placeholder:text-neutral-400 focus-visible:ring-0 focus-visible:ring-offset-0"
               />
               <Button
                 onClick={() => checkTokensAndSend(input)}
@@ -339,7 +339,11 @@ export default function ChatPage() {
                 className="h-9 w-9 rounded-full bg-zinc-700 p-0 transition-all duration-200 hover:bg-zinc-800"
                 disabled={loading || !input.trim()}
               >
-                <PaperPlaneIcon className="h-4 w-4" />
+                {loading ? (
+                  <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                ) : (
+                  <PaperPlaneIcon className="h-5 w-5" />
+                )}
               </Button>
             </div>
           </div>
