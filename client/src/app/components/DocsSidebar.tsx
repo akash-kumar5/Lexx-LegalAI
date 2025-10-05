@@ -31,7 +31,7 @@ export default function DocsSidebar() {
     <aside
       ref={sidebarRef}
       className={`
-        fixed top-0 left-0 h-full z-40
+        fixed top-0 left-0 h-full z-40 pt-18
         lg:static lg:h-auto
         transition-all duration-300 ease-in-out
         ${expanded ? "w-64" : "w-16"}

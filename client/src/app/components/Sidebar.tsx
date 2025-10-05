@@ -8,14 +8,7 @@ import React, {
   useState,
 } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import {
-  Pencil,
-  PlusIcon,
-  Trash,
-  MoreVertical,
-  Copy,
-  Upload,
-} from "lucide-react";
+import { Pencil, PlusIcon, Trash, MoreVertical, Copy, Upload } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
 
@@ -34,7 +27,7 @@ interface Message {
 interface ChatSidebarProps {
   onSelectChat: (chatId: string) => void;
   chats: ChatSummary[];
-  chatMessages: Message[]; // messages for the currently open chat
+  chatMessages: Message[];
   onNewChat: () => void;
   currentChatId: string | null;
   onRefresh: () => void;
@@ -51,7 +44,7 @@ interface ChatMessageExport {
 
 type ExportResult = { ok: boolean; url?: string; message?: string };
 
-// Placeholder export function — typed return so callers can check `.ok` without casting.
+// Placeholder export function
 const exportChatToPDF = async (
   title: string,
   messages: ChatMessageExport[]
@@ -70,9 +63,7 @@ const useClickOutside = (
     const listener = (event: MouseEvent | TouchEvent) => {
       for (const ref of refs) {
         const el = ref.current;
-        if (el && el.contains(event.target as Node)) {
-          return;
-        }
+        if (el && el.contains(event.target as Node)) return;
       }
       handler(event);
     };
@@ -98,31 +89,21 @@ export default function ChatSidebar({
   token,
 }: ChatSidebarProps) {
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
-    null
-  );
-  const [openMenu, setOpenMenu] = useState<{
-    id: string | null;
-    dir: "up" | "down";
-  }>({ id: null, dir: "down" });
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState<{ id: string | null; dir: "up" | "down" }>({
+    id: null,
+    dir: "down",
+  });
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-  const [snackbarType, setSnackbarType] = useState<
-    "info" | "error" | "success"
-  >("info");
+  const [snackbarType, setSnackbarType] = useState<"info" | "error" | "success">("info");
 
   const editingInputRef = useRef<HTMLInputElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const snackbarTimeoutRef = useRef<number | null>(null);
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
-  const stableRefs = useMemo(
-    () => [menuRef] as React.RefObject<HTMLElement>[],
-    [menuRef]
-  );
-  const closeMenu = useCallback(
-    () => setOpenMenu({ id: null, dir: "down" }),
-    []
-  );
+  const stableRefs = useMemo(() => [menuRef] as React.RefObject<HTMLElement>[], [menuRef]);
+  const closeMenu = useCallback(() => setOpenMenu({ id: null, dir: "down" }), []);
   useClickOutside(stableRefs, closeMenu);
 
   useEffect(() => {
@@ -157,12 +138,8 @@ export default function ChatSidebar({
     (msg: string, type: "info" | "error" | "success" = "info", ms = 2500) => {
       setSnackbarMessage(msg);
       setSnackbarType(type);
-      if (snackbarTimeoutRef.current) {
-        window.clearTimeout(snackbarTimeoutRef.current);
-      }
-      const id = window.setTimeout(() => {
-        setSnackbarMessage(null);
-      }, ms);
+      if (snackbarTimeoutRef.current) window.clearTimeout(snackbarTimeoutRef.current);
+      const id = window.setTimeout(() => setSnackbarMessage(null), ms);
       snackbarTimeoutRef.current = id;
     },
     []
@@ -170,22 +147,15 @@ export default function ChatSidebar({
 
   useEffect(() => {
     return () => {
-      if (snackbarTimeoutRef.current) {
-        window.clearTimeout(snackbarTimeoutRef.current);
-      }
+      if (snackbarTimeoutRef.current) window.clearTimeout(snackbarTimeoutRef.current);
     };
   }, []);
 
   const updateChatTitle = useCallback(
     async (chatId: string, newTitle: string) => {
-      if (!token) {
-        showSnackbar("Authentication error.", "error");
-        return;
-      }
-      if (!API_URL) {
-        showSnackbar("Server configuration error.", "error");
-        return;
-      }
+      if (!token) return showSnackbar("Authentication error.", "error");
+      if (!API_URL) return showSnackbar("Server configuration error.", "error");
+
       try {
         const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
           method: "PATCH",
@@ -214,20 +184,13 @@ export default function ChatSidebar({
 
   const deleteChat = useCallback(
     async (chatId: string) => {
-      if (!token) {
-        showSnackbar("Authentication error.", "error");
-        return;
-      }
-      if (!API_URL) {
-        showSnackbar("Server configuration error.", "error");
-        return;
-      }
+      if (!token) return showSnackbar("Authentication error.", "error");
+      if (!API_URL) return showSnackbar("Server configuration error.", "error");
+
       try {
         const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
           await onRefresh();
@@ -250,9 +213,7 @@ export default function ChatSidebar({
   const saveTitle = useCallback(() => {
     if (editingChatId && editingInputRef.current) {
       const newTitle = editingInputRef.current.value.trim();
-      if (newTitle) {
-        updateChatTitle(editingChatId, newTitle);
-      }
+      if (newTitle) updateChatTitle(editingChatId, newTitle);
     }
     setEditingChatId(null);
   }, [editingChatId, updateChatTitle]);
@@ -312,14 +273,9 @@ export default function ChatSidebar({
 
   const handleExportChat = useCallback(
     async (chatId: string, title?: string) => {
-      if (!API_URL) {
-        showSnackbar("Server configuration error.", "error");
-        return;
-      }
-      if (!token) {
-        showSnackbar("Authentication required.", "error");
-        return;
-      }
+      if (!API_URL) return showSnackbar("Server configuration error.", "error");
+      if (!token) return showSnackbar("Authentication required.", "error");
+
       try {
         const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -334,17 +290,10 @@ export default function ChatSidebar({
         const exportMsgs: ChatMessageExport[] = messages.map((m) => ({
           sender: m.role,
           text: m.content,
-          timestamp: undefined,
         }));
-        const result = await exportChatToPDF(
-          title ?? "Untitled Chat",
-          exportMsgs
-        );
-        if (result.ok) {
-          showSnackbar("Export started.", "success");
-        } else {
-          showSnackbar(result.message ?? "Export failed.", "error");
-        }
+        const result = await exportChatToPDF(title ?? "Untitled Chat", exportMsgs);
+        if (result.ok) showSnackbar("Export started.", "success");
+        else showSnackbar(result.message ?? "Export failed.", "error");
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         console.error("Export error:", message);
@@ -359,8 +308,7 @@ export default function ChatSidebar({
   const groupedChats = useMemo(() => {
     const groups: Record<string, ChatSummary[]> = {};
     const sortedChats = [...chats].sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     const today = new Date();
     const yesterday = new Date(today);
@@ -376,10 +324,7 @@ export default function ChatSidebar({
       if (isSameDay(chatDate, today)) key = "Today";
       else if (isSameDay(chatDate, yesterday)) key = "Yesterday";
       else
-        key = chatDate.toLocaleDateString(undefined, {
-          month: "long",
-          day: "numeric",
-        });
+        key = chatDate.toLocaleDateString(undefined, { month: "long", day: "numeric" });
       if (!groups[key]) groups[key] = [];
       groups[key].push(chat);
     });
@@ -392,23 +337,23 @@ export default function ChatSidebar({
       className={`
         transition-all duration-300
         ${collapsed ? "w-16" : "w-64"}
-        h-full
-         bg-zinc-950/50 backdrop-blur-sm border-r border-white/10 flex flex-col
+        h-full flex flex-col
+        bg-white/75 border-r border-zinc-200 backdrop-blur-sm
+        dark:bg-zinc-950/50 dark:border-white/10
       `}
     >
       {/* Header */}
-      <div className="flex items-center justify-between h-14 px-3 border-b border-white/40">
+      <div className="flex items-center justify-between h-14 px-3 border-b border-zinc-200 dark:border-white/10">
         {!collapsed && (
-          <span className="text-lg font-semibold tracking-wide text-zinc-200">
+          <span className="text-lg font-semibold tracking-wide text-zinc-800 dark:text-zinc-200">
             Chats
           </span>
         )}
-
-        {/* Collapse Toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="ml-auto grid place-items-center h-7 w-7 rounded-full ring-1 ring-zinc-500"
+          className="ml-auto grid place-items-center h-7 w-7 rounded-full ring-1 ring-zinc-300 text-zinc-700 hover:bg-zinc-100
+                     dark:ring-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
           title={collapsed ? "Expand" : "Collapse"}
         >
           {collapsed ? (
@@ -424,7 +369,9 @@ export default function ChatSidebar({
         <button
           onClick={onNewChat}
           className="w-full inline-flex items-center justify-center gap-2 h-9 rounded-full
-               bg-gradient-to-r from-zinc-900/60 via-zinc-700 to-zinc-900/60 hover:bg-zinc-500 text-white text-sm font-medium transition-colors"
+                    text-sm font-medium transition-colors
+                    bg-zinc-900 text-white hover:bg-zinc-800
+                    dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
         >
           <PlusIcon className="h-4 w-4" /> {!collapsed && "New Chat"}
         </button>
@@ -433,14 +380,16 @@ export default function ChatSidebar({
       {/* Chat List */}
       <div
         className="flex-1 overflow-y-auto px-2 space-y-3
-                [scrollbar-width:thin] [scrollbar-color:theme(colors.zinc.700)_transparent]"
+                   [scrollbar-width:thin] [scrollbar-color:theme(colors.zinc.400)_transparent]
+                   dark:[scrollbar-color:theme(colors.zinc.700)_transparent]"
       >
         {Object.entries(groupedChats).map(([date, chatList]) => (
           <div key={date}>
             {!collapsed && (
               <div
                 className="sticky top-0 z-10 -mx-2 px-4 py-1.5 text-[11px] uppercase tracking-wide
-                        text-zinc-400 bg-zinc-950/80 backdrop-blur border-b border-white/5"
+                           bg-white/85 text-zinc-500 border-b border-zinc-200
+                           dark:bg-zinc-950/80 dark:text-zinc-400 dark:border-white/5 backdrop-blur"
               >
                 {date}
               </div>
@@ -450,27 +399,41 @@ export default function ChatSidebar({
                 const active = chat._id === currentChatId;
                 return (
                   <li key={chat._id} className="group relative">
-                    <button
-                      onClick={() => onSelectChat(chat._id)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition
-                  ${
-                    active
-                      ? "bg-white/10 text-zinc-50 ring-1 ring-white/10"
-                      : "hover:bg-white/5 text-zinc-200"
-                  }`}
-                      title={chat.preview || "Untitled"}
-                    >
-                      {collapsed
-                        ? ""
-                        : chat.preview || "Untitled"}
-                    </button>
+                    {editingChatId === chat._id ? (
+                      <input
+                        ref={editingInputRef}
+                        type="text"
+                        defaultValue={chat.preview || "New Chat"}
+                        autoFocus
+                        onKeyDown={handleEditKeyDown}
+                        onBlur={saveTitle}
+                        className="w-full px-3 py-2 rounded-lg text-sm outline-none
+                                   bg-white border border-zinc-300 text-zinc-900
+                                   focus:ring-2 focus:ring-zinc-300
+                                   dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:focus:ring-zinc-600"
+                      />
+                    ) : (
+                      <button
+                        onClick={() => onSelectChat(chat._id)}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition
+                          ${
+                            active
+                              ? "bg-zinc-100 text-zinc-900 ring-1 ring-zinc-200 dark:bg-white/10 dark:text-zinc-50 dark:ring-white/10"
+                              : "hover:bg-zinc-100/70 text-zinc-800 dark:hover:bg-white/5 dark:text-zinc-200"
+                          }`}
+                        title={chat.preview || "Untitled"}
+                      >
+                        {collapsed ? "" : chat.preview || "Untitled"}
+                      </button>
+                    )}
 
-                    {!collapsed && (
+                    {!collapsed && editingChatId !== chat._id && (
                       <div className="absolute inset-y-0 right-1 flex items-center">
                         <button
                           onClick={(e) => handleMenuToggle(e, chat._id)}
                           className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5
-                               rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-white/10"
+                                     rounded-md text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100
+                                     dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-white/10"
                           aria-label="Chat options"
                         >
                           <MoreVertical size={16} />
@@ -481,41 +444,38 @@ export default function ChatSidebar({
                     {openMenu.id === chat._id && (
                       <div
                         ref={menuRef}
-                        className={`absolute z-50 right-0 mt-2 w-44 rounded-md border border-white/10 
-                bg-zinc-950/95 backdrop-blur shadow-xl text-sm overflow-hidden`}
+                        className={`absolute z-50 right-0 mt-2 w-44 rounded-md overflow-hidden shadow-xl text-sm
+                                    border bg-white text-zinc-900
+                                    dark:border-white/10 dark:bg-zinc-950/95 dark:text-zinc-100 backdrop-blur`}
                         style={{
                           top: openMenu.dir === "up" ? "auto" : "100%",
                           bottom: openMenu.dir === "up" ? "100%" : "auto",
-                          marginTop:
-                            openMenu.dir === "up" ? undefined : "0.5rem",
-                          marginBottom:
-                            openMenu.dir === "up" ? "0.5rem" : undefined,
+                          marginTop: openMenu.dir === "up" ? undefined : "0.5rem",
+                          marginBottom: openMenu.dir === "up" ? "0.5rem" : undefined,
                         }}
                       >
                         <button
                           onClick={() => handleStartEditing(chat._id)}
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-white/5 text-left"
+                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
                         >
                           <Pencil size={14} /> Rename
                         </button>
                         <button
                           onClick={() => copyChatLink(chat._id)}
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-white/5 text-left"
+                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
                         >
                           <Copy size={14} /> Share
                         </button>
                         <button
-                          onClick={() =>
-                            handleExportChat(chat._id, chat.preview)
-                          }
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-white/5 text-left"
+                          onClick={() => handleExportChat(chat._id, chat.preview)}
+                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
                         >
                           <Upload size={14} /> Export
                         </button>
-                        <div className="h-px bg-white/10" />
+                        <div className="h-px bg-zinc-200 dark:bg-white/10" />
                         <button
                           onClick={() => handleStartDelete(chat._id)}
-                          className="flex items-center gap-2 w-full px-3 py-2 text-red-400 hover:bg-white/5 text-left"
+                          className="flex items-center gap-2 w-full px-3 py-2 text-red-600 hover:bg-red-50 text-left dark:text-red-400 dark:hover:bg-white/5"
                         >
                           <Trash size={14} /> Delete
                         </button>
@@ -530,65 +490,66 @@ export default function ChatSidebar({
       </div>
 
       {/* Delete Confirmation Modal */}
+      {showDeleteConfirm &&
+        createPortal(
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+            <div className="w-full max-w-sm p-6 rounded-2xl bg-white text-zinc-900 shadow-2xl border border-zinc-200
+                            dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700">
+              <h3 className="text-lg font-semibold mb-2 text-center">Delete Chat</h3>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 text-center">
+                Are you sure you want to delete this chat? This action cannot be undone.
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowDeleteConfirm(null)}
+                  className="px-5 py-2 rounded-md bg-zinc-200 hover:bg-zinc-300 text-zinc-900
+                             dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="px-5 py-2 rounded-md bg-red-600 hover:bg-red-500 text-white"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
-
-{showDeleteConfirm &&
-  createPortal(
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-full max-w-sm p-6 rounded-2xl bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
-        <h3 className="text-lg font-semibold mb-2 text-center">Delete Chat</h3>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 text-center">
-          Are you sure you want to delete this chat? This action cannot be undone.
-        </p>
-        <div className="flex gap-3 justify-center">
-          <button
-            onClick={() => setShowDeleteConfirm(null)}
-            className="px-5 py-2 rounded-md bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={confirmDelete}
-            className="px-5 py-2 rounded-md bg-red-600 hover:bg-red-500 text-white"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body
-  )}
-
-
-
-      {snackbarMessage && createPortal(
-  <AnimatePresence>
-    <motion.div
-      key="snackbar"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10 }}
-      className="fixed left-1/2 -translate-x-1/2 z-[70]
-                 bottom-[max(1.25rem,env(safe-area-inset-bottom))]"
-      onClick={() => setSnackbarMessage(null)}
-    >
-      <div
-        role={snackbarType === "error" ? "alert" : "status"}
-        className={`max-w-[90vw] sm:max-w-md px-4 py-2 rounded-lg shadow-lg
-          text-white cursor-pointer backdrop-blur
-          ${snackbarType === "error"
-            ? "bg-red-600/95"
-            : snackbarType === "success"
-            ? "bg-emerald-900"
-            : "bg-zinc-800/95"}`}
-      >
-        <span className="block truncate">{snackbarMessage}</span>
-      </div>
-    </motion.div>
-  </AnimatePresence>,
-  document.body
-)}
-
+      {/* Snackbar */}
+      {snackbarMessage &&
+        createPortal(
+          <AnimatePresence>
+            <motion.div
+              key="snackbar"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              className="fixed left-1/2 -translate-x-1/2 z-[70]
+                         bottom-[max(1.25rem,env(safe-area-inset-bottom))]"
+              onClick={() => setSnackbarMessage(null)}
+            >
+              <div
+                role={snackbarType === "error" ? "alert" : "status"}
+                className={`max-w-[90vw] sm:max-w-md px-4 py-2 rounded-lg shadow-lg cursor-pointer backdrop-blur
+                  text-white
+                  ${
+                    snackbarType === "error"
+                      ? "bg-red-600/95"
+                      : snackbarType === "success"
+                      ? "bg-emerald-600/95"
+                      : "bg-zinc-800/95"
+                  }`}
+              >
+                <span className="block truncate">{snackbarMessage}</span>
+              </div>
+            </motion.div>
+          </AnimatePresence>,
+          document.body
+        )}
     </div>
   );
 }

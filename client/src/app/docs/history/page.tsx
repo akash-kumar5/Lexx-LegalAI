@@ -59,59 +59,70 @@ export default function DraftHistoryPage() {
   if (loading) {
     return <p className="text-zinc-400 p-6">Loading Drafts...</p>;
   }
+return (
+  <div
+    className={`
+      min-h-screen p-6
+      text-zinc-900 dark:text-zinc-100
+      bg-gradient-to-b from-white via-zinc-100 to-white
+      dark:bg-gradient-to-b dark:from-zinc-950 dark:via-zinc-900 dark:to-black
+    `}
+  >
+    <h1 className="text-3xl font-bold mb-6">My Drafts</h1>
 
-  return (
-    <div className="bg-zinc-950 text-white min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-6">My Drafts</h1>
+    {drafts.length === 0 ? (
+      <p className="text-zinc-600 dark:text-zinc-400">No drafts saved yet.</p>
+    ) : (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {drafts.map((draft) => (
+          <Card
+            key={draft.timestamp}
+            className={`
+              overflow-hidden transition-colors
+              bg-white border border-zinc-300 hover:border-zinc-400
+              dark:bg-zinc-900 dark:border-zinc-700 dark:hover:border-zinc-600
+            `}
+          >
+            <CardContent className="p-4 space-y-3">
+              <h2 className="text-xl font-semibold capitalize">
+                {draft.slug.replace(/-/g, " ")}
+              </h2>
 
-      {drafts.length === 0 ? (
-        <p className="text-zinc-400">No drafts saved yet.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {drafts.map((draft) => (
-            <Card
-              key={draft.timestamp}
-              className="bg-zinc-900 border border-zinc-700"
-            >
-              <CardContent className="p-4 space-y-3 text-zinc-300">
-                <h2 className="text-xl font-semibold capitalize">
-                  {draft.slug.replace(/-/g, " ")}
-                </h2>
-                <p className="text-sm text-zinc-400">
-                  Saved on {new Date(draft.timestamp).toLocaleString()}
-                </p>
-                <div className="flex justify-between items-center">
-                  <Link
-                    href={{
-                      pathname: `/docs/${draft.slug}`,
-                      query: {
-                        body: encodeURIComponent(draft.draft_content),
-                        timestamp: draft.timestamp,
-                      },
-                    }}
-                  >
-                    <Button
-                      size="sm"
-                      variant="default"
-                      className="bg-green-700"
-                    >
-                      Load Draft
-                    </Button>
-                  </Link>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                Saved on {new Date(draft.timestamp).toLocaleString()}
+              </p>
+
+              <div className="flex justify-between items-center gap-2">
+                <Link
+                  href={{
+                    pathname: `/docs/${draft.slug}`,
+                    query: {
+                      body: encodeURIComponent(draft.draft_content),
+                      timestamp: draft.timestamp,
+                    },
+                  }}
+                >
                   <Button
                     size="sm"
-                    variant="outline"
-                    className="bg-red-800"
-                    onClick={() => handleDeleteDraft(draft.timestamp)}
+                    className="bg-zinc-800 text-white hover:bg-zinc-700 dark:bg-zinc-700 dark:hover:bg-zinc-600"
                   >
-                    Delete
+                    Load Draft
                   </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+                </Link>
+
+                <Button
+                  size="sm"
+                  className="bg-red-600 text-white hover:bg-red-500 dark:bg-red-700 dark:hover:bg-red-600"
+                  onClick={() => handleDeleteDraft(draft.timestamp)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )}
+  </div>
+);
 }

@@ -22,7 +22,7 @@ export default function DocsCard({ title, description, route }: DocsCardProps) {
           <h2 className="text-xl font-semibold mb-2">{title}</h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">{description}</p>
         </div>
-        <ArrowBigRightDash className="mt-4 text-red-600 dark:text-red-500 w-5 h-5" />
+        <ArrowBigRightDash className="mt-4 text-zinc-700 dark:text-zinc-200 w-5 h-5" />
       </div>
     </Link>
   );

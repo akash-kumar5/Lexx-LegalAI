@@ -1,32 +1,33 @@
 # server/routes/oauth_google.py
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, Response
 from fastapi.responses import RedirectResponse
-import os
-import httpx
-import time
-import jwt  # PyJWT
+import os, time, json, secrets
+import httpx, jwt
 from urllib.parse import urlencode
-from models import User  # adapt to your model
-from db import users_collection  # adapt to your DB / collection
-from dotenv import load_dotenv
+from models import User
+from db import users_collection
 from typing import Optional
-
-load_dotenv(".env.local")
+from itsdangerous import URLSafeTimedSerializer, BadTimeSignature, SignatureExpired
 
 router = APIRouter()
 
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID") or ""
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET") or ""
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI") or ""
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
-JWT_SECRET = os.getenv("JWT_SECRET")
+
+# Prefer RS256 if possible; showing HS256 for brevity
+JWT_SECRET = os.getenv("JWT_SECRET", "change-me-now")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 JWT_EXPIRE_SECONDS = int(os.getenv("JWT_EXPIRE_SECONDS", "86400"))
 
-if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI):
-    # log warning in production
-    pass
+STATE_SECRET = os.getenv("STATE_SECRET", "another-secret")
+STATE_MAX_AGE = 600  # 10 min
 
+if not (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET and GOOGLE_REDIRECT_URI):
+    raise RuntimeError("Missing Google OAuth env vars")
+
+serializer = URLSafeTimedSerializer(STATE_SECRET)
 
 def create_jwt_for_user(user_id: str, email: str) -> str:
     now = int(time.time())
@@ -34,17 +35,28 @@ def create_jwt_for_user(user_id: str, email: str) -> str:
         "sub": str(user_id),
         "email": email,
         "iat": now,
+        "nbf": now - 5,  # small clock skew
         "exp": now + JWT_EXPIRE_SECONDS,
     }
-    token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-    return token
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
+def set_session_cookie(resp: Response, token: str):
+    # Adjust domain and secure flags per your deployment
+    resp.set_cookie(
+        key="app_session",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=JWT_EXPIRE_SECONDS,
+        path="/",
+    )
 
 @router.get("/auth/google/login")
 def google_login():
-    """
-    Redirect user to Google's OAuth consent screen.
-    """
+    # Generate state + nonce and store in a signed cookie
+    nonce = secrets.token_urlsafe(16)
+    state = serializer.dumps({"nonce": nonce})
     base = "https://accounts.google.com/o/oauth2/v2/auth"
     params = {
         "client_id": GOOGLE_CLIENT_ID,
@@ -52,73 +64,110 @@ def google_login():
         "response_type": "code",
         "scope": "openid email profile",
         "access_type": "offline",
-        "prompt": "select_account",  # or "consent" if you want refresh token each time
-        # Optional: add a state param for CSRF protection; see notes below.
+        # Use consent at least once if you need a refresh_token
+        "prompt": "select_account",  # or "consent"
+        "state": state,
+        "nonce": nonce,
     }
     url = f"{base}?{urlencode(params)}"
-    return RedirectResponse(url)
-
+    resp = RedirectResponse(url)
+    resp.set_cookie("oauth_nonce", nonce, max_age=STATE_MAX_AGE, secure=True, httponly=True, samesite="lax", path="/")
+    return resp
 
 @router.get("/auth/google/callback")
-async def google_callback(code: Optional[str] = None, request: Request = None):
-    """
-    Google calls back here with ?code=... . We exchange code for tokens,
-    get userinfo, then create/find user in DB and issue our JWT token.
-    Finally redirect to FRONTEND_URL with ?token=JWT.
-    """
-    if not code:
-        raise HTTPException(status_code=400, detail="Missing code parameter from Google.")
+async def google_callback(code: Optional[str] = None, state: Optional[str] = None, error: Optional[str] = None, error_description: Optional[str] = None, request: Request = None):
+    if error:
+        raise HTTPException(status_code=400, detail=f"Google OAuth error: {error} ({error_description or 'no description'})")
+    if not code or not state:
+        raise HTTPException(status_code=400, detail="Missing code or state")
+
+    # Validate state + nonce
+    try:
+        data = serializer.loads(state, max_age=STATE_MAX_AGE)
+        expected_nonce = request.cookies.get("oauth_nonce")
+        if not expected_nonce or expected_nonce != data.get("nonce"):
+            raise HTTPException(status_code=400, detail="Invalid nonce/state")
+    except SignatureExpired:
+        raise HTTPException(status_code=400, detail="State expired")
+    except BadTimeSignature:
+        raise HTTPException(status_code=400, detail="Invalid state")
 
     token_url = "https://oauth2.googleapis.com/token"
-    userinfo_url = "https://www.googleapis.com/oauth2/v3/userinfo"
-
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=5.0)) as client:
         # Exchange code for tokens
-        data = {
+        token_payload = {
             "code": code,
             "client_id": GOOGLE_CLIENT_ID,
             "client_secret": GOOGLE_CLIENT_SECRET,
             "redirect_uri": GOOGLE_REDIRECT_URI,
             "grant_type": "authorization_code",
         }
-        r = await client.post(token_url, data=data, headers={"Accept": "application/json"})
-        if r.status_code != 200:
-            raise HTTPException(status_code=400, detail="Failed to fetch token from Google.")
-        token_resp = r.json()
-        access_token = token_resp.get("access_token")
-        if not access_token:
-            raise HTTPException(status_code=400, detail="No access token returned from Google.")
+        tr = await client.post(token_url, data=token_payload, headers={"Accept": "application/json"})
+        try:
+            tr.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(status_code=400, detail=f"Failed to fetch token: {e.response.text[:300]}")
 
-        # Fetch userinfo
-        r2 = await client.get(userinfo_url, headers={"Authorization": f"Bearer {access_token}"})
-        if r2.status_code != 200:
-            raise HTTPException(status_code=400, detail="Failed to fetch user info from Google.")
+        token_resp = tr.json()
+        access_token = token_resp.get("access_token")
+        id_token = token_resp.get("id_token")  # consider verifying
+        refresh_token = token_resp.get("refresh_token")  # may be None unless prompt=consent
+
+        if not access_token:
+            raise HTTPException(status_code=400, detail="No access token from Google")
+
+        # Option A: Verify id_token (recommended). Skipping JWKS for brevity.
+        # Option B: Call userinfo
+        r2 = await client.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        try:
+            r2.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(status_code=400, detail=f"Failed to fetch userinfo: {e.response.text[:300]}")
+
         info = r2.json()
-        # info contains at least: sub (id), email, email_verified, name, picture
         email = info.get("email")
         if not email:
-            raise HTTPException(status_code=400, detail="Google account has no email.")
+            raise HTTPException(status_code=400, detail="Google account has no email")
+        if info.get("email_verified") is False:
+            raise HTTPException(status_code=400, detail="Email not verified with Google")
 
-        # Find or create user in your DB
-        # Adjust this to match your user model / creation logic
-        user = await users_collection.find_one({"email": email})
-        if not user:
-            new_user = {
+        # Upsert user
+        existing = await users_collection.find_one({"email": email})
+        if existing:
+            # Optional: ensure oauth_provider matches, update fields if changed
+            await users_collection.update_one(
+                {"_id": existing["_id"]},
+                {"$set": {
+                    "fullName": info.get("name"),
+                    "profilePictureUrl": info.get("picture"),
+                    "oauth_provider": "google",
+                    "oauth_id": info.get("sub"),
+                    "updatedAt": time.time(),
+                }}
+            )
+            user_id = str(existing["_id"])
+        else:
+            doc = {
                 "email": email,
                 "fullName": info.get("name"),
                 "profilePictureUrl": info.get("picture"),
                 "createdAt": time.time(),
                 "oauth_provider": "google",
                 "oauth_id": info.get("sub"),
+                # If you keep refresh_token, encrypt it before storing
+                # "google_refresh_token": refresh_token,
             }
-            res = await users_collection.insert_one(new_user)
+            res = await users_collection.insert_one(doc)
             user_id = str(res.inserted_id)
-        else:
-            user_id = str(user["_id"])
 
-        jwt_token = create_jwt_for_user(user_id, email)
+    jwt_token = create_jwt_for_user(user_id, email)
 
-        # Redirect to frontend with token (optionally set cookie instead)
-        # For security, prefer setting HttpOnly cookie from backend. Simpler: redirect with token.
-        redirect_url = f"{FRONTEND_URL.rstrip('/')}/auth?token={jwt_token}"
-        return RedirectResponse(redirect_url)
+    # Set HttpOnly cookie and redirect cleanly
+    redirect = RedirectResponse(f"{FRONTEND_URL.rstrip('/')}/auth/signed-in")
+    set_session_cookie(redirect, jwt_token)
+    # Clear transient cookie(s)
+    redirect.delete_cookie("oauth_nonce", path="/")
+    return redirect

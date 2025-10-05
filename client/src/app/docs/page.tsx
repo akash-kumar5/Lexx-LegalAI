@@ -208,70 +208,84 @@ export default function Docs() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white py-10 px-6">
-      <div className="flex-1">
-        <h1 className="text-3xl font-bold mb-6 text-center">
-          Your Legal Workspace
-        </h1>
+  <div
+    className={`
+      min-h-screen pt-24
+      bg-gradient-to-b from-white via-zinc-100 to-white text-zinc-900
+      dark:bg-gradient-to-b dark:from-zinc-950 dark:via-zinc-900 dark:to-black dark:text-white
+    `}
+  >
+    <div className="flex-1">
+      <h1 className="text-3xl font-bold mb-6 text-center">Your Legal Workspace</h1>
 
-        {/* Search Bar */}
-        <div className="relative max-w-3xl mx-auto mb-8">
-          <textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleDraftGeneration();
-              }
-            }}
-            className="w-full bg-zinc-900 p-4 rounded-md border border-zinc-700 resize-none"
-            placeholder="Describe your situation… (e.g., 'I need to fire an employee for poor performance')"
-            rows={2}
-          />
-          {query && (
-            <button
-              onClick={handleDraftGeneration}
-              className="absolute right-3 bottom-3 text-zinc-400 hover:text-white transition-colors"
-              disabled={loading}
-              aria-label="Generate draft"
-            >
-              {loading ? (
-                <div className="animate-spin h-5 w-5 border-t-2 border-zinc-400 rounded-full" />
-              ) : (
-                <ArrowRightIcon className="h-5 w-5" />
-              )}
-            </button>
-          )}
-        </div>
-
-        {/* AI Recommended Templates - This section now renders correctly */}
-        {suggestions.length > 0 && (
-          <div className="max-w-5xl mx-auto mb-12">
-            <h2 className="text-lg text-zinc-400 mb-4">Recommendations</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {suggestions.map((draft: Suggestion) => (
-                <DocsCard
-                  key={draft.slug}
-                  title={draft.title}
-                  description={draft.description || ""}
-                  route={`/docs/${draft.slug}`}
-                />
-              ))}
-            </div>
-          </div>
+      {/* Search Bar */}
+      <div className="relative max-w-3xl mx-auto mb-8">
+        <textarea
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleDraftGeneration();
+            }
+          }}
+          rows={2}
+          placeholder="Describe your situation… (e.g., 'I need to fire an employee for poor performance')"
+          className={`
+            w-full resize-none rounded-md p-4
+            border bg-white text-zinc-900 placeholder:text-zinc-500
+            border-zinc-300 focus:outline-none focus:ring-2 focus:ring-zinc-400/50
+            dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-neutral-400
+            dark:border-stone-700 dark:focus:ring-stone-600/60
+          `}
+        />
+        {query && (
+          <button
+            onClick={handleDraftGeneration}
+            disabled={loading}
+            aria-label="Generate draft"
+            className={`
+              absolute right-3 bottom-3 transition-colors
+              text-zinc-600 hover:text-zinc-900
+              dark:text-zinc-400 dark:hover:text-white
+            `}
+          >
+            {loading ? (
+              <div className="h-5 w-5 animate-spin rounded-full border-t-2 border-zinc-400" />
+            ) : (
+              <ArrowRightIcon className="h-5 w-5" />
+            )}
+          </button>
         )}
+      </div>
 
-        {/* All Templates - This section now renders correctly */}
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-lg text-zinc-400 mb-4">Browse All Templates</h2>
+      {/* AI Recommended Templates */}
+      {suggestions.length > 0 && (
+        <div className="max-w-5xl mx-auto mb-12">
+          <h2 className="text-lg mb-4 text-zinc-600 dark:text-zinc-400">Recommendations</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {allTemplates.map((draft) => (
-              <DocsCard key={draft.route} {...draft} />
+            {suggestions.map((draft: Suggestion) => (
+              <DocsCard
+                key={draft.slug}
+                title={draft.title}
+                description={draft.description || ""}
+                route={`/docs/${draft.slug}`}
+              />
             ))}
           </div>
         </div>
+      )}
+
+      {/* All Templates */}
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-lg mb-4 text-zinc-600 dark:text-zinc-400">Browse All Templates</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {allTemplates.map((draft) => (
+            <DocsCard key={draft.route} {...draft} />
+          ))}
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 }
