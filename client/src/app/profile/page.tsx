@@ -95,14 +95,21 @@ const InputField: FC<{
   const { name, label, type, placeholder, rows } = config;
 
   const commonProps = {
-    id: name,
-    name: name,
-    value: value,
-    onChange: onChange,
-    placeholder: placeholder,
-    className:
-      "mt-1 block w-full rounded-md border border-zinc-700 bg-zinc-800 p-2.5 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 transition",
-  };
+  id: name,
+  name: name,
+  value: value,
+  onChange: onChange,
+  placeholder: placeholder,
+  className: `
+    mt-1 block w-full rounded-md border p-2.5 shadow-sm transition
+    bg-zinc-50 text-zinc-900 border-zinc-300
+    placeholder:text-zinc-400
+    focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50
+
+    dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+    dark:placeholder:text-zinc-500 dark:focus:border-red-500 dark:focus:ring-red-600
+  `,
+};
 
   return (
     <div>
@@ -253,66 +260,82 @@ export default function Profile() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 md:p-8 bg-zinc-900 rounded-lg shadow-xl text-white">
-      <h1 className="text-3xl font-bold mb-2">Your Profile</h1>
-      <p className="text-stone-400 mb-6">
-        We will use this info to auto-fill your legal drafts.
-      </p>
+  <div
+    className={`
+      max-w-4xl mx-auto md:p-8 rounded-lg shadow-xl
+      border mt-23
+      bg-white text-zinc-900 border-zinc-200
+      dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+    `}
+  >
+    <h1 className="text-3xl font-bold mb-2">Your Profile</h1>
+    <p className="text-zinc-600 dark:text-stone-400 mb-6">
+      We will use this info to auto-fill your legal drafts.
+    </p>
 
-      {notification && (
-        <div
-          className={`flex items-center p-3 mb-4 rounded-md text-sm ${
-            notification.type === "success"
-              ? "bg-green-800/50 text-green-300"
-              : "bg-red-800/50 text-red-300"
-          }`}
-        >
-          {notification.type === "success" ? (
-            <CheckCircle className="w-5 h-5 mr-2" />
-          ) : (
-            <AlertTriangle className="w-5 h-5 mr-2" />
-          )}
-          {notification.message}
-        </div>
-      )}
-
-      <form onSubmit={handleSave} className="space-y-6">
-        {formFields.map((field) => (
-          <InputField
-            key={field.name}
-            config={field}
-            value={profile[field.name]}
-            onChange={handleChange}
-          />
-        ))}
-
-        <div className="flex justify-end pt-4">
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="flex items-center justify-center bg-red-600 hover:bg-red-700 disabled:bg-red-900 disabled:cursor-not-allowed text-white font-bold px-6 py-2.5 rounded-md transition-all duration-300"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="animate-spin w-5 h-5 mr-2" />
-                Saving...
-              </>
-            ) : (
-              "Save Profile"
-            )}
-          </button>
-        </div>
-      </form>
-      <div className="mx-auto align-centre justify-centre w-[25%]">
-        <Button
-          className="px-6 py-5 gap-2 flex items-center"
-          onClick={handleDelete}
-          variant="destructive"
-        >
-          <X className="" />
-          Delete Account
-        </Button>
+    {notification && (
+      <div
+        className={[
+          "flex items-center p-3 mb-4 rounded-md text-sm border",
+          notification.type === "success"
+            ? "bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300 dark:border-emerald-800/50"
+            : "bg-red-50 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800/50",
+        ].join(" ")}
+      >
+        {notification.type === "success" ? (
+          <CheckCircle className="w-5 h-5 mr-2" />
+        ) : (
+          <AlertTriangle className="w-5 h-5 mr-2" />
+        )}
+        {notification.message}
       </div>
+    )}
+
+    <form onSubmit={handleSave} className="space-y-6">
+      {formFields.map((field) => (
+        <InputField
+          key={field.name}
+          config={field}
+          value={profile[field.name]}
+          onChange={handleChange}
+        />
+      ))}
+
+      <div className="flex justify-end pt-4">
+        <button
+          type="submit"
+          disabled={isSaving}
+          className={`
+            inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-semibold
+            transition-colors duration-200
+            text-white
+            bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-400 disabled:cursor-not-allowed
+            dark:bg-red-600 dark:hover:bg-red-700 dark:disabled:bg-red-900
+          `}
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className="animate-spin w-5 h-5" />
+              Saving...
+            </>
+          ) : (
+            "Save Profile"
+          )}
+        </button>
+      </div>
+    </form>
+
+    <div className="mt-8 mx-auto w-full sm:w-1/3 flex items-center justify-center">
+      <Button
+        className="w-full px-6 py-5 gap-2 flex items-center justify-center
+                   bg-red-600 hover:bg-red-700 text-white
+                   dark:bg-red-700 dark:hover:bg-red-600"
+        onClick={handleDelete}
+      >
+        <X className="w-5 h-5" />
+        Delete Account
+      </Button>
     </div>
-  );
+  </div>
+);
 }
