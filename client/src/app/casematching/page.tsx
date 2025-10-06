@@ -28,21 +28,20 @@ import FilterChip from "../components/FilterChip";
 import ModeChip from "../components/ModeChip";
 import { apiSearch, apiGetCase } from "@/lib/lexxApi";
 
-
-// ---------- Types ----------
+/* ---------- Types ---------- */
 
 type SearchMode = "all" | "citation" | "parties" | "facts";
 
 type CaseStub = {
   id: string;
-  title: string; // e.g., "Union of India v ABC Ltd."
-  court: string; // e.g., "Supreme Court of India"
+  title: string;
+  court: string;
   date: string; // ISO
   outcome: "allowed" | "dismissed" | "partly" | "na";
   neutral_citation?: string;
   reporter_citations?: string[];
   issues?: string[];
-  why?: string; // short reason for match
+  why?: string;
 };
 
 type Filters = {
@@ -60,52 +59,48 @@ type CaseDocument = {
   bench?: string;
   date: string; // ISO
   outcome: "allowed" | "dismissed" | "partly" | "na";
-  statutes: string[]; // extracted
+  statutes: string[];
   neutral_citation?: string;
   reporter_citations?: string[];
   ratio_summary?: string;
   parties?: { appellant?: string[]; respondent?: string[] };
-  // Timeline entries (docket-style)
   timeline: Array<{
-    date: string; // ISO
-    purpose: string; // e.g., "Hearing", "Order reserved", "Pronounced"
-    coram?: string; // bench for that date
+    date: string;
+    purpose: string;
+    coram?: string;
     note?: string;
-    orderId?: string; // link to orders list below
+    orderId?: string;
   }>;
   orders: Array<{
     id: string;
-    date: string; // ISO
-    title: string; // e.g., "Interim Order"
+    date: string;
+    title: string;
     summary?: string;
     pdfUrl?: string;
   }>;
   citations: {
-    cites: Array<{ id: string; title: string; court?: string; date?: string }>; // outbound
+    cites: Array<{ id: string; title: string; court?: string; date?: string }>;
     citedBy: Array<{
       id: string;
       title: string;
       court?: string;
       date?: string;
       treatment?: "followed" | "distinguished" | "overruled" | "referred";
-    }>; // inbound
+    }>;
   };
   similar: CaseStub[];
 };
 
-// ---------- Helper UI ----------
+/* ---------- Helper UI ---------- */
 
-const OutcomeBadge: React.FC<{ outcome: CaseStub["outcome"] }> = ({
-  outcome,
-}) => {
+const OutcomeBadge: React.FC<{ outcome: CaseStub["outcome"] }> = ({ outcome }) => {
   const map: Record<string, string> = {
-    allowed: "bg-emerald-100 text-emerald-800",
-    dismissed: "bg-rose-100 text-rose-800",
-    partly: "bg-amber-100 text-amber-800",
-    na: "bg-zinc-100 text-zinc-800",
+    allowed: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
+    dismissed: "bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300",
+    partly: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+    na: "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200",
   };
-  const label =
-    outcome === "na" ? "—" : outcome.charAt(0).toUpperCase() + outcome.slice(1);
+  const label = outcome === "na" ? "—" : outcome.charAt(0).toUpperCase() + outcome.slice(1);
   return <Badge className={`rounded-full ${map[outcome]}`}>{label}</Badge>;
 };
 
@@ -114,14 +109,14 @@ const Labeled: React.FC<{
   label: string;
   value?: string | React.ReactNode;
 }> = ({ icon, label, value }) => (
-  <div className="flex items-center gap-2 text-sm text-zinc-700">
+  <div className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
     <div className="w-4 h-4 flex items-center justify-center">{icon}</div>
-    <span className="font-medium text-zinc-900">{label}:</span>
+    <span className="font-medium text-zinc-800 dark:text-zinc-400">{label}:</span>
     <span className="truncate">{value || "—"}</span>
   </div>
 );
 
-// ---------- Main Component ----------
+/* ---------- Main Component ---------- */
 
 export default function CaseMatching() {
   const [q, setQ] = useState("");
@@ -141,53 +136,53 @@ export default function CaseMatching() {
   }, [filters]);
 
   async function runSearch() {
-  setLoading(true);
-  try {
-    const data = await apiSearch(q, mode, filters);
-    setResults(data);
-  } catch (e) {
-    console.error(e);
-    setResults([]);
-  } finally {
-    setLoading(false);
+    if (!q.trim()) return;
+    setLoading(true);
+    try {
+      const data = await apiSearch(q, mode, filters);
+      setResults(data);
+    } catch (e) {
+      console.error(e);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
-async function openCase(id: string) {
-  try {
-    const doc = await apiGetCase(id);
-    setSelected(doc);
-    setSheetOpen(true);
-  } catch (e) {
-    console.error(e);
+  async function openCase(id: string) {
+    try {
+      const doc = await apiGetCase(id);
+      setSelected(doc);
+      setSheetOpen(true);
+    } catch (e) {
+      console.error(e);
+    }
   }
-}
+
   return (
     <div
-      className={`
-      min-h-screen w-full pt-20
-      bg-white text-zinc-900
-      dark:bg-black dark:text-zinc-100
-    `}
+      className="
+        min-h-screen w-full pt-20
+        bg-white text-zinc-900
+        dark:bg-black dark:text-zinc-100
+      "
     >
       <div className="mx-auto max-w-6xl px-4 py-6">
         {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Case Matching
-            </h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Case Matching</h1>
           </div>
         </div>
 
         {/* Search Row */}
         <div
-          className={`
-          flex flex-col gap-3 rounded-2xl border p-4
-          md:flex-row md:items-center md:gap-4
-          border-zinc-200 bg-white
-          dark:border-zinc-800 dark:bg-zinc-950/40 dark:backdrop-blur
-        `}
+          className="
+            flex flex-col gap-3 rounded-2xl border p-4
+            md:flex-row md:items-center md:gap-4
+            border-zinc-200 bg-white
+            dark:border-zinc-800 dark:bg-zinc-950/40 dark:backdrop-blur
+          "
         >
           <div className="flex w-full items-center gap-2">
             <Search className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
@@ -196,38 +191,23 @@ async function openCase(id: string) {
               onChange={(e) => setQ(e.target.value)}
               placeholder="Type citation, parties, or plain English..."
               onKeyDown={(e) => e.key === "Enter" && runSearch()}
-              className={`
-              border-none focus-visible:ring-0
-              bg-transparent text-zinc-900 placeholder:text-zinc-400
-              dark:text-zinc-100 dark:placeholder:text-zinc-500
-            `}
+              className="
+                border-none focus-visible:ring-0
+                bg-transparent text-zinc-900 placeholder:text-zinc-400
+                dark:text-zinc-100 dark:placeholder:text-zinc-500
+              "
+              aria-label="Search cases"
             />
-            <Button onClick={runSearch} className="shrink-0">
+            <Button onClick={runSearch} className="shrink-0" disabled={loading || !q.trim()}>
               {loading ? "Searching..." : "Search"}
             </Button>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <ModeChip
-              label="All"
-              active={mode === "all"}
-              onClick={() => setMode("all")}
-            />
-            <ModeChip
-              label="Citation"
-              active={mode === "citation"}
-              onClick={() => setMode("citation")}
-            />
-            <ModeChip
-              label="Parties"
-              active={mode === "parties"}
-              onClick={() => setMode("parties")}
-            />
-            <ModeChip
-              label="Facts"
-              active={mode === "facts"}
-              onClick={() => setMode("facts")}
-            />
+            <ModeChip label="All" active={mode === "all"} onClick={() => setMode("all")} />
+            <ModeChip label="Citation" active={mode === "citation"} onClick={() => setMode("citation")} />
+            <ModeChip label="Parties" active={mode === "parties"} onClick={() => setMode("parties")} />
+            <ModeChip label="Facts" active={mode === "facts"} onClick={() => setMode("facts")} />
           </div>
         </div>
 
@@ -241,21 +221,17 @@ async function openCase(id: string) {
             onClear={() => setFilters({ ...filters, court: undefined })}
           >
             <select
-              className={`
-              w-full rounded-md border p-2
-              bg-zinc-50 text-zinc-900 border-zinc-200
-              dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
-              focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-stone-700
-            `}
+              className="
+                w-full rounded-md border p-2
+                bg-zinc-50 text-zinc-900 border-zinc-200
+                dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+                focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-stone-700
+              "
               value={filters.court || ""}
-              onChange={(e) =>
-                setFilters({ ...filters, court: e.target.value || undefined })
-              }
+              onChange={(e) => setFilters({ ...filters, court: e.target.value || undefined })}
             >
               <option value="">Any</option>
-              <option value="Supreme Court of India">
-                Supreme Court of India
-              </option>
+              <option value="Supreme Court of India">Supreme Court of India</option>
               <option value="Delhi High Court">Delhi High Court</option>
               <option value="Bombay High Court">Bombay High Court</option>
             </select>
@@ -264,32 +240,26 @@ async function openCase(id: string) {
           <FilterChip
             label="Year"
             value={yearsLabel}
-            onClear={() =>
-              setFilters({ ...filters, yearFrom: undefined, yearTo: undefined })
-            }
+            onClear={() => setFilters({ ...filters, yearFrom: undefined, yearTo: undefined })}
           >
             <div className="flex gap-2">
               <Input
                 placeholder="From"
                 value={filters.yearFrom || ""}
-                onChange={(e) =>
-                  setFilters({ ...filters, yearFrom: e.target.value })
-                }
-                className={`
-                bg-zinc-50 text-zinc-900 border-zinc-200
-                dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
-              `}
+                onChange={(e) => setFilters({ ...filters, yearFrom: e.target.value })}
+                className="
+                  bg-zinc-50 text-zinc-900 border-zinc-200
+                  dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+                "
               />
               <Input
                 placeholder="To"
                 value={filters.yearTo || ""}
-                onChange={(e) =>
-                  setFilters({ ...filters, yearTo: e.target.value })
-                }
-                className={`
-                bg-zinc-50 text-zinc-900 border-zinc-200
-                dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
-              `}
+                onChange={(e) => setFilters({ ...filters, yearTo: e.target.value })}
+                className="
+                  bg-zinc-50 text-zinc-900 border-zinc-200
+                  dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+                "
               />
             </div>
           </FilterChip>
@@ -302,13 +272,11 @@ async function openCase(id: string) {
             <Input
               placeholder="e.g., NDPS bail, Section 34"
               value={filters.issue || ""}
-              onChange={(e) =>
-                setFilters({ ...filters, issue: e.target.value })
-              }
-              className={`
-              bg-zinc-50 text-zinc-900 border-zinc-200
-              dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
-            `}
+              onChange={(e) => setFilters({ ...filters, issue: e.target.value })}
+              className="
+                bg-zinc-50 text-zinc-900 border-zinc-200
+                dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+              "
             />
           </FilterChip>
 
@@ -318,16 +286,14 @@ async function openCase(id: string) {
             onClear={() => setFilters({ ...filters, outcome: undefined })}
           >
             <select
-              className={`
-              w-full rounded-md border p-2
-              bg-zinc-50 text-zinc-900 border-zinc-200
-              dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
-              focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-stone-700
-            `}
+              className="
+                w-full rounded-md border p-2
+                bg-zinc-50 text-zinc-900 border-zinc-200
+                dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+                focus:outline-none focus:ring-2 focus:ring-zinc-300 dark:focus:ring-stone-700
+              "
               value={filters.outcome || ""}
-              onChange={(e) =>
-                setFilters({ ...filters, outcome: e.target.value || undefined })
-              }
+              onChange={(e) => setFilters({ ...filters, outcome: e.target.value || undefined })}
             >
               <option value="">Any</option>
               <option value="allowed">Allowed</option>
@@ -338,7 +304,7 @@ async function openCase(id: string) {
         </div>
 
         {/* Results */}
-        <div className="mt-6">
+        <div className="mt-6" aria-live="polite">
           {!results && (
             <div className="text-sm text-zinc-600 dark:text-zinc-400">
               Start by typing a query, then hit Search.
@@ -350,10 +316,7 @@ async function openCase(id: string) {
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className={`
-                  h-24 animate-pulse rounded-xl
-                  bg-zinc-100 dark:bg-zinc-800/50
-                `}
+                  className="h-24 animate-pulse rounded-xl bg-zinc-100 dark:bg-zinc-800/50"
                 />
               ))}
             </div>
@@ -370,11 +333,11 @@ async function openCase(id: string) {
               {results.map((c) => (
                 <Card
                   key={c.id}
-                  className={`
-                  transition hover:shadow-md
-                  bg-white border-zinc-200
-                  dark:bg-zinc-950/40 dark:border-zinc-800 dark:backdrop-blur
-                `}
+                  className="
+                    transition hover:shadow-md
+                    bg-white border-zinc-200
+                    dark:bg-zinc-950/40 dark:border-zinc-800 dark:backdrop-blur
+                  "
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between gap-4">
@@ -389,9 +352,7 @@ async function openCase(id: string) {
                           </span>
                         </div>
 
-                        <h3 className="mt-1 line-clamp-1 text-lg font-medium">
-                          {c.title}
-                        </h3>
+                        <h3 className="mt-1 line-clamp-1 text-lg font-medium">{c.title}</h3>
 
                         <div className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
                           {c.neutral_citation && (
@@ -400,11 +361,7 @@ async function openCase(id: string) {
                             </Badge>
                           )}
                           {c.reporter_citations?.slice(0, 2).map((r) => (
-                            <Badge
-                              key={r}
-                              variant="outline"
-                              className="rounded-full"
-                            >
+                            <Badge key={r} variant="outline" className="rounded-full">
                               {r}
                             </Badge>
                           ))}
@@ -412,8 +369,7 @@ async function openCase(id: string) {
 
                         {c.issues && c.issues.length > 0 && (
                           <div className="mt-2 text-sm text-zinc-700 dark:text-zinc-300 line-clamp-2">
-                            <span className="font-medium">Issues:</span>{" "}
-                            {c.issues.join("; ")}
+                            <span className="font-medium">Issues:</span> {c.issues.join("; ")}
                           </div>
                         )}
 
@@ -428,10 +384,7 @@ async function openCase(id: string) {
                       </div>
 
                       <div className="shrink-0">
-                        <Button
-                          onClick={() => openCase(c.id)}
-                          className="group"
-                        >
+                        <Button onClick={() => openCase(c.id)} className="group">
                           Open Case{" "}
                           <ChevronRight className="ml-1 h-4 w-4 transition group-hover:translate-x-0.5" />
                         </Button>
@@ -449,26 +402,20 @@ async function openCase(id: string) {
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent
           side="right"
-          className={`
-          w-full overflow-y-auto sm:max-w-2xl
-          bg-white text-zinc-900
-          dark:bg-zinc-950 dark:text-zinc-100
-        `}
+          className="
+            w-full overflow-y-auto sm:max-w-2xl
+            bg-white text-zinc-900
+            dark:bg-zinc-950 dark:text-zinc-100
+          "
         >
           <SheetHeader>
-            <SheetTitle className="pr-8">
-              {selected?.title || "Case"}
-            </SheetTitle>
+            <SheetTitle className="pr-8">{selected?.title || "Case"}</SheetTitle>
             <SheetDescription className="flex flex-wrap items-center gap-2">
               {selected?.neutral_citation && (
-                <Badge variant="outline" className="rounded-full">
-                  {selected.neutral_citation}
-                </Badge>
+                <Badge variant="outline" className="rounded-full">{selected.neutral_citation}</Badge>
               )}
               {selected?.reporter_citations?.map((r) => (
-                <Badge key={r} variant="outline" className="rounded-full">
-                  {r}
-                </Badge>
+                <Badge key={r} variant="outline" className="rounded-full">{r}</Badge>
               ))}
             </SheetDescription>
           </SheetHeader>
@@ -476,25 +423,19 @@ async function openCase(id: string) {
           {/* Snapshot */}
           <div className="mt-4 space-y-3">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Labeled icon={<Gavel className="h-4 w-4 text-zinc-400" />} label="Court" value={selected?.court} />
               <Labeled
-                icon={<Gavel className="h-4 w-4" />}
-                label="Court"
-                value={selected?.court}
-              />
-              <Labeled
-                icon={<CalendarDays className="h-4 w-4" />}
+                icon={<CalendarDays className="h-4 w-4 text-zinc-400" />}
                 label="Date"
-                value={
-                  selected ? new Date(selected.date).toLocaleDateString() : "—"
-                }
+                value={selected ? new Date(selected.date).toLocaleDateString() : "—"}
               />
               <Labeled
-                icon={<BadgeCheck className="h-4 w-4" />}
+                icon={<BadgeCheck className="h-4 w-4 text-zinc-400" />}
                 label="Outcome"
                 value={<OutcomeBadge outcome={selected?.outcome || "na"} />}
               />
               <Labeled
-                icon={<BookOpenText className="h-4 w-4" />}
+                icon={<BookOpenText className="h-4 w-4 text-zinc-400" />}
                 label="Statutes"
                 value={selected?.statutes?.join(", ") || "—"}
               />
@@ -522,23 +463,19 @@ async function openCase(id: string) {
               <TabsTrigger value="citations">Citations</TabsTrigger>
               <TabsTrigger value="similar">Similar</TabsTrigger>
             </TabsList>
+
             <TabsContent value="timeline" className="mt-3">
               <ScrollArea className="max-h-[50vh] rounded-lg border p-3 border-zinc-200 dark:border-zinc-800">
                 <div className="space-y-4">
                   {selected?.timeline?.map((t) => (
                     <div key={t.date} className="relative pl-6">
                       <div className="absolute left-0 top-1.5 h-3 w-3 rounded-full bg-zinc-900 dark:bg-zinc-200" />
-                      <div className="text-sm font-medium">
-                        {new Date(t.date).toLocaleDateString()}
-                      </div>
+                      <div className="text-sm font-medium">{new Date(t.date).toLocaleDateString()}</div>
                       <div className="text-sm text-zinc-700 dark:text-zinc-300">
-                        {t.purpose}
-                        {t.coram ? ` — ${t.coram}` : ""}
+                        {t.purpose}{t.coram ? ` — ${t.coram}` : ""}
                       </div>
                       {t.note && (
-                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                          {t.note}
-                        </div>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400">{t.note}</div>
                       )}
                     </div>
                   ))}
@@ -549,10 +486,7 @@ async function openCase(id: string) {
             <TabsContent value="orders" className="mt-3">
               <div className="space-y-3">
                 {selected?.orders?.map((o) => (
-                  <Card
-                    key={o.id}
-                    className="border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950/40"
-                  >
+                  <Card key={o.id} className="border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950/40">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div>
@@ -561,19 +495,13 @@ async function openCase(id: string) {
                             {new Date(o.date).toLocaleDateString()}
                           </div>
                           {o.summary && (
-                            <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">
-                              {o.summary}
-                            </div>
+                            <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-300">{o.summary}</div>
                           )}
                         </div>
                         <div className="shrink-0">
                           {o.pdfUrl && (
                             <Button variant="outline" asChild>
-                              <a
-                                href={o.pdfUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                              >
+                              <a href={o.pdfUrl} target="_blank" rel="noreferrer">
                                 <FileDown className="mr-2 h-4 w-4" /> PDF
                               </a>
                             </Button>
@@ -611,18 +539,10 @@ async function openCase(id: string) {
                   </CardHeader>
                   <CardContent className="space-y-2 p-3">
                     {selected?.citations.cites?.map((c) => (
-                      <div
-                        key={c.id}
-                        className="rounded-md border p-2 border-zinc-200 dark:border-zinc-800"
-                      >
+                      <div key={c.id} className="rounded-md border p-2 border-zinc-200 dark:border-zinc-800">
                         <div className="text-sm font-medium">{c.title}</div>
                         <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                          {[
-                            c.court,
-                            c.date && new Date(c.date).toLocaleDateString(),
-                          ]
-                            .filter(Boolean)
-                            .join(" • ")}
+                          {[c.court, c.date && new Date(c.date).toLocaleDateString()].filter(Boolean).join(" • ")}
                         </div>
                       </div>
                     ))}
@@ -635,27 +555,15 @@ async function openCase(id: string) {
                   </CardHeader>
                   <CardContent className="space-y-2 p-3">
                     {selected?.citations.citedBy?.map((c) => (
-                      <div
-                        key={c.id}
-                        className="rounded-md border p-2 border-zinc-200 dark:border-zinc-800"
-                      >
+                      <div key={c.id} className="rounded-md border p-2 border-zinc-200 dark:border-zinc-800">
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="text-sm font-medium">{c.title}</div>
                             <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                              {[
-                                c.court,
-                                c.date && new Date(c.date).toLocaleDateString(),
-                              ]
-                                .filter(Boolean)
-                                .join(" • ")}
+                              {[c.court, c.date && new Date(c.date).toLocaleDateString()].filter(Boolean).join(" • ")}
                             </div>
                           </div>
-                          {c.treatment && (
-                            <Badge className="rounded-full">
-                              {c.treatment}
-                            </Badge>
-                          )}
+                          {c.treatment && <Badge className="rounded-full">{c.treatment}</Badge>}
                         </div>
                       </div>
                     ))}
@@ -667,10 +575,7 @@ async function openCase(id: string) {
             <TabsContent value="similar" className="mt-3">
               <div className="space-y-3">
                 {selected?.similar.map((s) => (
-                  <Card
-                    key={s.id}
-                    className="hover:shadow-sm border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950/40"
-                  >
+                  <Card key={s.id} className="hover:shadow-sm border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950/40">
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -679,32 +584,20 @@ async function openCase(id: string) {
                             <span className="text-xs text-zinc-500 dark:text-zinc-400">
                               {new Date(s.date).toLocaleDateString()}
                             </span>
-                            <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                              • {s.court}
-                            </span>
+                            <span className="text-xs text-zinc-500 dark:text-zinc-400">• {s.court}</span>
                           </div>
-                          <div className="mt-1 truncate font-medium">
-                            {s.title}
-                          </div>
+                          <div className="mt-1 truncate font-medium">{s.title}</div>
                           {s.issues && (
-                            <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                              {s.issues.join("; ")}
-                            </div>
+                            <div className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{s.issues.join("; ")}</div>
                           )}
                           {s.why && (
                             <div className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-                              <span className="font-medium text-zinc-700 dark:text-zinc-300">
-                                Why this matched:
-                              </span>{" "}
-                              {s.why}
+                              <span className="font-medium text-zinc-700 dark:text-zinc-300">Why this matched:</span> {s.why}
                             </div>
                           )}
                         </div>
                         <div className="shrink-0">
-                          <Button
-                            variant="outline"
-                            onClick={() => openCase(s.id)}
-                          >
+                          <Button variant="outline" onClick={() => openCase(s.id)}>
                             Open <ChevronRight className="ml-1 h-4 w-4" />
                           </Button>
                         </div>
