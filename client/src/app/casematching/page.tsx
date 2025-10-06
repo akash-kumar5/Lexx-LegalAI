@@ -26,7 +26,8 @@ import {
 } from "@/components/ui/sheet";
 import FilterChip from "../components/FilterChip";
 import ModeChip from "../components/ModeChip";
-import mockSearch from "../components/MockSearch";
+import { apiSearch, apiGetCase } from "@/lib/lexxApi";
+
 
 // ---------- Types ----------
 
@@ -140,21 +141,27 @@ export default function CaseMatching() {
   }, [filters]);
 
   async function runSearch() {
-    setLoading(true);
-    try {
-      const data = await mockSearch({ q, mode, filters });
-      setResults(data);
-    } finally {
-      setLoading(false);
-    }
+  setLoading(true);
+  try {
+    const data = await apiSearch(q, mode, filters);
+    setResults(data);
+  } catch (e) {
+    console.error(e);
+    setResults([]);
+  } finally {
+    setLoading(false);
   }
+}
 
-  async function openCase(id: string) {
-    const doc = await mockGetCase(id);
+async function openCase(id: string) {
+  try {
+    const doc = await apiGetCase(id);
     setSelected(doc);
     setSheetOpen(true);
+  } catch (e) {
+    console.error(e);
   }
-
+}
   return (
     <div
       className={`
