@@ -43,22 +43,34 @@ const useClickOutside = (
   }, [refs, handler]);
 };
 
-type NavLinksProps = { onLinkClick?: () => void };
+type NavLinksProps = {
+  onLinkClick?: () => void;
+  variant?: "desktop" | "mobile";
+};
 
-const NavLinks = ({ onLinkClick }: NavLinksProps) => (
-  <>
-    {navItems.map((item) => (
-      <Link
-        key={item.href}
-        href={item.href}
-        onClick={onLinkClick}
-        className="hover:text-red-400 transition-colors duration-300 px-4 py-2 text-center md:text-left"
-      >
-        {item.label}
-      </Link>
-    ))}
-  </>
-);
+const NavLinks = ({ onLinkClick, variant = "desktop" }: NavLinksProps) => {
+  const base =
+    "transition-colors duration-200 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500";
+  const desktop =
+    "px-3 py-2 hover:bg-black/5 dark:hover:bg-white/5 hover:text-red-400";
+  const mobile =
+    "w-full text-left px-4 py-3 hover:bg-black/5 dark:hover:bg-white/5 hover:text-red-400";
+
+  return (
+    <>
+      {navItems.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={onLinkClick}
+          className={`${base} ${variant === "desktop" ? desktop : mobile}`}
+        >
+          {item.label}
+        </Link>
+      ))}
+    </>
+  );
+};
 
 type ProfileMenuProps = {
   user: UserType | null;
@@ -78,7 +90,6 @@ const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
       onClose();
     };
 
-    // avoid rendering theme-dependent UI until mounted to prevent hydration mismatch
     if (!mounted) {
       return (
         <motion.div
@@ -96,7 +107,6 @@ const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
             </p>
           </div>
           <div className="py-1">
-            {/* simple placeholders until mounted */}
             <div className="px-4 py-2 text-sm text-zinc-700 dark:text-stone-200">
               Loading…
             </div>
@@ -208,16 +218,17 @@ export default function Navbar() {
   };
 
   return (
-<nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
-  <div
-    className="
-      mx-auto mt-2 w-[99%] max-w-screen-2xl 
-      backdrop-blur-md border text-zinc-900 dark:text-stone-100 shadow-lg rounded-full
-      bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-100 border-zinc-400
-      dark:bg-gradient-to-r dark:from-black/20 dark:via-zinc-800 dark:to-black/20 dark:border-stone-700
-      px-6 py-3 flex items-center justify-between
-    "
-  >        <Link
+    <nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
+      <div
+        className="
+          mx-auto mt-2 w-[99%] max-w-screen-2xl
+          backdrop-blur-md border text-zinc-900 dark:text-stone-100 shadow-lg rounded-full
+          bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-100 border-zinc-400
+          dark:bg-gradient-to-r dark:from-black/20 dark:via-zinc-800 dark:to-black/20 dark:border-stone-700
+          px-6 py-3 flex items-center justify-between
+        "
+      >
+        <Link
           href="/"
           onClick={closeAllMenus}
           className="text-xl font-bold tracking-tight"
@@ -226,7 +237,7 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden md:flex items-center space-x-2 text-sm font-medium">
-          <NavLinks onLinkClick={closeAllMenus} />
+          <NavLinks onLinkClick={closeAllMenus} variant="desktop" />
         </div>
 
         <div className="flex items-center space-x-4">
@@ -247,7 +258,6 @@ export default function Navbar() {
                   height={40}
                   alt="Profile"
                   className="w-full h-full object-cover"
-                  onError={(e) => (e.currentTarget.src = "/default-avatar.png")}
                 />
               </motion.button>
 
@@ -266,7 +276,7 @@ export default function Navbar() {
             <div className="hidden md:block">
               <Link
                 href="/auth"
-                className="text-sm font-medium hover:text-red-400 transition-colors duration-300"
+                className="text-sm font-medium transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 hover:text-red-400"
               >
                 Login
               </Link>
@@ -274,15 +284,25 @@ export default function Navbar() {
           )}
 
           <div className="md:hidden flex items-center">
-            <button
-              ref={mobileMenuButtonRef}
-              onClick={toggleMobileMenu}
-              className="text-zinc-900 dark:text-stone-100"
-              aria-label="Toggle mobile navigation"
-              aria-expanded={isMobileMenuOpen}
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {token ? (
+              <button
+                ref={mobileMenuButtonRef}
+                onClick={toggleMobileMenu}
+                className="text-zinc-900 dark:text-stone-100"
+                aria-label="Toggle mobile navigation"
+                aria-expanded={isMobileMenuOpen}
+                aria-controls="mobile-menu"
+              >
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            ) : (
+              <Link
+                href="/auth"
+                className="text-sm font-medium px-4 py-2 text-white transition-colors"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -290,23 +310,36 @@ export default function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
+            id="mobile-menu"
             ref={mobileMenuRef as React.RefObject<HTMLDivElement>}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{ opacity: 0, height: 0, y: -8 }}
+            animate={{ opacity: 1, height: "auto", y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -8 }}
             className="md:hidden overflow-hidden"
           >
-            <div className="flex flex-col items-center space-y-2 py-4 border-t border-zinc-200 dark:border-stone-700">
-              <NavLinks onLinkClick={closeAllMenus} />
-              {!token && (
-                <Link
-                  href="/auth"
-                  onClick={closeAllMenus}
-                  className="px-4 py-2 w-full text-center hover:text-red-400 transition-colors"
-                >
-                  Login
-                </Link>
-              )}
+            {/* mirror the same glassy container as desktop */}
+            <div
+              className="
+                mx-auto mt-2 w-[99%] max-w-screen-2xl
+                backdrop-blur-md border shadow-lg rounded-2xl
+                bg-gradient-to-r from-zinc-100 via-zinc-300 to-zinc-100 border-zinc-400
+                dark:bg-gradient-to-r dark:from-black/20 dark:via-zinc-800 dark:to-black/20 dark:border-stone-700
+                text-zinc-900 dark:text-stone-100
+              "
+            >
+              <div className="flex flex-col items-stretch space-y-1 py-3">
+                {token ? (
+                  <NavLinks onLinkClick={closeAllMenus} variant="mobile" />
+                ) : (
+                  <Link
+                    href="/auth"
+                    onClick={closeAllMenus}
+                    className="w-full text-left px-4 py-3 rounded-lg transition-colors duration-200 hover:bg-black/5 dark:hover:bg-white/5 hover:text-red-400"
+                  >
+                    Login
+                  </Link>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

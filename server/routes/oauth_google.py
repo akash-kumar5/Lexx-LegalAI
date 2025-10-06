@@ -71,6 +71,7 @@ def google_login():
     }
     url = f"{base}?{urlencode(params)}"
     resp = RedirectResponse(url)
+    print(resp)
     resp.set_cookie("oauth_nonce", nonce, max_age=STATE_MAX_AGE, secure=True, httponly=True, samesite="lax", path="/")
     return resp
 
@@ -166,7 +167,7 @@ async def google_callback(code: Optional[str] = None, state: Optional[str] = Non
     jwt_token = create_jwt_for_user(user_id, email)
 
     # Set HttpOnly cookie and redirect cleanly
-    redirect = RedirectResponse(f"{FRONTEND_URL.rstrip('/')}/auth/signed-in")
+    redirect = RedirectResponse(f"{FRONTEND_URL.rstrip('/')}/auth/login")
     set_session_cookie(redirect, jwt_token)
     # Clear transient cookie(s)
     redirect.delete_cookie("oauth_nonce", path="/")

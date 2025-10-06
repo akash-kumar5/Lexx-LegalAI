@@ -1,20 +1,14 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useMemo, useState } from "react";
 import {
   Search,
   Filter,
-  X,
   ChevronRight,
-  ChevronLeft,
-  Scale,
   BookOpenText,
-  FileText,
   Gavel,
   CalendarDays,
   BadgeCheck,
   FileDown,
-  Link as LinkIcon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -22,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -30,12 +24,9 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import FilterChip from "../components/FilterChip";
+import ModeChip from "../components/ModeChip";
+import mockSearch from "../components/MockSearch";
 
 // ---------- Types ----------
 
@@ -101,186 +92,7 @@ type CaseDocument = {
   similar: CaseStub[];
 };
 
-// ---------- Mock API (replace with real) ----------
-
-async function mockSearch(params: {
-  q: string;
-  mode: SearchMode;
-  filters: Filters;
-}) {
-  // Simulate network delay
-  await new Promise((r) => setTimeout(r, 500));
-  const sample: CaseStub[] = [
-    {
-      id: "sc-2023-001",
-      title: "Union of India v ABC Limited",
-      court: "Supreme Court of India",
-      date: "2023-07-15",
-      outcome: "dismissed",
-      neutral_citation: "2023 SCC OnLine SC 1234",
-      reporter_citations: ["(2023) 7 SCC 123"],
-      issues: ["Arbitration — Section 34 — Limitation"],
-      why: "Query terms matched in headnotes; high semantic similarity on 'Section 34 set-aside refused'.",
-    },
-    {
-      id: "sc-2021-002",
-      title: "State of Maharashtra v XYZ & Ors",
-      court: "Supreme Court of India",
-      date: "2021-02-03",
-      outcome: "allowed",
-      neutral_citation: "2021 SCC OnLine SC 456",
-      reporter_citations: ["(2021) 4 SCC 321"],
-      issues: ["Criminal — NDPS — Section 37 — Bail"],
-      why: "Citation graph proximity to known bail precedents; query mentions 'NDPS bail granted'.",
-    },
-  ];
-  return sample.filter(
-    (c) =>
-      c.title.toLowerCase().includes(params.q.toLowerCase()) ||
-      params.mode !== "parties"
-  );
-}
-
-async function mockGetCase(id: string): Promise<CaseDocument> {
-  await new Promise((r) => setTimeout(r, 500));
-  return {
-    id,
-    title: id.includes("sc-2021")
-      ? "State of Maharashtra v XYZ & Ors"
-      : "Union of India v ABC Limited",
-    court: "Supreme Court of India",
-    bench: "Chandrachud, Narasimha, Trivedi, JJ.",
-    date: id.includes("2021") ? "2021-02-03" : "2023-07-15",
-    outcome: id.includes("2021") ? "allowed" : "dismissed",
-    statutes: [
-      "NDPS Act, 1985 — S.37",
-      "Arbitration and Conciliation Act, 1996 — S.34",
-    ],
-    neutral_citation: id.includes("2021")
-      ? "2021 SCC OnLine SC 456"
-      : "2023 SCC OnLine SC 1234",
-    reporter_citations: id.includes("2021")
-      ? ["(2021) 4 SCC 321"]
-      : ["(2023) 7 SCC 123"],
-    ratio_summary: id.includes("2021")
-      ? "Bail granted noting twin conditions satisfied; custodial interrogation unnecessary; delay considered."
-      : "Section 34 petition dismissed; scope of interference with arbitral awards remains narrow; no patent illegality.",
-    parties: {
-      appellant: [
-        id.includes("2021") ? "State of Maharashtra" : "Union of India",
-      ],
-      respondent: [id.includes("2021") ? "XYZ and Others" : "ABC Limited"],
-    },
-    timeline: [
-      {
-        date: "2020-12-01",
-        purpose: "Filing",
-        note: "Registered; defects removed.",
-      },
-      {
-        date: "2021-01-10",
-        purpose: "Hearing",
-        coram: "Narasimha, J.",
-        note: "Notice issued; reply in 2 weeks.",
-      },
-      {
-        date: "2021-02-03",
-        purpose: "Pronounced",
-        coram: "Bench as above",
-        note: "Judgment delivered.",
-      },
-    ],
-    orders: [
-      {
-        id: "ord-1",
-        date: "2021-01-10",
-        title: "Interim Order",
-        summary: "Notice issued; no coercive steps.",
-        pdfUrl: "https://example.com/order1.pdf",
-      },
-      {
-        id: "ord-2",
-        date: "2021-02-03",
-        title: "Final Judgment",
-        summary: "Appeal allowed; bail granted.",
-        pdfUrl: "https://example.com/judgment.pdf",
-      },
-    ],
-    citations: {
-      cites: [
-        {
-          id: "sc-2018-010",
-          title: "Narcotics Control Bureau v PQR",
-          court: "SC",
-          date: "2018-05-12",
-        },
-        {
-          id: "sc-2020-011",
-          title: "ABC v State of Gujarat",
-          court: "SC",
-          date: "2020-09-22",
-        },
-      ],
-      citedBy: [
-        {
-          id: "bom-2022-001",
-          title: "DEF v State of Maharashtra",
-          court: "Bom HC",
-          date: "2022-01-11",
-          treatment: "followed",
-        },
-        {
-          id: "del-2023-002",
-          title: "State (NCT of Delhi) v GHI",
-          court: "Del HC",
-          date: "2023-03-05",
-          treatment: "distinguished",
-        },
-      ],
-    },
-    similar: [
-      {
-        id: "sc-2022-003",
-        title: "UOI v LMN Pvt Ltd",
-        court: "Supreme Court of India",
-        date: "2022-06-18",
-        outcome: "dismissed",
-        issues: ["Arbitration — Section 34 — Patent illegality"],
-        why: "Semantic similarity in holding paragraphs.",
-      },
-    ],
-  };
-}
-
 // ---------- Helper UI ----------
-
-const ModeChip: React.FC<{
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}> = ({ label, active, onClick }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    aria-pressed={active}
-    className={[
-      // base
-      "px-3 py-1 rounded-full text-sm transition-colors",
-      "border focus:outline-none focus:ring-2 focus:ring-offset-1",
-      // light
-      active
-        ? "bg-zinc-900 text-white border-zinc-900 focus:ring-zinc-400"
-        : "bg-white text-zinc-800 border-zinc-200 hover:bg-zinc-100 focus:ring-zinc-300",
-      // dark
-      "dark:focus:ring-stone-700 dark:focus:ring-offset-0",
-      active
-        ? "dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100"
-        : "dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 dark:hover:bg-zinc-800",
-    ].join(" ")}
-  >
-    {label}
-  </button>
-);
 
 const OutcomeBadge: React.FC<{ outcome: CaseStub["outcome"] }> = ({
   outcome,
@@ -384,7 +196,7 @@ export default function CaseMatching() {
             `}
             />
             <Button onClick={runSearch} className="shrink-0">
-              Search
+              {loading ? "Searching..." : "Search"}
             </Button>
           </div>
 
@@ -696,13 +508,13 @@ export default function CaseMatching() {
           <Separator className="my-4 dark:bg-zinc-800" />
 
           <Tabs defaultValue="timeline" className="w-full">
-            <TabsList className="grid w-full grid-cols-5" />
-            <TabsTrigger value="timeline">Timeline</TabsTrigger>
-            <TabsTrigger value="orders">Orders</TabsTrigger>
-            <TabsTrigger value="issues">Issues & Ratio</TabsTrigger>
-            <TabsTrigger value="citations">Citations</TabsTrigger>
-            <TabsTrigger value="similar">Similar</TabsTrigger>
-
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="timeline">Timeline</TabsTrigger>
+              <TabsTrigger value="orders">Orders</TabsTrigger>
+              <TabsTrigger value="issues">Issues & Ratio</TabsTrigger>
+              <TabsTrigger value="citations">Citations</TabsTrigger>
+              <TabsTrigger value="similar">Similar</TabsTrigger>
+            </TabsList>
             <TabsContent value="timeline" className="mt-3">
               <ScrollArea className="max-h-[50vh] rounded-lg border p-3 border-zinc-200 dark:border-zinc-800">
                 <div className="space-y-4">
@@ -791,7 +603,7 @@ export default function CaseMatching() {
                     <CardTitle className="text-base">Cites</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 p-3">
-                    {selected?.citations.cites.map((c) => (
+                    {selected?.citations.cites?.map((c) => (
                       <div
                         key={c.id}
                         className="rounded-md border p-2 border-zinc-200 dark:border-zinc-800"
@@ -815,7 +627,7 @@ export default function CaseMatching() {
                     <CardTitle className="text-base">Cited by</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 p-3">
-                    {selected?.citations.citedBy.map((c) => (
+                    {selected?.citations.citedBy?.map((c) => (
                       <div
                         key={c.id}
                         className="rounded-md border p-2 border-zinc-200 dark:border-zinc-800"
@@ -901,76 +713,3 @@ export default function CaseMatching() {
     </div>
   );
 }
-
-/* ---------- Small Components ---------- */
-
-function FilterChip({
-  label,
-  value,
-  onClear,
-  children,
-}: {
-  label: string;
-  value: React.ReactNode;
-  onClear: () => void;
-  children: React.ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className={`
-          group inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm
-          bg-white hover:bg-zinc-50 border-zinc-200
-          dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:border-zinc-700
-        `}
-      >
-        <span className="text-zinc-700 dark:text-zinc-300">{label}:</span>
-        <span className="max-w-[10rem] truncate text-zinc-900 dark:text-zinc-100">
-          {value}
-        </span>
-        <ChevronDownMini open={open} />
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className={`
-              absolute z-10 mt-2 w-72 rounded-xl border p-3 shadow-xl
-              bg-white border-zinc-200
-              dark:bg-zinc-900 dark:border-zinc-700
-            `}
-          >
-            <div className="space-y-3">
-              {children}
-              <div className="flex items-center justify-between">
-                <Button variant="ghost" size="sm" onClick={onClear}>
-                  <X className="mr-1 h-4 w-4" /> Clear
-                </Button>
-                <Button size="sm" onClick={() => setOpen(false)}>
-                  Done
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-const ChevronDownMini: React.FC<{ open: boolean }> = ({ open }) => (
-  <svg
-    className={`h-4 w-4 transition ${open ? "rotate-180" : "rotate-0"}`}
-    viewBox="0 0 20 20"
-    fill="currentColor"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden
-  >
-    <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" />
-  </svg>
-);

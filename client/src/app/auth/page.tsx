@@ -24,7 +24,7 @@ function isAuthResponse(obj: unknown): obj is AuthResponse {
 export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 👈 new
+  const [showPassword, setShowPassword] = useState(false); 
   const [isLogin, setIsLogin] = useState(true);
   const { login } = useAuth();
   const { showLoading, hideLoading } = useLoading();
