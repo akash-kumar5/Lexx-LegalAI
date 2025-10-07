@@ -75,6 +75,19 @@ def google_login():
     resp.set_cookie("oauth_nonce", nonce, max_age=STATE_MAX_AGE, secure=True, httponly=True, samesite="lax", path="/")
     return resp
 
+# add this route (CORS must allow credentials)
+@router.get("/auth/session")
+async def session(request: Request):
+    token = request.cookies.get("app_session")
+    if not token:
+        return {"authenticated": False}
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return {"authenticated": True, "sub": payload.get("sub"), "email": payload.get("email")}
+    except jwt.InvalidTokenError:
+        return {"authenticated": False}
+
+
 @router.get("/auth/google/callback")
 async def google_callback(code: Optional[str] = None, state: Optional[str] = None, error: Optional[str] = None, error_description: Optional[str] = None, request: Request = None):
     if error:
@@ -167,7 +180,7 @@ async def google_callback(code: Optional[str] = None, state: Optional[str] = Non
     jwt_token = create_jwt_for_user(user_id, email)
 
     # Set HttpOnly cookie and redirect cleanly
-    redirect = RedirectResponse(f"{FRONTEND_URL.rstrip('/')}/auth/login")
+    redirect = RedirectResponse(f"{FRONTEND_URL.rstrip('/')}/")
     set_session_cookie(redirect, jwt_token)
     # Clear transient cookie(s)
     redirect.delete_cookie("oauth_nonce", path="/")

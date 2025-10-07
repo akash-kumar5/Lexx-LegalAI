@@ -7,7 +7,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
+import {
+  AngleIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@radix-ui/react-icons";
 import {
   Pencil,
   PlusIcon,
@@ -16,7 +20,6 @@ import {
   Copy,
   Upload,
   X,
-  ArrowRight,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
@@ -363,6 +366,26 @@ export default function ChatSidebar({
     return groups;
   }, [chats]);
 
+  // auto-collapse on mobile, expand on desktop by default
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const setFromMQ = (e: MediaQueryListEvent | MediaQueryList) => {
+      // desktop (md+) => expanded; mobile => collapsed
+      const matches = "matches" in e ? e.matches : (e as MediaQueryList).matches;
+      setCollapsed(!matches);
+    };
+
+    // initial
+    setFromMQ(mq);
+
+    // listen to changes
+    const handler = (e: MediaQueryListEvent) => setFromMQ(e);
+    mq.addEventListener?.("change", handler);
+    return () => mq.removeEventListener?.("change", handler);
+    // intentionally not depending on setCollapsed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       {/* MOBILE: hamburger trigger (tiny, no layout reserved) */}
@@ -374,7 +397,7 @@ export default function ChatSidebar({
                     ring-zinc-300 bg-white/90 text-zinc-700 backdrop-blur hover:bg-white
                    dark:ring-zinc-600 dark:bg-zinc-900/90 dark:text-zinc-200"
       >
-        <ArrowRight className="h-4 w-4" />
+        <AngleIcon className="h-4 w-4" />
       </button>
 
       {/* MOBILE: backdrop when drawer is open */}
@@ -553,7 +576,7 @@ export default function ChatSidebar({
       {/* DESKTOP: left rail (collapsible) */}
       <div
         className={`
-          hidden md:flex md:flex-col
+          hidden md:flex md:flex-col mt-17
           transition-all duration-300
           ${collapsed ? "md:w-14" : "md:w-64"}
           h-screen
@@ -598,8 +621,8 @@ export default function ChatSidebar({
                          bg-zinc-900 text-white hover:bg-zinc-800
                          dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
             >
-              <PlusIcon className="h-4 w-4" />{" "}
-              <span className="hidden md:inline">New Chat</span>
+              {/* <PlusIcon className="h-4 w-4" />{" "} */}
+              <span className="">New Chat</span>
             </button>
           </div>
 

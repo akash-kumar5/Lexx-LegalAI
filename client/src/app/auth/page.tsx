@@ -4,6 +4,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useLoading } from "../components/Loading";
 import { useRouter, useSearchParams } from "next/navigation";
 import { EyeClosed, LucideEye } from "lucide-react";
+import Image from "next/image";
 
 type FieldErrors = {
   email?: string;
@@ -24,7 +25,7 @@ function isAuthResponse(obj: unknown): obj is AuthResponse {
 export default function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const { login } = useAuth();
   const { showLoading, hideLoading } = useLoading();
@@ -48,6 +49,36 @@ export default function AuthPage() {
   useEffect(() => {
     setServerError(null);
   }, [email, password, isLogin]);
+
+  useEffect(() => {
+    // still support ?token= for email/password flow, but also handle cookie sessions
+    const token = searchParams.get("token");
+    if (token) {
+      login(token);
+      router.replace("/chat");
+      return;
+    }
+
+    // check cookie-based session
+    const check = async () => {
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
+      if (!base) return;
+      try {
+        const r = await fetch(`${base}/auth/session`, {
+          credentials: "include",
+        });
+        const j = await r.json();
+        if (j?.authenticated) {
+          // if your app uses localStorage tokens, you can store a sentinel
+          // or fetch a bearer token; or just mark logged-in in your AuthContext.
+          login("cookie"); // or login with a server-issued short token
+          router.replace("/chat");
+        }
+      } catch {}
+    };
+    check();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, login, router]);
 
   const validate = () => {
     const errs: FieldErrors = {};
@@ -285,12 +316,19 @@ export default function AuthPage() {
         <div className="flex flex-col gap-2">
           <a
             href={`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google/login`}
-            className="
+            className=" flex gap-3 justify-center
               py-2 px-4 rounded-md text-sm text-center transition
               bg-white border border-zinc-200 text-zinc-800 hover:bg-zinc-50
               dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-700/80
             "
           >
+            <Image
+              src="/googled.svg" // place google.svg in /public
+              alt="Google logo"
+              width={10}
+              height={10}
+              className="w-5 h-5"
+            />
             Continue with Google
           </a>
         </div>

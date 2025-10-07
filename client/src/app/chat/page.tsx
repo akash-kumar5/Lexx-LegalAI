@@ -188,7 +188,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex w-full overflow-hidden h-screen pt-18">
+    <div className="flex w-full overflow-hidden max-h-screen">
       {/* Sidebar */}
       <div className={``}>
         <ChatSidebar
