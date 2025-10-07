@@ -190,7 +190,7 @@ export default function ChatPage() {
   return (
     <div className="flex w-full overflow-hidden h-screen pt-18">
       {/* Sidebar */}
-      <div className={`${collapsed ? "w-14" : "w-64"} transition-all duration-300 border-r bg-white/75 border-zinc-200 backdrop-blur-sm dark:bg-zinc-950/40 dark:border-white/10`}>
+      <div className={``}>
         <ChatSidebar
           chats={chats}
           chatMessages={messages}

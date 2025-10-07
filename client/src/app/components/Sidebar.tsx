@@ -8,7 +8,16 @@ import React, {
   useState,
 } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { Pencil, PlusIcon, Trash, MoreVertical, Copy, Upload } from "lucide-react";
+import {
+  Pencil,
+  PlusIcon,
+  Trash,
+  MoreVertical,
+  Copy,
+  Upload,
+  X,
+  ArrowRight,
+} from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from "react-dom";
 
@@ -89,21 +98,34 @@ export default function ChatSidebar({
   token,
 }: ChatSidebarProps) {
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [openMenu, setOpenMenu] = useState<{ id: string | null; dir: "up" | "down" }>({
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(
+    null
+  );
+  const [openMenu, setOpenMenu] = useState<{
+    id: string | null;
+    dir: "up" | "down";
+  }>({
     id: null,
     dir: "down",
   });
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
-  const [snackbarType, setSnackbarType] = useState<"info" | "error" | "success">("info");
+  const [snackbarType, setSnackbarType] = useState<
+    "info" | "error" | "success"
+  >("info");
 
   const editingInputRef = useRef<HTMLInputElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const snackbarTimeoutRef = useRef<number | null>(null);
   const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
-  const stableRefs = useMemo(() => [menuRef] as React.RefObject<HTMLElement>[], [menuRef]);
-  const closeMenu = useCallback(() => setOpenMenu({ id: null, dir: "down" }), []);
+  const stableRefs = useMemo(
+    () => [menuRef] as React.RefObject<HTMLElement>[],
+    [menuRef]
+  );
+  const closeMenu = useCallback(
+    () => setOpenMenu({ id: null, dir: "down" }),
+    []
+  );
   useClickOutside(stableRefs, closeMenu);
 
   useEffect(() => {
@@ -138,7 +160,8 @@ export default function ChatSidebar({
     (msg: string, type: "info" | "error" | "success" = "info", ms = 2500) => {
       setSnackbarMessage(msg);
       setSnackbarType(type);
-      if (snackbarTimeoutRef.current) window.clearTimeout(snackbarTimeoutRef.current);
+      if (snackbarTimeoutRef.current)
+        window.clearTimeout(snackbarTimeoutRef.current);
       const id = window.setTimeout(() => setSnackbarMessage(null), ms);
       snackbarTimeoutRef.current = id;
     },
@@ -147,7 +170,8 @@ export default function ChatSidebar({
 
   useEffect(() => {
     return () => {
-      if (snackbarTimeoutRef.current) window.clearTimeout(snackbarTimeoutRef.current);
+      if (snackbarTimeoutRef.current)
+        window.clearTimeout(snackbarTimeoutRef.current);
     };
   }, []);
 
@@ -291,7 +315,10 @@ export default function ChatSidebar({
           sender: m.role,
           text: m.content,
         }));
-        const result = await exportChatToPDF(title ?? "Untitled Chat", exportMsgs);
+        const result = await exportChatToPDF(
+          title ?? "Untitled Chat",
+          exportMsgs
+        );
         if (result.ok) showSnackbar("Export started.", "success");
         else showSnackbar(result.message ?? "Export failed.", "error");
       } catch (err) {
@@ -308,7 +335,8 @@ export default function ChatSidebar({
   const groupedChats = useMemo(() => {
     const groups: Record<string, ChatSummary[]> = {};
     const sortedChats = [...chats].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     const today = new Date();
     const yesterday = new Date(today);
@@ -324,7 +352,10 @@ export default function ChatSidebar({
       if (isSameDay(chatDate, today)) key = "Today";
       else if (isSameDay(chatDate, yesterday)) key = "Yesterday";
       else
-        key = chatDate.toLocaleDateString(undefined, { month: "long", day: "numeric" });
+        key = chatDate.toLocaleDateString(undefined, {
+          month: "long",
+          day: "numeric",
+        });
       if (!groups[key]) groups[key] = [];
       groups[key].push(chat);
     });
@@ -333,171 +364,367 @@ export default function ChatSidebar({
   }, [chats]);
 
   return (
-    <div
-      className={`
-        transition-all duration-300
-        ${collapsed ? "w-16" : "w-64"}
-        h-full flex flex-col
-        bg-white/75 border-r border-zinc-200 backdrop-blur-sm
-        dark:bg-zinc-950/50 dark:border-white/10
-      `}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between h-14 px-3 border-b border-zinc-200 dark:border-white/10">
-        {!collapsed && (
-          <span className="text-lg font-semibold tracking-wide text-zinc-800 dark:text-zinc-200">
+    <>
+      {/* MOBILE: hamburger trigger (tiny, no layout reserved) */}
+      <button
+        onClick={() => setCollapsed(false)}
+        aria-label="Open chats"
+        aria-expanded={!collapsed}
+        className="md:hidden fixed top-18 left-2 z-50 h-9 w-9 rounded-full grid place-items-center
+                    ring-zinc-300 bg-white/90 text-zinc-700 backdrop-blur hover:bg-white
+                   dark:ring-zinc-600 dark:bg-zinc-900/90 dark:text-zinc-200"
+      >
+        <ArrowRight className="h-4 w-4" />
+      </button>
+
+      {/* MOBILE: backdrop when drawer is open */}
+      <button
+        onClick={() => setCollapsed(true)}
+        aria-label="Close chats"
+        className={`md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-opacity
+                    ${
+                      collapsed
+                        ? "pointer-events-none opacity-0"
+                        : "opacity-100"
+                    }`}
+      />
+
+      {/* MOBILE: drawer */}
+      <div
+        className={`
+          md:hidden fixed inset-y-0 left-0 z-50 mt-17
+          w-[min(92vw,20rem)] max-h-screen
+          bg-white/95 dark:bg-zinc-950/95
+          border-r border-zinc-200 dark:border-white/10
+          shadow-2xl backdrop-blur
+          transition-transform duration-300
+          ${collapsed ? "-translate-x-full" : "translate-x-0"}
+        `}
+        role="dialog"
+        aria-modal="true"
+      >
+        {/* Drawer header */}
+        <div className="flex items-center justify-between h-12 px-3 border-b border-zinc-200 dark:border-white/10">
+          <span className="text-sm font-semibold tracking-wide text-zinc-800 dark:text-zinc-200">
             Chats
           </span>
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="ml-auto grid place-items-center h-7 w-7 rounded-full ring-1 ring-zinc-300 text-zinc-700 hover:bg-zinc-100
-                     dark:ring-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
-          title={collapsed ? "Expand" : "Collapse"}
+          <button
+            onClick={() => setCollapsed(true)}
+            aria-label="Close chats"
+            className="h-8 w-8 grid place-items-center rounded-full ring-1 ring-zinc-300 text-zinc-700 hover:bg-zinc-100
+                       dark:ring-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Drawer body */}
+        <div
+          className="overflow-y-auto h-[calc(100vh-3rem)] px-2 py-2 space-y-3
+                     [scrollbar-width:thin] [scrollbar-color:theme(colors.zinc.400)_transparent]
+                     dark:[scrollbar-color:theme(colors.zinc.700)_transparent]"
         >
-          {collapsed ? (
-            <ChevronRightIcon className="w-4 h-4" />
-          ) : (
-            <ChevronLeftIcon className="w-4 h-4" />
-          )}
-        </button>
-      </div>
-
-      {/* New Chat Button */}
-      <div className="p-2">
-        <button
-          onClick={onNewChat}
-          className="w-full inline-flex items-center justify-center gap-2 h-9 rounded-full
-                    text-sm font-medium transition-colors
-                    bg-zinc-900 text-white hover:bg-zinc-800
-                    dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
-        >
-          <PlusIcon className="h-4 w-4" /> {!collapsed && "New Chat"}
-        </button>
-      </div>
-
-      {/* Chat List */}
-      <div
-        className="flex-1 overflow-y-auto px-2 space-y-3
-                   [scrollbar-width:thin] [scrollbar-color:theme(colors.zinc.400)_transparent]
-                   dark:[scrollbar-color:theme(colors.zinc.700)_transparent]"
-      >
-        {Object.entries(groupedChats).map(([date, chatList]) => (
-          <div key={date}>
-            {!collapsed && (
-              <div
-                className="sticky top-0 z-10 -mx-2 px-4 py-1.5 text-[11px] uppercase tracking-wide
-                           bg-white/85 text-zinc-500 border-b border-zinc-200
-                           dark:bg-zinc-950/80 dark:text-zinc-400 dark:border-white/5 backdrop-blur"
-              >
-                {date}
-              </div>
-            )}
-            <ul className="mt-1 space-y-1">
-              {chatList.map((chat) => {
-                const active = chat._id === currentChatId;
-                return (
-                  <li key={chat._id} className="group relative">
-                    {editingChatId === chat._id ? (
-                      <input
-                        ref={editingInputRef}
-                        type="text"
-                        defaultValue={chat.preview || "New Chat"}
-                        autoFocus
-                        onKeyDown={handleEditKeyDown}
-                        onBlur={saveTitle}
-                        className="w-full px-3 py-2 rounded-lg text-sm outline-none
-                                   bg-white border border-zinc-300 text-zinc-900
-                                   focus:ring-2 focus:ring-zinc-300
-                                   dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:focus:ring-zinc-600"
-                      />
-                    ) : (
-                      <button
-                        onClick={() => onSelectChat(chat._id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition
-                          ${
-                            active
-                              ? "bg-zinc-100 text-zinc-900 ring-1 ring-zinc-200 dark:bg-white/10 dark:text-zinc-50 dark:ring-white/10"
-                              : "hover:bg-zinc-100/70 text-zinc-800 dark:hover:bg-white/5 dark:text-zinc-200"
-                          }`}
-                        title={chat.preview || "Untitled"}
-                      >
-                        {collapsed ? "" : chat.preview || "Untitled"}
-                      </button>
-                    )}
-
-                    {!collapsed && editingChatId !== chat._id && (
-                      <div className="absolute inset-y-0 right-1 flex items-center">
-                        <button
-                          onClick={(e) => handleMenuToggle(e, chat._id)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5
-                                     rounded-md text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100
-                                     dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-white/10"
-                          aria-label="Chat options"
-                        >
-                          <MoreVertical size={16} />
-                        </button>
-                      </div>
-                    )}
-
-                    {openMenu.id === chat._id && (
-                      <div
-                        ref={menuRef}
-                        className={`absolute z-50 right-0 mt-2 w-44 rounded-md overflow-hidden shadow-xl text-sm
-                                    border bg-white text-zinc-900
-                                    dark:border-white/10 dark:bg-zinc-950/95 dark:text-zinc-100 backdrop-blur`}
-                        style={{
-                          top: openMenu.dir === "up" ? "auto" : "100%",
-                          bottom: openMenu.dir === "up" ? "100%" : "auto",
-                          marginTop: openMenu.dir === "up" ? undefined : "0.5rem",
-                          marginBottom: openMenu.dir === "up" ? "0.5rem" : undefined,
-                        }}
-                      >
-                        <button
-                          onClick={() => handleStartEditing(chat._id)}
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
-                        >
-                          <Pencil size={14} /> Rename
-                        </button>
-                        <button
-                          onClick={() => copyChatLink(chat._id)}
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
-                        >
-                          <Copy size={14} /> Share
-                        </button>
-                        <button
-                          onClick={() => handleExportChat(chat._id, chat.preview)}
-                          className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
-                        >
-                          <Upload size={14} /> Export
-                        </button>
-                        <div className="h-px bg-zinc-200 dark:bg-white/10" />
-                        <button
-                          onClick={() => handleStartDelete(chat._id)}
-                          className="flex items-center gap-2 w-full px-3 py-2 text-red-600 hover:bg-red-50 text-left dark:text-red-400 dark:hover:bg-white/5"
-                        >
-                          <Trash size={14} /> Delete
-                        </button>
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
+          {/* New Chat */}
+          <div className="p-0">
+            <button
+              onClick={onNewChat}
+              className="w-full inline-flex items-center justify-center gap-2 h-9 rounded-full
+                         text-sm font-medium transition-colors
+                         bg-zinc-900 text-white hover:bg-zinc-800
+                         dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
+            >
+              <PlusIcon className="h-4 w-4" /> New Chat
+            </button>
           </div>
-        ))}
+
+          {/* Grouped chats */}
+          <div>
+            {Object.entries(groupedChats).map(([date, chatList]) => (
+              <div key={date} className="mb-2">
+                <div className="px-4 py-1.5 text-[11px] uppercase tracking-wide bg-white/70 text-zinc-500 border-b border-zinc-200 dark:bg-zinc-950/70 dark:text-zinc-400 dark:border-white/10 backdrop-blur sticky top-0">
+                  {date}
+                </div>
+                <ul className="mt-1 space-y-1">
+                  {chatList.map((chat) => {
+                    const active = chat._id === currentChatId;
+                    return (
+                      <li key={chat._id} className="group relative">
+                        {editingChatId === chat._id ? (
+                          <input
+                            ref={editingInputRef}
+                            type="text"
+                            defaultValue={chat.preview || "New Chat"}
+                            autoFocus
+                            onKeyDown={handleEditKeyDown}
+                            onBlur={saveTitle}
+                            className="w-full px-3 py-2 rounded-lg text-sm outline-none
+                                       bg-white border border-zinc-300 text-zinc-900
+                                       focus:ring-2 focus:ring-zinc-300
+                                       dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:focus:ring-zinc-600"
+                          />
+                        ) : (
+                          <button
+                            onClick={() => {
+                              onSelectChat(chat._id);
+                              // optional: auto close drawer after selecting
+                              setCollapsed(true);
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition
+                              ${
+                                active
+                                  ? "bg-zinc-100 text-zinc-900 ring-1 ring-zinc-200 dark:bg-white/10 dark:text-zinc-50 dark:ring-white/10"
+                                  : "hover:bg-zinc-100/70 text-zinc-800 dark:hover:bg-white/5 dark:text-zinc-200"
+                              }`}
+                            title={chat.preview || "Untitled"}
+                          >
+                            {chat.preview || "Untitled"}
+                          </button>
+                        )}
+
+                        {/* Always-visible menu on mobile */}
+                        {editingChatId !== chat._id && (
+                          <div className="absolute inset-y-0 right-1 flex items-center">
+                            <button
+                              onClick={(e) => handleMenuToggle(e, chat._id)}
+                              className="opacity-100 transition-opacity p-1.5 rounded-md
+                                         text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100
+                                         dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-white/10"
+                              aria-label="Chat options"
+                            >
+                              <MoreVertical size={16} />
+                            </button>
+                          </div>
+                        )}
+
+                        {openMenu.id === chat._id && (
+                          <div
+                            ref={menuRef}
+                            className={`absolute z-50 right-0 mt-2 w-44 rounded-md overflow-hidden shadow-xl text-sm
+                                        border bg-white text-zinc-900
+                                        dark:border-white/10 dark:bg-zinc-950/95 dark:text-zinc-100 backdrop-blur`}
+                            style={{
+                              top: openMenu.dir === "up" ? "auto" : "100%",
+                              bottom: openMenu.dir === "up" ? "100%" : "auto",
+                              marginTop:
+                                openMenu.dir === "up" ? undefined : "0.5rem",
+                              marginBottom:
+                                openMenu.dir === "up" ? "0.5rem" : undefined,
+                            }}
+                          >
+                            <button
+                              onClick={() => handleStartEditing(chat._id)}
+                              className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
+                            >
+                              <Pencil size={14} /> Rename
+                            </button>
+                            <button
+                              onClick={() => copyChatLink(chat._id)}
+                              className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
+                            >
+                              <Copy size={14} /> Share
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleExportChat(chat._id, chat.preview)
+                              }
+                              className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
+                            >
+                              <Upload size={14} /> Export
+                            </button>
+                            <div className="h-px bg-zinc-200 dark:bg-white/10" />
+                            <button
+                              onClick={() => handleStartDelete(chat._id)}
+                              className="flex items-center gap-2 w-full px-3 py-2 text-red-600 hover:bg-red-50 text-left dark:text-red-400 dark:hover:bg-white/5"
+                            >
+                              <Trash size={14} /> Delete
+                            </button>
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* DESKTOP: left rail (collapsible) */}
+      <div
+        className={`
+          hidden md:flex md:flex-col
+          transition-all duration-300
+          ${collapsed ? "md:w-14" : "md:w-64"}
+          h-screen
+          bg-white/75 border-r border-zinc-200 backdrop-blur-sm
+          dark:bg-zinc-950/50 dark:border-white/10
+        `}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between h-14 px-3 border-b border-zinc-200 dark:border-white/10">
+          {!collapsed && (
+            <span className="text-lg font-semibold tracking-wide text-zinc-800 dark:text-zinc-200">
+              Chats
+            </span>
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="ml-auto grid place-items-center h-8 w-8 rounded-full ring-1 ring-zinc-300 text-zinc-700 hover:bg-zinc-100
+                       dark:ring-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5"
+            title={collapsed ? "Expand" : "Collapse"}
+          >
+            {collapsed ? (
+              <ChevronRightIcon className="w-4 h-4" />
+            ) : (
+              <ChevronLeftIcon className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+
+        {/* Body */}
+        <div
+          className="flex-1 overflow-y-auto px-2 py-2 space-y-3
+                     [scrollbar-width:thin] [scrollbar-color:theme(colors.zinc.400)_transparent]
+                     dark:[scrollbar-color:theme(colors.zinc.700)_transparent]"
+        >
+          {/* New Chat Button */}
+          <div className="p-0">
+            <button
+              onClick={onNewChat}
+              className="w-full inline-flex items-center justify-center gap-2 h-9 rounded-full
+                         text-sm font-medium transition-colors
+                         bg-zinc-900 text-white hover:bg-zinc-800
+                         dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
+            >
+              <PlusIcon className="h-4 w-4" />{" "}
+              <span className="hidden md:inline">New Chat</span>
+            </button>
+          </div>
+
+          {/* Grouped chats */}
+          {Object.entries(groupedChats).map(([date, chatList]) => (
+            <div key={date}>
+              {!collapsed && (
+                <div className="sticky top-0 z-10 -mx-2 px-4 py-1.5 text-[11px] uppercase tracking-wide bg-white/85 text-zinc-500 border-b border-zinc-200 dark:bg-zinc-950/80 dark:text-zinc-400 dark:border-white/5 backdrop-blur">
+                  {date}
+                </div>
+              )}
+
+              <ul className="mt-1 space-y-1">
+                {chatList.map((chat) => {
+                  const active = chat._id === currentChatId;
+                  return (
+                    <li key={chat._id} className="group relative">
+                      {editingChatId === chat._id ? (
+                        <input
+                          ref={editingInputRef}
+                          type="text"
+                          defaultValue={chat.preview || "New Chat"}
+                          autoFocus
+                          onKeyDown={handleEditKeyDown}
+                          onBlur={saveTitle}
+                          className="w-full px-3 py-2 rounded-lg text-sm outline-none
+                                     bg-white border border-zinc-300 text-zinc-900
+                                     focus:ring-2 focus:ring-zinc-300
+                                     dark:bg-zinc-800 dark:border-zinc-700 dark:text-white dark:focus:ring-zinc-600"
+                        />
+                      ) : (
+                        <button
+                          onClick={() => onSelectChat(chat._id)}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm truncate transition
+                            ${
+                              active
+                                ? "bg-zinc-100 text-zinc-900 ring-1 ring-zinc-200 dark:bg-white/10 dark:text-zinc-50 dark:ring-white/10"
+                                : "hover:bg-zinc-100/70 text-zinc-800 dark:hover:bg-white/5 dark:text-zinc-200"
+                            }`}
+                          title={chat.preview || "Untitled"}
+                        >
+                          <span className="md:inline">
+                            {collapsed ? "" : chat.preview || "Untitled"}
+                          </span>
+                        </button>
+                      )}
+
+                      {!collapsed && editingChatId !== chat._id && (
+                        <div className="absolute inset-y-0 right-1 flex items-center">
+                          <button
+                            onClick={(e) => handleMenuToggle(e, chat._id)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5
+                                       rounded-md text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100
+                                       dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-white/10"
+                            aria-label="Chat options"
+                          >
+                            <MoreVertical size={16} />
+                          </button>
+                        </div>
+                      )}
+
+                      {openMenu.id === chat._id && (
+                        <div
+                          ref={menuRef}
+                          className={`absolute z-50 right-0 mt-2 w-44 rounded-md overflow-hidden shadow-xl text-sm
+                                      border bg-white text-zinc-900
+                                      dark:border-white/10 dark:bg-zinc-950/95 dark:text-zinc-100 backdrop-blur`}
+                          style={{
+                            top: openMenu.dir === "up" ? "auto" : "100%",
+                            bottom: openMenu.dir === "up" ? "100%" : "auto",
+                            marginTop:
+                              openMenu.dir === "up" ? undefined : "0.5rem",
+                            marginBottom:
+                              openMenu.dir === "up" ? "0.5rem" : undefined,
+                          }}
+                        >
+                          <button
+                            onClick={() => handleStartEditing(chat._id)}
+                            className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
+                          >
+                            <Pencil size={14} /> Rename
+                          </button>
+                          <button
+                            onClick={() => copyChatLink(chat._id)}
+                            className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
+                          >
+                            <Copy size={14} /> Share
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleExportChat(chat._id, chat.preview)
+                            }
+                            className="flex items-center gap-2 w-full px-3 py-2 hover:bg-zinc-100 text-left dark:hover:bg-white/5"
+                          >
+                            <Upload size={14} /> Export
+                          </button>
+                          <div className="h-px bg-zinc-200 dark:bg-white/10" />
+                          <button
+                            onClick={() => handleStartDelete(chat._id)}
+                            className="flex items-center gap-2 w-full px-3 py-2 text-red-600 hover:bg-red-50 text-left dark:text-red-400 dark:hover:bg-white/5"
+                          >
+                            <Trash size={14} /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm &&
         createPortal(
           <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-            <div className="w-full max-w-sm p-6 rounded-2xl bg-white text-zinc-900 shadow-2xl border border-zinc-200
-                            dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700">
-              <h3 className="text-lg font-semibold mb-2 text-center">Delete Chat</h3>
+            <div className="w-full max-w-sm p-6 rounded-2xl bg-white text-zinc-900 shadow-2xl border border-zinc-200 dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700">
+              <h3 className="text-lg font-semibold mb-2 text-center">
+                Delete Chat
+              </h3>
               <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6 text-center">
-                Are you sure you want to delete this chat? This action cannot be undone.
+                Are you sure you want to delete this chat? This action cannot be
+                undone.
               </p>
               <div className="flex gap-3 justify-center">
                 <button
@@ -550,6 +777,6 @@ export default function ChatSidebar({
           </AnimatePresence>,
           document.body
         )}
-    </div>
+    </>
   );
 }
