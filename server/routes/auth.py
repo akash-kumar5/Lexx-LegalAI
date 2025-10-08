@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Response
 from db import users_collection
 from models.User import UserCreate
 from utils.auth_utils import hash_password, verify_password, create_jwt
@@ -27,3 +27,14 @@ async def login(user: UserCreate):
     
     token = create_jwt({"user_id": str(existing["_id"]), "email": existing["email"]})
     return {"token": token}
+
+@router.post("/auth/logout")
+async def logout(request: Request, response: Response):
+    response.delete_cookie(
+        "app_session",
+        path="/",
+        httponly=True,
+        samesite="lax",  # or "none" if cross-site
+        secure=False,    # True if using https
+    )
+    return {"message": "Logged out"}

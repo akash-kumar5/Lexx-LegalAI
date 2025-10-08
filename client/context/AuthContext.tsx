@@ -39,9 +39,18 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
     router.refresh();
   };
 
-  const logout = () => {
+  const logout = async() => {
+    try {
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include", // <-- important: sends the cookie
+    });
+  } catch (e) {
+    console.warn("Logout request failed", e);
+  }
     localStorage.removeItem("token");
     localStorage.removeItem("userProfile");
+    
     setToken(null);
     router.push("/auth");
     router.refresh();
