@@ -47,7 +47,7 @@ def set_session_cookie(resp: Response, token: str):
         value=token,
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
         max_age=JWT_EXPIRE_SECONDS,
         path="/",
     )

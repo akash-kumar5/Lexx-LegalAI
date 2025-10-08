@@ -188,7 +188,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex w-full overflow-hidden max-h-screen">
+    <div className="flex w-full overflow-hidden h-screen">
       {/* Sidebar */}
       <div className={``}>
         <ChatSidebar
@@ -315,7 +315,7 @@ export default function ChatPage() {
             </AnimatePresence>
 
             {/* Input row */}
-            <div className="flex w-full items-center gap-2">
+            <div className="flex w-full items-center gap-2 sticky">
               <SummerizationBtn
                 key={fileKey}
                 setAttachedFileName={setAttachedFileName}
