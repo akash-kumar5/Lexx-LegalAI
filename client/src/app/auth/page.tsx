@@ -55,7 +55,7 @@ export default function AuthPage() {
     const token = searchParams.get("token");
     if (token) {
       login(token);
-      router.replace("/chat");
+      router.replace("/");
       return;
     }
 
@@ -72,7 +72,7 @@ export default function AuthPage() {
           // if your app uses localStorage tokens, you can store a sentinel
           // or fetch a bearer token; or just mark logged-in in your AuthContext.
           login("cookie"); // or login with a server-issued short token
-          router.replace("/chat");
+          router.replace("/");
         }
       } catch {}
     };
