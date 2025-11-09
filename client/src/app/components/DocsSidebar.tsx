@@ -11,11 +11,6 @@ import {
   ChevronLeftIcon,
 } from "lucide-react";
 
-/**
- * Breakpoints (Tailwind defaults):
- * sm: 640px, md: 768px, lg: 1024px
- * We collapse by default below lg, expand by default at/above lg.
- */
 const LG_WIDTH = 1024;
 
 export default function DocsSidebar() {
@@ -33,45 +28,69 @@ export default function DocsSidebar() {
     return () => window.removeEventListener("resize", decide);
   }, []);
 
+  // Close on ESC (mobile especially)
+  useEffect(() => {
+    if (expanded === null) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && window.innerWidth < LG_WIDTH) {
+        setExpanded(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [expanded]);
+
+  // Lock body scroll when sidebar is open on mobile
+  useEffect(() => {
+    if (expanded === null) return;
+    const isMobile = window.innerWidth < LG_WIDTH;
+    if (isMobile && expanded) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [expanded]);
+
   const isActive = (path: string) => pathname === path;
 
   // Until we know screen size, render nothing to avoid flicker/mismatch
   if (expanded === null) return null;
 
+  const expandedWide = !!expanded; // readability
+
   return (
     <>
-      {/* When collapsed on small screens, show a tiny floating toggle so users can open the sidebar */}
-      {!expanded && (
+      {/* MOBILE: floating opener, matching reference coloring */}
+      {!expandedWide && (
         <button
           onClick={() => setExpanded(true)}
           aria-label="Open sidebar"
           className="
-            fixed top-20 left-2 z-50
-            flex h-8 w-8 items-center justify-center
-            rounded-md border
-            bg-white text-zinc-700
-            hover:bg-zinc-50 hover:text-zinc-900
-            border-zinc-200
-            dark:bg-stone-900 dark:text-stone-200 dark:border-stone-700 dark:hover:bg-stone-800
-            lg:hidden
+            fixed top-18 left-2 z-50 md:hidden
+            h-9 w-9 rounded-full grid place-items-center
+            ring-1 ring-zinc-300 bg-white/90 text-zinc-700 backdrop-blur hover:bg-white
+            dark:ring-zinc-600 dark:bg-zinc-900/90 dark:text-zinc-200
           "
         >
-          <ChevronRightIcon size={18} />
+          <ChevronRightIcon size={16} />
         </button>
       )}
 
       <aside
         ref={sidebarRef}
+        aria-expanded={expandedWide}
         className={`
-          fixed top-0 left-0 z-40 pt-18 h-full
+          fixed top-0 left-0 z-40 h-full pt-[72px]
           transition-[width,transform] duration-300 ease-in-out
-          bg-white text-zinc-900 border-r border-zinc-200
-          dark:bg-stone-900 dark:text-stone-100 dark:border-stone-700
+          bg-white/75 text-zinc-900 border-r border-zinc-200 backdrop-blur-sm shadow-lg
+          dark:bg-zinc-950/50 dark:text-zinc-100 dark:border-white/10
 
           /* Small/medium: slide in/out */
-          ${expanded ? "translate-x-0 w-56" : "-translate-x-full w-56"}
+          ${expandedWide ? "translate-x-0 w-56" : "-translate-x-full w-56"}
           /* Large and up: never slide, just shrink to rail */
-          lg:translate-x-0 lg:${expanded ? "w-64" : "w-16"}
+          lg:translate-x-0 ${expandedWide ? "lg:w-64" : "lg:w-16"}
         `}
       >
         <div className="flex h-full flex-col p-3">
@@ -79,14 +98,14 @@ export default function DocsSidebar() {
           <div className="mb-4 flex justify-end">
             <button
               onClick={() => setExpanded((s) => !s)}
-              aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+              aria-label={expandedWide ? "Collapse sidebar" : "Expand sidebar"}
               className="
-                p-1 rounded-md transition
-                text-zinc-600 hover:text-zinc-900
-                dark:text-zinc-400 dark:hover:text-white
+                h-8 w-8 grid place-items-center rounded-full
+                ring-1 ring-zinc-300 text-zinc-700 hover:bg-zinc-100
+                dark:ring-zinc-600 dark:text-zinc-200 dark:hover:bg-white/5
               "
             >
-              {expanded ? <ChevronLeftIcon size={20} /> : <ChevronRightIcon size={20} />}
+              {expandedWide ? <ChevronLeftIcon size={18} /> : <ChevronRightIcon size={18} />}
             </button>
           </div>
 
@@ -99,31 +118,31 @@ export default function DocsSidebar() {
                 className={`
                   flex items-center gap-3 px-2 py-2 rounded-md transition-colors
                   ${isActive("/docs/new")
-                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
-                    : "text-zinc-700 dark:text-zinc-200"}
-                  hover:bg-zinc-50 dark:hover:bg-zinc-800
-                  ${expanded ? "justify-start" : "justify-center"}
+                    ? "bg-zinc-100 text-zinc-900 ring-1 ring-zinc-200 dark:bg-white/10 dark:text-zinc-50 dark:ring-white/10"
+                    : "text-zinc-800 dark:text-zinc-200"}
+                  hover:bg-zinc-100/70 dark:hover:bg-white/5
+                  ${expandedWide ? "justify-start" : "justify-center"}
                 `}
               >
                 <PlusIcon size={18} />
-                {expanded && <span>New Draft</span>}
+                {expandedWide && <span>New Draft</span>}
               </Link>
             </div>
 
             {/* Expand-only links */}
-            <div className={`${expanded ? "block mt-4" : "hidden lg:block"}`}>
+            <div className={`${expandedWide ? "block mt-4" : "hidden lg:block"}`}>
               <Link
                 href="/docs"
                 className={`
                   flex items-center gap-3 px-2 py-2 rounded-md transition-colors
                   ${isActive("/docs")
-                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
-                    : "text-zinc-700 dark:text-zinc-200"}
-                  hover:bg-zinc-50 dark:hover:bg-zinc-800
+                    ? "bg-zinc-100 text-zinc-900 ring-1 ring-zinc-200 dark:bg-white/10 dark:text-zinc-50 dark:ring-white/10"
+                    : "text-zinc-800 dark:text-zinc-200"}
+                  hover:bg-zinc-100/70 dark:hover:bg-white/5
                 `}
               >
                 <BookTemplateIcon size={18} />
-                {expanded && <span>Browse Templates</span>}
+                {expandedWide && <span>Browse Templates</span>}
               </Link>
 
               <Link
@@ -131,17 +150,17 @@ export default function DocsSidebar() {
                 className={`
                   mt-1 flex items-center gap-3 px-2 py-2 rounded-md transition-colors
                   ${isActive("/docs/history")
-                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
-                    : "text-zinc-700 dark:text-zinc-200"}
-                  hover:bg-zinc-50 dark:hover:bg-zinc-800
+                    ? "bg-zinc-100 text-zinc-900 ring-1 ring-zinc-200 dark:bg-white/10 dark:text-zinc-50 dark:ring-white/10"
+                    : "text-zinc-800 dark:text-zinc-200"}
+                  hover:bg-zinc-100/70 dark:hover:bg-white/5
                 `}
               >
                 <HistoryIcon size={18} />
-                {expanded && <span>Draft History</span>}
+                {expandedWide && <span>Draft History</span>}
               </Link>
 
               {/* Recent drafts (labels only when expanded) */}
-              {expanded && (
+              {expandedWide && (
                 <div className="mt-6 px-2 text-sm text-zinc-500 dark:text-zinc-400">
                   <h3 className="mb-2 font-semibold text-zinc-700 dark:text-zinc-200">
                     Recent Drafts
@@ -182,8 +201,8 @@ export default function DocsSidebar() {
       {/* Dim overlay for small screens when sidebar is open */}
       <div
         className={`
-          fixed inset-0 z-30 bg-black/40
-          ${expanded ? "opacity-100" : "opacity-0 pointer-events-none"}
+          fixed inset-0 z-30 bg-black/40 backdrop-blur-sm
+          ${expandedWide ? "opacity-100" : "opacity-0 pointer-events-none"}
           transition-opacity duration-300
           lg:hidden
         `}

@@ -197,7 +197,7 @@ async def ask_llm(request: ChatRequest, user: User = Depends(get_current_user)):
             raise HTTPException(status_code=500, detail="LLM client not configured on server.")
 
         response = llm_client.chat.completions.create(
-            model="x-ai/grok-4-fast:free",
+            model="minimax/minimax-m2:free",
             messages=messages_for_llm,
             temperature=0.6,
             top_p=0.95

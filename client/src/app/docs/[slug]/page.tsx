@@ -169,7 +169,7 @@ export default function DraftEditorPage() {
  return (
   <div
     className={`
-      flex flex-col md:flex-row pt-20
+      flex flex-col md:flex-row pt-20 ps-65
       text-zinc-900 dark:text-white
       bg-gradient-to-b from-white via-zinc-100 to-white
       dark:bg-gradient-to-b dark:from-zinc-950 dark:via-zinc-900 dark:to-black

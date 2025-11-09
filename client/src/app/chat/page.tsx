@@ -205,7 +205,7 @@ export default function ChatPage() {
       </div>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col relative bg-gradient-to-b from-white via-zinc-100 to-white dark:from-zinc-950 dark:via-zinc-900/70 dark:to-black">
+      <div className="flex-1 flex flex-col relative bg-gradient-to-b from-white via-zinc-100 to-white dark:from-zinc-950 dark:via-zinc-900/70 dark:to-black pt-13">
         {messages.length === 0 && !loading && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <p className="text-xl md:text-2xl font-medium text-zinc-500 dark:text-zinc-400 text-center px-4">

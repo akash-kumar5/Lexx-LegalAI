@@ -221,7 +221,7 @@ export default function ChatSidebar({
         });
         if (res.ok) {
           await onRefresh();
-          showSnackbar("Chat deleted.", "success");
+          showSnackbar("Chat deleted.", "info");
           if (chatId === currentChatId) onNewChat();
         } else {
           const txt = await res.text().catch(() => "Server error");
