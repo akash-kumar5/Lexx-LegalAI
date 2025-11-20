@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, FormEvent, FC, useRef } from "react";
 import { CheckCircle, AlertTriangle, Loader2, X } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
@@ -30,19 +29,62 @@ type FormFieldConfig = {
 };
 
 const formFields: FormFieldConfig[] = [
-  { name: "professionalTitle", label: "Professional Title", type: "text", placeholder: "Advocate / Law Student" },
-  { name: "barNumber", label: "Bar Council / Enrollment No.", type: "text", placeholder: "ABC/1234/2024" },
-  { name: "companyName", label: "Law Firm / Organization", type: "text", placeholder: "Lexx Legal Services" },
-  { name: "phone", label: "Phone Number", type: "tel", placeholder: "+91 9876543210" },
-  { name: "address", label: "Office Address", type: "textarea", placeholder: "123 Legal Street, City, State", rows: 3, spanFull: true },
-  { name: "courtPreferences", label: "Preferred Courts", type: "textarea", placeholder: "High Court of Delhi, Supreme Court of India", rows: 2, spanFull: true },
-  { name: "signatureBlock", label: "Signature Block", type: "textarea", placeholder: "Your Name\nAdvocate\nEnrolment No.\nContact Details", rows: 3, spanFull: true },
+  {
+    name: "professionalTitle",
+    label: "Professional Title",
+    type: "text",
+    placeholder: "Advocate / Law Student",
+  },
+  {
+    name: "barNumber",
+    label: "Bar Council / Enrollment No.",
+    type: "text",
+    placeholder: "ABC/1234/2024",
+  },
+  {
+    name: "companyName",
+    label: "Law Firm / Organization",
+    type: "text",
+    placeholder: "Lexx Legal Services",
+  },
+  {
+    name: "phone",
+    label: "Phone Number",
+    type: "tel",
+    placeholder: "+91 9876543210",
+  },
+  {
+    name: "address",
+    label: "Office Address",
+    type: "textarea",
+    placeholder: "123 Legal Street, City, State",
+    rows: 3,
+    spanFull: true,
+  },
+  {
+    name: "courtPreferences",
+    label: "Preferred Courts",
+    type: "textarea",
+    placeholder: "High Court of Delhi, Supreme Court of India",
+    rows: 2,
+    spanFull: true,
+  },
+  {
+    name: "signatureBlock",
+    label: "Signature Block",
+    type: "textarea",
+    placeholder: "Your Name\nAdvocate\nEnrolment No.\nContact Details",
+    rows: 3,
+    spanFull: true,
+  },
 ];
 
 const InputField: FC<{
   config: FormFieldConfig;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }> = ({ config, value, onChange }) => {
   const { name, label, type, placeholder, rows } = config;
 
@@ -56,35 +98,49 @@ const InputField: FC<{
     signatureBlock: "off",
   };
 
-  const inputMode = type === "tel" ? "tel" : type === "email" ? "email" : undefined;
+  const inputMode =
+    type === "tel" ? "tel" : type === "email" ? "email" : undefined;
 
-  const commonProps = {
-    id: name,
-    name,
-    value,
-    onChange,
-    placeholder,
-    autoComplete: autoCompleteMap[name] ?? "off",
-    inputMode,
-    className: `
-      mt-1 block w-full rounded-md border px-3 py-2.5 text-base shadow-sm transition
-      bg-zinc-50 text-zinc-900 border-zinc-300 placeholder:text-zinc-400
-      focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50
-      h-11
-      dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
-      dark:placeholder:text-zinc-500 dark:focus:border-red-500 dark:focus:ring-red-600
-    `,
-  } as const;
+  const commonBase = `
+    mt-1 block w-full rounded-md border px-3 py-2.5 text-base shadow-sm transition
+    bg-zinc-50 text-zinc-900 border-zinc-300 placeholder:text-zinc-400
+    focus:border-red-500 focus:ring-2 focus:ring-red-500 focus:ring-opacity-50
+    dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
+    dark:placeholder:text-zinc-500 dark:focus:border-red-500 dark:focus:ring-red-600
+  `;
 
   return (
     <div className="min-w-0">
-      <label htmlFor={name} className="block text-sm font-medium text-zinc-700 dark:text-stone-300">
+      <label
+        htmlFor={name}
+        className="block text-sm font-medium text-zinc-700 dark:text-stone-300"
+      >
         {label}
       </label>
       {type === "textarea" ? (
-        <textarea {...commonProps} rows={rows} className={`${commonProps.className} h-auto resize-y`} />
+        <textarea
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          rows={rows}
+          autoComplete={autoCompleteMap[name] ?? "off"}
+          className={`${commonBase} h-auto resize-y`}
+        />
       ) : (
-        <input {...commonProps} type={type} autoCapitalize={type === "email" ? "none" : undefined} />
+        <input
+          id={name}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          type={type}
+          inputMode={inputMode}
+          autoComplete={autoCompleteMap[name] ?? "off"}
+          autoCapitalize={type === "email" ? "none" : undefined}
+          className={`${commonBase} h-11`}
+        />
       )}
     </div>
   );
@@ -92,7 +148,10 @@ const InputField: FC<{
 
 export default function Profile() {
   const auth = useAuth();
-  const BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(/\/$/, "");
+  const BASE_URL = (process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(
+    /\/$/,
+    ""
+  );
 
   const [profile, setProfile] = useState<ProfileData>({
     professionalTitle: "",
@@ -104,9 +163,20 @@ export default function Profile() {
     signatureBlock: "",
   });
 
-  const [display, setDisplay] = useState<DisplayData>({ name: "", image: "", email: "" });
+  const initialProfileRef = useRef<ProfileData | null>(null);
+
+  const [display, setDisplay] = useState<DisplayData>({
+    name: "",
+    image: "",
+    email: "",
+  });
   const [isSaving, setIsSaving] = useState(false);
-  const [notification, setNotification] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+
+  const notifTimerRef = useRef<number | null>(null);
 
   // Load profile on mount
   useEffect(() => {
@@ -115,7 +185,7 @@ export default function Profile() {
     (async () => {
       try {
         if (!BASE_URL) throw new Error("API base url missing");
-        const token = localStorage.getItem("token");
+        const token = (localStorage.getItem("token") || "").replace(/\s+/g, "");
         const res = await fetch(`${BASE_URL}/user/me`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
           credentials: "include",
@@ -124,8 +194,12 @@ export default function Profile() {
         if (!res.ok) throw new Error("Failed to fetch profile");
         const data = await res.json();
 
-        setDisplay({ name: data.name || "", image: data.image || "", email: data.email || "" });
-        setProfile({
+        const fetchedDisplay: DisplayData = {
+          name: data.name || "",
+          image: data.image || "",
+          email: data.email || "",
+        };
+        const fetchedProfile: ProfileData = {
           professionalTitle: data.professionalTitle || "",
           barNumber: data.barNumber || "",
           companyName: data.companyName || "",
@@ -133,17 +207,30 @@ export default function Profile() {
           address: data.address || "",
           courtPreferences: data.courtPreferences || "",
           signatureBlock: data.signatureBlock || "",
-        });
+        };
 
-        localStorage.setItem("userProfile", JSON.stringify(data));
+        setDisplay(fetchedDisplay);
+        setProfile(fetchedProfile);
+
+        // Save initial profile for dirty-check
+        initialProfileRef.current = fetchedProfile;
+
+        localStorage.setItem(
+          "userProfile",
+          JSON.stringify({ ...fetchedDisplay, ...fetchedProfile })
+        );
       } catch (err) {
         if ((err as any)?.name === "AbortError") return;
         const saved = localStorage.getItem("userProfile");
         if (saved) {
           try {
             const data = JSON.parse(saved);
-            setDisplay({ name: data.name || "", image: data.image || "", email: data.email || "" });
-            setProfile({
+            const savedDisplay: DisplayData = {
+              name: data.name || "",
+              image: data.image || "",
+              email: data.email || "",
+            };
+            const savedProfile: ProfileData = {
               professionalTitle: data.professionalTitle || "",
               barNumber: data.barNumber || "",
               companyName: data.companyName || "",
@@ -151,20 +238,47 @@ export default function Profile() {
               address: data.address || "",
               courtPreferences: data.courtPreferences || "",
               signatureBlock: data.signatureBlock || "",
-            });
+            };
+            setDisplay(savedDisplay);
+            setProfile(savedProfile);
+            initialProfileRef.current = savedProfile;
           } catch {
-            setNotification({ message: "Could not load profile data.", type: "error" });
+            setNotification({
+              message: "Could not load profile data.",
+              type: "error",
+            });
           }
         } else {
-          setNotification({ message: "Could not load profile data.", type: "error" });
+          setNotification({
+            message: "Could not load profile data.",
+            type: "error",
+          });
         }
       }
     })();
 
     return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [BASE_URL]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  useEffect(() => {
+    return () => {
+      // clean notif timer on unmount
+      if (notifTimerRef.current) window.clearTimeout(notifTimerRef.current);
+    };
+  }, []);
+
+  // simple deep-equality via JSON stringify is fine for this small form
+  const isDirty = (() => {
+    if (!initialProfileRef.current) return false;
+    return (
+      JSON.stringify(profile) !== JSON.stringify(initialProfileRef.current)
+    );
+  })();
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const field = e.target.name as keyof ProfileData;
     const { value } = e.target;
     setProfile((prev) => ({ ...prev, [field]: value }));
@@ -172,14 +286,14 @@ export default function Profile() {
 
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
-    if (isSaving) return;
+    if (isSaving || !isDirty) return;
 
     try {
       if (!BASE_URL) throw new Error("API base url missing");
       setIsSaving(true);
       setNotification(null);
 
-      const token = localStorage.getItem("token");
+      const token = (localStorage.getItem("token") || "").replace(/\s+/g, "");    
       const res = await fetch(`${BASE_URL}/user/me`, {
         method: "PUT",
         headers: {
@@ -190,26 +304,47 @@ export default function Profile() {
         body: JSON.stringify(profile),
       });
 
-      if (!res.ok) throw new Error("Failed to save profile");
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.message || "Failed to save profile");
+      }
 
-      setNotification({ message: "Profile saved successfully!", type: "success" });
-      localStorage.setItem("userProfile", JSON.stringify({ ...profile, ...display }));
-    } catch {
+      // success
+      setNotification({
+        message: "Profile saved successfully!",
+        type: "success",
+      });
+
+      // update initial snapshot and localstorage
+      initialProfileRef.current = profile;
+      localStorage.setItem(
+        "userProfile",
+        JSON.stringify({ ...profile, ...display })
+      );
+    } catch (err) {
+      console.error(err);
       setNotification({ message: "Failed to save profile.", type: "error" });
     } finally {
       setIsSaving(false);
-      // auto-hide toast
-      const t = setTimeout(() => setNotification(null), 3000);
-      return () => clearTimeout(t);
+      if (notifTimerRef.current) window.clearTimeout(notifTimerRef.current);
+      notifTimerRef.current = window.setTimeout(
+        () => setNotification(null),
+        3000
+      );
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete your account? This action cannot be undone.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    )
+      return;
 
     try {
       if (!BASE_URL) throw new Error("API base url missing");
-      const token = localStorage.getItem("token");
+      const token = (localStorage.getItem("token") || "").replace(/\s+/g, "");
       const res = await fetch(`${BASE_URL}/user/me`, {
         method: "DELETE",
         headers: {
@@ -235,28 +370,30 @@ export default function Profile() {
       className={`
         mx-auto w-full max-w-4xl
         px-4 sm:px-6 md:px-8
-        pt-5 pb-[calc(5rem+env(safe-area-inset-bottom))]
-        md:pb-10
-        mt-20
-        rounded-none md:rounded-lg shadow-none md:shadow-xl
-        border-0 md:border
-        bg-white text-zinc-900 md:border-zinc-200
-        dark:bg-zinc-900 dark:text-zinc-100 md:dark:border-zinc-700
+        p-6        mt-20
+        rounded-lg shadow-sm
+        border
+        bg-white text-zinc-900 border-zinc-200
+        dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700
       `}
     >
       <h1 className="text-2xl sm:text-3xl font-bold mb-1">Your Profile</h1>
-      <p className="text-zinc-600 dark:text-stone-400 mb-5">We will use this info to auto-fill your legal drafts.</p>
+      <p className="text-zinc-600 dark:text-stone-400 mb-6">
+        We will use this info to auto-fill your legal drafts.
+      </p>
 
       {/* OAuth display header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-4 mb-6">
         <img
           src={display.image || "/avatar.png"}
           alt={display.name || "User"}
-          className="h-12 w-12 rounded-full border object-cover"
+          className="h-16 w-16 rounded-full border object-cover border-zinc-200 dark:border-zinc-700"
         />
-        <div>
-          <div className="font-semibold">{display.name || "—"}</div>
-          <div className="text-sm text-zinc-500">{display.email}</div>
+        <div className="flex-1 min-w-0">
+          <div className="font-semibold text-lg truncate">
+            {display.name || "—"}
+          </div>
+          <div className="text-sm text-zinc-500 truncate">{display.email}</div>
         </div>
       </div>
 
@@ -272,73 +409,82 @@ export default function Profile() {
               : "bg-red-50 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800/50",
           ].join(" ")}
         >
-          {notification.type === "success" ? <CheckCircle className="w-5 h-5 mr-2" /> : <AlertTriangle className="w-5 h-5 mr-2" />}
+          {notification.type === "success" ? (
+            <CheckCircle className="w-5 h-5 mr-2" />
+          ) : (
+            <AlertTriangle className="w-5 h-5 mr-2" />
+          )}
           <span className="min-w-0 truncate">{notification.message}</span>
         </div>
       )}
 
-      <form id="profileForm" onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+      <form
+        id="profileForm"
+        onSubmit={handleSave}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 mb-6"
+      >
         {formFields.map((field) => (
-          <div key={field.name} className={field.spanFull ? "md:col-span-2" : ""}>
-            <InputField config={field} value={profile[field.name]} onChange={handleChange} />
+          <div
+            key={field.name}
+            className={field.spanFull ? "md:col-span-2" : ""}
+          >
+            <InputField
+              config={field}
+              value={profile[field.name]}
+              onChange={handleChange}
+            />
           </div>
         ))}
 
         {/* read-only email input (not posted) */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-zinc-700 dark:text-stone-300">Email</label>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-stone-300">
+            Email
+          </label>
           <input
             value={display.email}
             disabled
             className="mt-1 block w-full rounded-md border px-3 py-2.5 bg-zinc-100 dark:bg-zinc-800 cursor-not-allowed border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200"
           />
         </div>
-
-        {/* spacer to avoid sticky overlap on mobile */}
-        <div className="h-2 md:hidden md:h-0 md:col-span-2" />
       </form>
 
-      {/* Sticky bottom actions */}
-      <div
-        className={`
-          fixed inset-x-0 bottom-0 z-40
-          px-4 sm:px-6
-          pb-[calc(0.5rem+env(safe-area-inset-bottom))]
-          pt-2
-          bg-white/90 dark:bg-zinc-900/90 backdrop-blur border-t border-zinc-200 dark:border-zinc-800
-        `}
-      >
-        <div className="mx-auto max-w-4xl flex gap-3">
-          <button
-            onClick={handleDelete}
-            className="flex-1 md:flex-none md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-md font-semibold
-                     border border-red-300 text-red-700 hover:bg-red-50
-                     dark:border-red-700 dark:text-red-300 dark:hover:bg-red-900/30"
-            type="button"
-          >
-            <X className="w-5 h-5" />
-            <span>Delete</span>
-          </button>
+      {/* Footer actions */}
+      <div className="flex items-center justify-between gap-4">
+        <button
+          onClick={handleDelete}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-md font-semibold
+                    text-red-900/10 hover:bg-red-50 dark:text-red-900 dark:hover:bg-red-900/30"
+          type="button"
+        >
+          <p className="text-sm underline">Delete account</p>
+        </button>
 
+        <div className="ml-auto flex items-center gap-3 relative">
           <button
             form="profileForm"
             type="submit"
-            disabled={isSaving}
+            disabled={!isDirty || isSaving}
+            aria-disabled={!isDirty || isSaving}
             className={`
-              flex-1 md:flex-none md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-semibold
-              text-white
-              bg-zinc-900 hover:bg-zinc-800 disabled:bg-zinc-400 disabled:cursor-not-allowed
-              dark:bg-red-600 dark:hover:bg-red-700 dark:disabled:bg-red-900
-            `}
-            aria-busy={isSaving}
+      inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-md font-semibold
+      text-white transition-all duration-200
+      ${isDirty ? "opacity-100 visible" : "opacity-0 invisible"}
+      ${
+        !isDirty || isSaving
+          ? "bg-zinc-400 cursor-not-allowed"
+          : "bg-zinc-900 hover:bg-zinc-800"
+      }
+      dark:bg-red-600 dark:hover:bg-red-700 dark:disabled:bg-red-900
+    `}
           >
             {isSaving ? (
               <>
-                <Loader2 className="animate-spin w-5 h-5" />
-                Saving...
+                <Loader2 className="animate-spin w-4 h-4" />
+                <span className="text-sm">Saving...</span>
               </>
             ) : (
-              "Save Profile"
+              <span className="text-sm">Save Profile</span>
             )}
           </button>
         </div>

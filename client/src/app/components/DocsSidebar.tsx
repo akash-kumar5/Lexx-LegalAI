@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -13,24 +13,22 @@ import {
 
 const LG_WIDTH = 1024;
 
-export default function DocsSidebar() {
+type Props = {
+  expanded: boolean | null;
+  setExpanded: React.Dispatch<React.SetStateAction<boolean | null>>;
+};
+
+export default function DocsSidebar({ expanded, setExpanded }: Props) {
   const pathname = usePathname();
 
-  // null until we know the viewport; avoids hydration mismatch
-  const [expanded, setExpanded] = useState<boolean | null>(null);
-  const sidebarRef = useRef<HTMLDivElement | null>(null);
+  // null until we know the viewport; avoids hydration mismatch (Docs manages this)
+  const expandedState = expanded;
 
-  // Initialize + keep in sync with resize
-  useEffect(() => {
-    const decide = () => setExpanded(window.innerWidth >= LG_WIDTH);
-    decide();
-    window.addEventListener("resize", decide);
-    return () => window.removeEventListener("resize", decide);
-  }, []);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
 
   // Close on ESC (mobile especially)
   useEffect(() => {
-    if (expanded === null) return;
+    if (expandedState === null) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && window.innerWidth < LG_WIDTH) {
         setExpanded(false);
@@ -38,31 +36,31 @@ export default function DocsSidebar() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [expanded]);
+  }, [expandedState, setExpanded]);
 
   // Lock body scroll when sidebar is open on mobile
   useEffect(() => {
-    if (expanded === null) return;
+    if (expandedState === null) return;
     const isMobile = window.innerWidth < LG_WIDTH;
-    if (isMobile && expanded) {
+    if (isMobile && expandedState) {
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => {
         document.body.style.overflow = prev;
       };
     }
-  }, [expanded]);
+  }, [expandedState]);
 
   const isActive = (path: string) => pathname === path;
 
   // Until we know screen size, render nothing to avoid flicker/mismatch
-  if (expanded === null) return null;
+  if (expandedState === null) return null;
 
-  const expandedWide = !!expanded; // readability
+  const expandedWide = !!expandedState; // readability
 
   return (
     <>
-      {/* MOBILE: floating opener, matching reference coloring */}
+      {/* MOBILE: floating opener */}
       {!expandedWide && (
         <button
           onClick={() => setExpanded(true)}
@@ -80,16 +78,14 @@ export default function DocsSidebar() {
 
       <aside
         ref={sidebarRef}
-        aria-expanded={expandedWide}
+        aria-expanded={Boolean(expandedWide)}
         className={`
           fixed top-0 left-0 z-40 h-full pt-[72px]
           transition-[width,transform] duration-300 ease-in-out
           bg-white/75 text-zinc-900 border-r border-zinc-200 backdrop-blur-sm shadow-lg
           dark:bg-zinc-950/50 dark:text-zinc-100 dark:border-white/10
 
-          /* Small/medium: slide in/out */
           ${expandedWide ? "translate-x-0 w-56" : "-translate-x-full w-56"}
-          /* Large and up: never slide, just shrink to rail */
           lg:translate-x-0 ${expandedWide ? "lg:w-64" : "lg:w-16"}
         `}
       >
@@ -111,7 +107,6 @@ export default function DocsSidebar() {
 
           {/* Content */}
           <nav className="flex-1">
-            {/* New Draft (always present; label hidden when rail) */}
             <div className="mb-2">
               <Link
                 href="/docs/new"

@@ -14,9 +14,15 @@ load_dotenv(".env.local")
 
 app = FastAPI()
 
+origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://192.168.29.57:3000",  # put your actual frontend IP:port here
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
