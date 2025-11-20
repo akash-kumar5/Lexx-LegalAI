@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from bson import ObjectId
 from utils.auth_utils import db, get_current_user
 from models.User import User  # Pydantic model for current_user
+import time
 
 router = APIRouter(prefix="/user")
 
@@ -12,19 +13,17 @@ router = APIRouter(prefix="/user")
 # This model now correctly mirrors the frontend's ProfileData state.
 # It uses aliases to map incoming camelCase JSON keys to Python's snake_case attributes.
 class ProfileUpdate(BaseModel):
-    full_name: Optional[str] = Field(None, alias='fullName')
     professional_title: Optional[str] = Field(None, alias='professionalTitle')
     bar_number: Optional[str] = Field(None, alias='barNumber')
     company_name: Optional[str] = Field(None, alias='companyName')
-    email: Optional[str] = Field(None, alias='email')
     phone: Optional[str] = Field(None, alias='phone')
     address: Optional[str] = Field(None, alias='address')
     court_preferences: Optional[str] = Field(None, alias='courtPreferences')
     signature_block: Optional[str] = Field(None, alias='signatureBlock')
 
     class Config:
-        # This allows Pydantic to populate the model using the aliases
         allow_population_by_field_name = True
+
 
 
 # --- Get current user profile ---
@@ -34,48 +33,56 @@ def get_my_profile(current_user: User = Depends(get_current_user)):
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
 
-    # Map database fields (snake_case) back to frontend's expected camelCase keys.
-    # This ensures the form is populated correctly on page load.
-    profile_response = {
-        "fullName": user_data.get("full_name"),
+    return {
+        "name": user_data.get("name") or "",
+        "image": user_data.get("image") or "",
+        "email": user_data.get("email") or "",
         "professionalTitle": user_data.get("professional_title"),
         "barNumber": user_data.get("bar_number"),
         "companyName": user_data.get("company_name"),
-        "email": user_data.get("email"),
         "phone": user_data.get("phone"),
         "address": user_data.get("address"),
         "courtPreferences": user_data.get("court_preferences"),
         "signatureBlock": user_data.get("signature_block"),
     }
-    return profile_response
+
 
 
 # --- Update current user profile ---
 @router.put("/me")
-def update_my_profile(
-    update_data: ProfileUpdate,  # Use the new, correct Pydantic model
-    current_user: User = Depends(get_current_user)
-):
-    # Create a dictionary with snake_case keys from the validated model.
-    # `exclude_unset=True` ensures we only update fields that were actually provided in the request.
-    update_fields = update_data.dict(exclude_unset=True)
-
+def update_my_profile(update_data: ProfileUpdate, current_user: User = Depends(get_current_user)):
+    update_fields = update_data.dict(exclude_unset=True)  # snake_case keys
     if not update_fields:
         raise HTTPException(status_code=400, detail="No changes provided")
 
-    # The $set operator updates the fields in the document or creates them if they don't exist.
+    update_fields["updated_at"] = int(time.time())
+
     result = db["users"].update_one(
         {"_id": ObjectId(current_user.id)},
         {"$set": update_fields}
     )
-
-    # Check if the user exists if no modifications were made
-    if result.modified_count == 0:
-        user_exists = db["users"].count_documents({"_id": ObjectId(current_user.id)}) > 0
-        if not user_exists:
-            raise HTTPException(status_code=404, detail="User not found")
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
 
     return {"message": "Profile updated successfully"}
+
+
+@router.patch("/me/display")
+def update_display(payload: dict, current_user: User = Depends(get_current_user)):
+    updates = {}
+    if "name" in payload and isinstance(payload["name"], str):
+        updates["name"] = payload["name"]
+        updates["name_source"] = "user"
+    if "image" in payload and isinstance(payload["image"], str):
+        updates["image"] = payload["image"]
+        updates["image_source"] = "user"
+    if not updates:
+        raise HTTPException(status_code=400, detail="No changes provided")
+
+    updates["updated_at"] = int(time.time())
+    db["users"].update_one({"_id": ObjectId(current_user.id)}, {"$set": updates})
+    return {"message": "Display updated"}
+
 
 
 # --- Delete current user ---

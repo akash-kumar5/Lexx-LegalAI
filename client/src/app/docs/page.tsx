@@ -4,6 +4,7 @@ import DocsCard from "../components/DocsCard";
 import { ArrowRightIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import allTemplates from "@/lib/utils/constTemplate";
+import DocsSidebar from "../components/DocsSidebar";
 
 // A simple debounce hook/function to delay API calls while typing
 function useDebounce(value: string, delay: number) {
@@ -104,7 +105,7 @@ export default function Docs() {
   >
     <div className="flex-1">
       <h1 className="text-3xl font-bold mb-6 text-center">Your Legal Workspace</h1>
-
+      <DocsSidebar />
       {/* Search Bar */}
       <div className="relative max-w-3xl mx-auto mb-8 px-2">
         <textarea

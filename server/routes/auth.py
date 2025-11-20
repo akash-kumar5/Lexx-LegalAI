@@ -3,6 +3,7 @@ from db import users_collection
 from models.User import UserCreate
 from utils.auth_utils import hash_password, verify_password, create_jwt
 from bson import ObjectId
+import time
 
 router = APIRouter()
 
@@ -11,12 +12,17 @@ async def signup(user: UserCreate):
     existing = await users_collection.find_one({"email": user.email})
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
-    
     hashed_pwd = hash_password(user.password)
-    user_doc = {"email": user.email, "password": hashed_pwd}
+    user_doc = {
+        "email": user.email,
+        "password": hashed_pwd,
+        "name": (user.name or "").strip(),
+        "name_source": "user",
+        "created_at": int(time.time()),
+        "updated_at": int(time.time()),
+    }
     result = await users_collection.insert_one(user_doc)
     token = create_jwt({"user_id": str(result.inserted_id), "email": user.email})
-
     return {"token": token}
 
 @router.post("/auth/login")

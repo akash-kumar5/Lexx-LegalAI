@@ -8,8 +8,8 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 
 type UserType = {
-  fullName?: string;
-  profilePictureUrl?: string;
+  full_name?: string;
+  profile_picture_url?: string;
 };
 
 interface AuthContextType {
@@ -127,7 +127,7 @@ const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
         <div className="px-4 py-3 text-sm text-zinc-600 border-b border-zinc-100 dark:text-stone-400 dark:border-stone-700">
           <p>Signed in as</p>
           <p className="font-medium text-zinc-900 truncate dark:text-stone-200">
-            {user?.fullName || "User"}
+            {user?.full_name || "User"}
           </p>
         </div>
 
@@ -253,7 +253,7 @@ export default function Navbar() {
                 aria-expanded={isProfileMenuOpen}
               >
                 <Image
-                  src={user?.profilePictureUrl || "/default-avatar.png"}
+                  src={user?.profile_picture_url || "/default-avatar.png"}
                   width={40}
                   height={40}
                   alt="Profile"

@@ -21,17 +21,40 @@ def serialize_user(user_data):
         "email": user_data["email"]
     }
 
-def get_current_user(authorization: str = Header(...)):
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Invalid auth header")
-    token = authorization.split("Bearer ")[1]
-    payload = verify_jwt(token)
+# utils/auth_utils.py
+from fastapi import Depends, HTTPException, Header, Request
+
+SECRET_KEY = os.getenv("SECRET_KEY")  # <- use the same value everywhere
+
+def get_current_user(
+    request: Request,
+    authorization: str | None = Header(None),
+):
+    # 1) Pick token from header or cookie
+    token = None
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization.split(" ", 1)[1]
+    else:
+        token = request.cookies.get("app_session")
+
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing auth token")
+
+    payload = verify_jwt(token)  # uses SECRET_KEY
     if not payload:
         raise HTTPException(status_code=403, detail="Invalid or expired token")
-    user_data = users_collection.find_one({"_id": ObjectId(payload["user_id"])})
+
+    # 2) Support both payload shapes
+    uid = payload.get("user_id") or payload.get("sub")
+    if not uid:
+        raise HTTPException(status_code=403, detail="Invalid token payload")
+
+    user_data = users_collection.find_one({"_id": ObjectId(uid)})
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
+
     return User(**serialize_user(user_data))
+
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
