@@ -8,8 +8,8 @@ import { useTheme } from "next-themes";
 import Image from "next/image";
 
 type UserType = {
-  full_name?: string;
-  profile_picture_url?: string;
+  name?: string;
+  image?: string;
 };
 
 interface AuthContextType {
@@ -86,6 +86,9 @@ const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
     useEffect(() => setMounted(true), []);
 
     const handleLogout = () => {
+      try {
+        localStorage.removeItem("token");
+      } catch {}
       logout();
       onClose();
     };
@@ -127,7 +130,7 @@ const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
         <div className="px-4 py-3 text-sm text-zinc-600 border-b border-zinc-100 dark:text-stone-400 dark:border-stone-700">
           <p>Signed in as</p>
           <p className="font-medium text-zinc-900 truncate dark:text-stone-200">
-            {user?.full_name || "User"}
+            {user?.name || "User"}
           </p>
         </div>
 
@@ -172,7 +175,47 @@ const ProfileMenu = forwardRef<HTMLDivElement, ProfileMenuProps>(
 ProfileMenu.displayName = "ProfileMenu";
 
 export default function Navbar() {
-  const { token, logout, user } = useAuth() as AuthContextType;
+  const auth = useAuth() as AuthContextType;
+
+  // sanitize token (protect against stored newlines or quotes)
+  const rawToken = auth?.token ?? null;
+  const token = typeof rawToken === "string" ? rawToken.replace(/[\r\n]+/g, "").trim() : null;
+
+  const logout = () => {
+    try { localStorage.removeItem("token"); } catch {}
+    auth?.logout?.();
+  };
+
+  // Try these sources for name/image in order:
+  // 1. auth.user
+  // 2. localStorage.userProfile (JSON with { name, image })
+  // 3. fallback debug image (uploaded file path)
+  const [localProfile, setLocalProfile] = useState<{ name?: string; image?: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("userProfile");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // normalize keys if frontend stored camelCase or snake_case
+        const name = parsed.name ?? parsed.full_name ?? parsed.fullName ?? parsed?.displayName ?? parsed?.fullName;
+        const image = parsed.image ?? parsed.profile_picture_url ?? parsed.profilePictureUrl ?? parsed.avatar ?? parsed.profileImage;
+        setLocalProfile({ name, image });
+      } else {
+        setLocalProfile(null);
+      }
+    } catch {
+      setLocalProfile(null);
+    }
+  }, []);
+
+  const userFromAuth = auth?.user ?? null;
+  const resolvedName = userFromAuth?.name || localProfile?.name || "User";
+
+  // fallback uploaded debug image path (from your uploads)
+  const DEBUG_FALLBACK = "/mnt/data/c5701f5b-b9b0-4b2f-b391-affc5e014ee0.png";
+
+  const resolvedImage = (userFromAuth?.image || localProfile?.image || DEBUG_FALLBACK) as string;
 
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -217,6 +260,9 @@ export default function Navbar() {
     setProfileMenuOpen(false);
   };
 
+  // safe avatarSrc - if remote domain isn't configured in next/image, unoptimized keeps it simple
+  const avatarSrc = resolvedImage || DEBUG_FALLBACK;
+
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
       <div
@@ -253,11 +299,12 @@ export default function Navbar() {
                 aria-expanded={isProfileMenuOpen}
               >
                 <Image
-                  src={user?.profile_picture_url || "/default-avatar.png"}
+                  src={avatarSrc}
                   width={40}
                   height={40}
-                  alt="Profile"
+                  alt={resolvedName}
                   className="w-full h-full object-cover"
+                  unoptimized
                 />
               </motion.button>
 
@@ -265,7 +312,7 @@ export default function Navbar() {
                 {isProfileMenuOpen && (
                   <ProfileMenu
                     ref={profileMenuRef as React.RefObject<HTMLDivElement>}
-                    user={user}
+                    user={{ name: resolvedName, image: avatarSrc }}
                     logout={logout}
                     onClose={closeAllMenus}
                   />
@@ -317,7 +364,6 @@ export default function Navbar() {
             exit={{ opacity: 0, height: 0, y: -8 }}
             className="md:hidden overflow-hidden"
           >
-            {/* mirror the same glassy container as desktop */}
             <div
               className="
                 mx-auto mt-2 w-[99%] max-w-screen-2xl

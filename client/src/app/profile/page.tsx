@@ -220,7 +220,7 @@ export default function Profile() {
           JSON.stringify({ ...fetchedDisplay, ...fetchedProfile })
         );
       } catch (err) {
-        if ((err as any)?.name === "AbortError") return;
+        if (err instanceof DOMException && err.name === "AbortError") return;
         const saved = localStorage.getItem("userProfile");
         if (saved) {
           try {
