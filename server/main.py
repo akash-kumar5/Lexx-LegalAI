@@ -1,3 +1,4 @@
+# main.py (or whatever your current entrypoint is)
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import chat  # import your chat router module
@@ -9,25 +10,32 @@ from routes import user
 from routes import drafts
 from routes import cases
 from routes.oauth_google import router as oauth_router
+import os
 
 load_dotenv(".env.local")
 
 app = FastAPI()
 
-origins = [
+raw = os.getenv("FRONTEND_ORIGINS", "")
+if raw:
+    origins = [o.strip() for o in raw.split(",") if o.strip()]
+else:
+    origins = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "http://192.168.29.57:3000",  # put your actual frontend IP:port here
+        "http://192.168.29.57:3000", 
     ]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=origins,      # MUST be explicit when allow_credentials=True
+    allow_credentials=True,     # required if you're using cookies
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
+# include routers
 app.include_router(chat.router)
 app.include_router(auth.router)
 app.include_router(summary.router)
